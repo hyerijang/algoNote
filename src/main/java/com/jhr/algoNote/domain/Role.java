@@ -1,8 +1,10 @@
 package com.jhr.algoNote.domain;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 
+@Getter
 @RequiredArgsConstructor
 public enum Role {
     GUEST("ROLE_GUEST", "손님"),
