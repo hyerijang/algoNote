@@ -32,7 +32,7 @@ public class MemberService {
      */
     private void validateDuplicateEmail(Member member) {
         log.info("validate of Duplicate Email");
-        log.info("entered email:" + member.getEmail());
+        log.info("entered email = {}", member.getEmail());
         Optional<Member> findMembers = memberRepository.findByEmail(member.getEmail());
 
         if (!findMembers.isEmpty()) {
