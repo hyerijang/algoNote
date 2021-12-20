@@ -1,20 +1,17 @@
 package com.jhr.algoNote.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.repository.MemberRepository;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
 public class MemberServiceTest {
@@ -36,21 +33,24 @@ public class MemberServiceTest {
         assertEquals(member, memberRepository.findById(savedId));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void 중복_회원_예외() throws Exception {
         // given
+        String email = "xxx@gamil.com";
+
         Member member1 = new Member();
-        member1.setEmail("xxx@gamil.com");
+        member1.setEmail(email);
 
         Member member2 = new Member();
-        member2.setEmail("xxx@gamil.com");
+        member2.setEmail(email);
 
         // when
         memberService.join(member1);
-        memberService.join(member2); //예외 발생
 
         // then
-        fail("예외가 발생해야 한다.");
+        assertThrows(IllegalStateException.class, () -> {
+            memberService.join(member2); //예외 발생
+        }, "예외가 발생해야 한다.");
     }
 
     @Test
@@ -65,7 +65,7 @@ public class MemberServiceTest {
         // when
         memberService.join(member1);
         memberService.join(member2);
-        List<Member> result = memberRepository.findAll();
+        List<Member> result = memberService.findMembers();
 
         // then
         assertEquals(result.size(), 2);
