@@ -27,7 +27,7 @@ public class MemberServiceTest {
     @Test
     public void 회원가입() throws Exception {
         // given
-        Member member = new Member().builder()
+        Member member = Member.builder()
             .name("김")
             .email("xxx@gmail.com")
             .role(Role.GUEST)
@@ -44,7 +44,7 @@ public class MemberServiceTest {
         // given
         String duplicateEmail = "xxx@gamil.com";
 
-        Member member1 = new Member().builder()
+        Member member1 = Member.builder()
             .name("김철수")
             .email(duplicateEmail)
             .role(Role.GUEST)
@@ -52,7 +52,7 @@ public class MemberServiceTest {
 
         System.out.println("member1.getEmail() = " + member1.getEmail());
 
-        Member member2 = new Member().builder()
+        Member member2 = Member.builder()
             .name("김철수")
             .email(duplicateEmail)
             .role(Role.GUEST)
@@ -70,13 +70,13 @@ public class MemberServiceTest {
     @Test
     public void 회원_전체_조회() throws Exception {
         // given
-        Member member1 = new Member().builder()
+        Member member1 = Member.builder()
             .name("김철수")
             .email("xxx@gmail.com")
             .role(Role.GUEST)
             .build();
 
-        Member member2 = new Member().builder()
+        Member member2 = Member.builder()
             .name("김철수")
             .email("xxx2@gmail.com")
             .role(Role.GUEST)
@@ -88,13 +88,13 @@ public class MemberServiceTest {
         List<Member> result = memberService.findMembers();
 
         // then
-        assertEquals(result.size(), 2);
+        assertEquals(2, result.size());
     }
 
     @Test
     public void 회원_1명_조회() throws Exception {
         // given
-        Member member = new Member().builder()
+        Member member = Member.builder()
             .name("홍길동")
             .email("xxx@gmail.com")
             .role(Role.GUEST)
@@ -105,14 +105,14 @@ public class MemberServiceTest {
         Member findMember = memberService.findOne(member.getId());
 
         // then
-        assertEquals(findMember.getId(), member.getId());
-        assertEquals(findMember.getName(), member.getName());
+        assertEquals(member.getId(), findMember.getId());
+        assertEquals(member.getName(), findMember.getName());
     }
 
     @Test
     void 회원_이름_변경() throws Exception {
         // given
-        Member member = new Member().builder()
+        Member member = Member.builder()
             .name("홍길동")
             .email("xxx@gmail.com")
             .role(Role.GUEST)
@@ -124,13 +124,13 @@ public class MemberServiceTest {
         Member findMember = memberService.findOne(member.getId());
 
         // then
-        assertEquals(findMember.getName(), "수정된이름");
+        assertEquals("수정된이름", findMember.getName());
     }
 
     @Test
     void 회원_사진_변경() throws Exception {
         // given
-        Member member = new Member().builder()
+        Member member = Member.builder()
             .name("홍길동")
             .email("xxx@gmail.com")
             .role(Role.GUEST)
@@ -142,7 +142,7 @@ public class MemberServiceTest {
         Member findMember = memberService.findOne(member.getId());
 
         // then
-        assertEquals(findMember.getPicture(), "수정된사진");
+        assertEquals("수정된사진", findMember.getPicture());
     }
 
 
