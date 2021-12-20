@@ -11,12 +11,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import lombok.Builder;
+import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor
-@Setter
 @Getter
 @Entity
 public class Member {
@@ -26,20 +25,24 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
     private String picture;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @Column(nullable = false)
     private List<Problem> problems = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @Column(nullable = false)
     private List<Review> reviews = new ArrayList<>();
 
     @Builder
@@ -50,11 +53,14 @@ public class Member {
         this.role = role;
     }
 
-    /**
-     * 이름, 사진 수정
-     */
-    public Member update(String name, String picture) {
+    // == 비스니스 로직 ==//
+
+    public Member updateName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public Member updatePicture(String picture) {
         this.picture = picture;
         return this;
     }

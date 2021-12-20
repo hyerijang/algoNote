@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.jhr.algoNote.domain.Member;
+import com.jhr.algoNote.domain.Role;
+import com.jhr.algoNote.exception.EmailRedundancyException;
 import com.jhr.algoNote.repository.MemberRepository;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -21,11 +23,15 @@ public class MemberServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
+
     @Test
     public void 회원가입() throws Exception {
         // given
-        Member member = new Member();
-        member.setName("김");
+        Member member = new Member().builder()
+            .name("김")
+            .email("xxx@gmail.com")
+            .role(Role.GUEST)
+            .build();
         // when
         Long savedId = memberService.join(member);
 
@@ -34,21 +40,29 @@ public class MemberServiceTest {
     }
 
     @Test
-    public void 중복_회원_예외() throws Exception {
+    public void 메일_중복_예외() throws Exception {
         // given
-        String email = "xxx@gamil.com";
+        String duplicateEmail = "xxx@gamil.com";
 
-        Member member1 = new Member();
-        member1.setEmail(email);
+        Member member1 = new Member().builder()
+            .name("김철수")
+            .email(duplicateEmail)
+            .role(Role.GUEST)
+            .build();
 
-        Member member2 = new Member();
-        member2.setEmail(email);
+        System.out.println("member1.getEmail() = " + member1.getEmail());
+
+        Member member2 = new Member().builder()
+            .name("김철수")
+            .email(duplicateEmail)
+            .role(Role.GUEST)
+            .build();
 
         // when
         memberService.join(member1);
 
         // then
-        assertThrows(IllegalStateException.class, () -> {
+        assertThrows(EmailRedundancyException.class, () -> {
             memberService.join(member2); //예외 발생
         }, "예외가 발생해야 한다.");
     }
@@ -56,11 +70,17 @@ public class MemberServiceTest {
     @Test
     public void 회원_전체_조회() throws Exception {
         // given
-        Member member1 = new Member();
-        member1.setName("홍길동");
+        Member member1 = new Member().builder()
+            .name("김철수")
+            .email("xxx@gmail.com")
+            .role(Role.GUEST)
+            .build();
 
-        Member member2 = new Member();
-        member2.setName("김철수");
+        Member member2 = new Member().builder()
+            .name("김철수")
+            .email("xxx2@gmail.com")
+            .role(Role.GUEST)
+            .build();
 
         // when
         memberService.join(member1);
@@ -74,8 +94,11 @@ public class MemberServiceTest {
     @Test
     public void 회원_1명_조회() throws Exception {
         // given
-        Member member = new Member();
-        member.setName("홍길동");
+        Member member = new Member().builder()
+            .name("홍길동")
+            .email("xxx@gmail.com")
+            .role(Role.GUEST)
+            .build();
 
         // when
         memberService.join(member);
@@ -85,5 +108,42 @@ public class MemberServiceTest {
         assertEquals(findMember.getId(), member.getId());
         assertEquals(findMember.getName(), member.getName());
     }
+
+    @Test
+    void 회원_이름_변경() throws Exception {
+        // given
+        Member member = new Member().builder()
+            .name("홍길동")
+            .email("xxx@gmail.com")
+            .role(Role.GUEST)
+            .build();
+        memberService.join(member);
+
+        // when
+        member.updateName("수정된이름");
+        Member findMember = memberService.findOne(member.getId());
+
+        // then
+        assertEquals(findMember.getName(), "수정된이름");
+    }
+
+    @Test
+    void 회원_사진_변경() throws Exception {
+        // given
+        Member member = new Member().builder()
+            .name("홍길동")
+            .email("xxx@gmail.com")
+            .role(Role.GUEST)
+            .build();
+        memberService.join(member);
+
+        // when
+        member.updatePicture("수정된사진");
+        Member findMember = memberService.findOne(member.getId());
+
+        // then
+        assertEquals(findMember.getPicture(), "수정된사진");
+    }
+
 
 }
