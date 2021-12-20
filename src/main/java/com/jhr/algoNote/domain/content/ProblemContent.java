@@ -27,4 +27,11 @@ public class ProblemContent {
     private Problem problem;
 
 
+    //== 생성 메서드 ==///
+    public static ProblemContent createProblemContent(String text) {
+        ProblemContent pc = new ProblemContent();
+        pc.text = text;
+        return pc;
+    }
+
 }

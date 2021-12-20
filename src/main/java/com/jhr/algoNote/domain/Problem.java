@@ -10,23 +10,22 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 
+@NoArgsConstructor
 @Getter
-@Setter
 @Entity
 public class Problem extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "problem_id")
     private Long id;
 
@@ -51,24 +50,53 @@ public class Problem extends BaseTimeEntity {
     private ProblemContent content;
 
     //== 연관관계 메서드 == //
-    public void setMember(Member member) {
+    private void setMember(Member member) {
         this.member = member;
         member.getProblems().add(this);
     }
 
-    public void addProblemTag(ProblemTag problemTag) {
+    private void addProblemTag(ProblemTag problemTag) {
         this.problemTags.add(problemTag);
         problemTag.setProblem(this);
     }
 
-    public void addReview(Review review) {
+    private void addReview(Review review) {
         reviews.add(review);
         review.setProblem(this);
     }
 
-    public void setContent(ProblemContent content) {
+    private void setContent(ProblemContent content) {
         this.content = content;
         content.setProblem(this);
     }
+
+    private void setTitle(String title) {
+        this.title = title;
+    }
+
+    //== 생성 메서드 ==//
+
+    /**
+     * 문제 생성 후 제목, 내용 및 태그 등록
+     *
+     * @param member
+     * @param content
+     * @param tags
+     * @return
+     */
+    public static Problem createProblem(Member member, String title, ProblemContent content,
+        ProblemTag... tags
+    ) {
+        Problem problem = new Problem();
+        problem.setMember(member);
+        problem.setTitle(title);
+        problem.setContent(content);
+        //태그 추가
+        for (ProblemTag tag : tags) {
+            problem.addProblemTag(tag);
+        }
+        return problem;
+    }
+
 
 }

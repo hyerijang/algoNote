@@ -10,10 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Entity
 public class ProblemTag {
 
@@ -29,5 +27,21 @@ public class ProblemTag {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "tag_id")
     private Tag tag;
+
+    private void setTag(Tag tag) {
+        this.tag = tag;
+    }
+
+    public void setProblem(Problem problem) {
+        this.problem = problem;
+    }
+
+    // == 생성 메서드 ==//
+    public static ProblemTag createProblemTag(Tag tag) {
+        ProblemTag pt = new ProblemTag();
+        pt.setTag(tag);
+        return pt;
+    }
+
 
 }
