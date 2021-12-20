@@ -71,4 +71,19 @@ public class MemberServiceTest {
         assertEquals(result.size(), 2);
     }
 
+    @Test
+    public void 회원_1명_조회() throws Exception {
+        // given
+        Member member = new Member();
+        member.setName("홍길동");
+
+        // when
+        memberService.join(member);
+        Member findMember = memberService.findOne(member.getId());
+
+        // then
+        assertEquals(findMember.getId(), member.getId());
+        assertEquals(findMember.getName(), member.getName());
+    }
+
 }
