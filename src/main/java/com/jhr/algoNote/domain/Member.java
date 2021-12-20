@@ -59,6 +59,7 @@ public class Member {
         return this;
     }
 
+    @Generated
     public String getRoleKey() {
         return this.role.getKey();
     }

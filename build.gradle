@@ -35,7 +35,7 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    
+
 
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
@@ -64,6 +64,19 @@ jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
     finalizedBy 'jacocoTestCoverageVerification'
 
+    //패키지 제외
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: [
+                            "**/*config*",
+                            "**/*dto*",
+                            "**/*exception*",
+                            "**/*Application.*"
+                    ])
+                })
+        )
+    }
 }
 
 jacocoTestCoverageVerification {
@@ -86,10 +99,19 @@ jacocoTestCoverageVerification {
                 value = 'COVEREDRATIO'
                 minimum = 0.80
             }
-        }
-    }
 
+            //커버리지 측정에서 제외할 클래스
+            excludes = [
+                    "**.*Application*",
+                    "**.*Config*",
+                    "**.*Dto*",
+                    "**.*Exception*"
+            ]
+        }
+
+    }
 }
+
 
 task testCoverage(type: Test) {
     group 'verification'
