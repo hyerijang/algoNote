@@ -4,7 +4,6 @@ import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.exception.EmailRedundancyException;
 import com.jhr.algoNote.repository.MemberRepository;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,7 @@ public class MemberService {
     private void validateDuplicateEmail(Member member) {
         log.info("validate of Duplicate Email");
         log.info("entered email = {}", member.getEmail());
-        Optional<Member> findMembers = memberRepository.findByEmail(member.getEmail());
+        List<Member> findMembers = memberRepository.findByEmail(member.getEmail());
 
         if (!findMembers.isEmpty()) {
 
