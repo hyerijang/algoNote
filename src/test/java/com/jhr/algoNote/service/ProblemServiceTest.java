@@ -1,6 +1,7 @@
 package com.jhr.algoNote.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -81,5 +83,29 @@ class ProblemServiceTest {
         assertEquals(result.getContent().getText(), content);
         assertEquals(result.getId(), savedProblemId);
     }
+
+
+    @Test
+    void 문제_제목은_null_일수없음() {
+        //given
+        Member member = Member.builder()
+            .name("김")
+            .email("xxx@gmail.com")
+            .role(Role.GUEST)
+            .build();
+
+        Long memberId = memberService.join(member);
+
+        ProblemTag[] problemTagList = problemService.createProblemTagList("그리디", "그리디", "greedy",
+            "병합정렬");
+        //when
+        //than
+
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            problemService.register(memberId, null, "content", problemTagList);
+        }, "제목이 null일때 에러가 발생해야합니다.");
+
+    }
+
 
 }

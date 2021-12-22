@@ -10,6 +10,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Generated;
 import lombok.Getter;
@@ -25,24 +26,25 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(nullable = false)
+    @NotNull
     private String name;
 
-    @Column(unique = true, nullable = false)
+    @NotNull
+    @Column(unique = true)
     private String email;
 
     private String picture;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Role role;
 
+    @NotNull
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    @Column(nullable = false)
     private List<Problem> problems = new ArrayList<>();
 
+    @NotNull
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    @Column(nullable = false)
     private List<Review> reviews = new ArrayList<>();
 
     @Builder

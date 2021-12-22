@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,6 +30,7 @@ public class Problem extends BaseTimeEntity {
     @Column(name = "problem_id")
     private Long id;
 
+    @NotNull
     private String title;
 
     @ManyToOne(fetch = LAZY)

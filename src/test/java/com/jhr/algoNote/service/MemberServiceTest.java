@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -143,6 +144,20 @@ public class MemberServiceTest {
 
         // then
         assertEquals("수정된사진", findMember.getPicture());
+    }
+
+    @Test
+    void 회원_이름은_null일_수_없음() throws Exception {
+        // given
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            Member member = Member.builder()
+                .name(null)
+                .email("xxx@gmail.com")
+                .role(Role.GUEST)
+                .build();
+            memberRepository.save(member);
+        }, "이름이 null일때 에러가 발생해야합니다.");
+
     }
 
 
