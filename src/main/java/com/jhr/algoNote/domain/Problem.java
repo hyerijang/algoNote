@@ -70,14 +70,10 @@ public class Problem extends BaseTimeEntity {
         content.setProblem(this);
     }
 
-    private void setTitle(String title) {
-        this.title = title;
-    }
-
     //== 생성 메서드 ==//
 
     /**
-     * 문제 생성 후 제목, 내용 및 태그 등록
+     * 문제 생성 후 제목, 내용 ,태그 등록
      *
      * @param member
      * @param content
@@ -89,12 +85,31 @@ public class Problem extends BaseTimeEntity {
     ) {
         Problem problem = new Problem();
         problem.setMember(member);
-        problem.setTitle(title);
+        problem.title = title;
         problem.setContent(content);
         //태그 추가
         for (ProblemTag tag : tags) {
             problem.addProblemTag(tag);
         }
+        return problem;
+    }
+
+    /**
+     * 문제 생성 후 제목, 내용, 태그, 사이트 명, url 등록
+     *
+     * @param member
+     * @param title
+     * @param content
+     * @param siteName
+     * @param url
+     * @param tags
+     * @return
+     */
+    public static Problem createProblem(Member member, String title, ProblemContent content,
+        String siteName, String url, ProblemTag... tags) {
+        Problem problem = createProblem(member, title, content, tags);
+        problem.url = url;
+        problem.siteName = siteName;
         return problem;
     }
 
