@@ -8,6 +8,7 @@ import com.jhr.algoNote.domain.tag.Tag;
 import com.jhr.algoNote.exception.IllegalTagNameException;
 import com.jhr.algoNote.exception.RedundantTagNameException;
 import com.jhr.algoNote.repository.TagRepository;
+import java.lang.reflect.Method;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -126,8 +127,12 @@ class TagServiceTest {
         // '-' '_'는 포함 가능
         String st = "!\"#$%&(){}@`*:+;.<>,^~|'[]";
 
+        TagService tagService = new TagService(tagRepository);
+        Method method = tagService.getClass().getDeclaredMethod("stringReplace", String.class);
+        method.setAccessible(true);
         // when
-        String result = TagService.stringReplace(st);
+
+        String result = (String) method.invoke("stringReplace", st);
 
         // then
         result = result.replaceAll("\\s", ""); //비교를 위해 공백 제거

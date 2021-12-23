@@ -16,11 +16,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 public class Problem extends BaseTimeEntity {
@@ -74,42 +77,25 @@ public class Problem extends BaseTimeEntity {
 
     //== 생성 메서드 ==//
 
+
     /**
-     * 문제 생성 후 제목, 내용 ,태그 등록
-     *
-     * @param member
-     * @param content
-     * @param tags
-     * @return
+     * 문제 생성
      */
-    public static Problem createProblem(Member member, String title, ProblemContent content,
-        ProblemTag... tags
-    ) {
+    @Builder
+    public static Problem createProblem(@NonNull Member member, @NonNull String title,
+        @NonNull ProblemContent content,
+        String siteName, String url, ProblemTag... tags) {
+
         Problem problem = new Problem();
+        //필수 요소 추가
         problem.setMember(member);
         problem.title = title;
         problem.setContent(content);
-        //태그 추가
+
+        //비 필수 요소 추가
         for (ProblemTag tag : tags) {
             problem.addProblemTag(tag);
         }
-        return problem;
-    }
-
-    /**
-     * 문제 생성 후 제목, 내용, 태그, 사이트 명, url 등록
-     *
-     * @param member
-     * @param title
-     * @param content
-     * @param siteName
-     * @param url
-     * @param tags
-     * @return
-     */
-    public static Problem createProblem(Member member, String title, ProblemContent content,
-        String siteName, String url, ProblemTag... tags) {
-        Problem problem = createProblem(member, title, content, tags);
         problem.url = url;
         problem.siteName = siteName;
         return problem;

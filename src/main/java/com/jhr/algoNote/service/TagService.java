@@ -41,6 +41,9 @@ public class TagService {
     }
 
 
+    /**
+     * 1개의 문자열을 여러개의 태그이름으로 구분
+     */
     public static String[] sliceTextToTagNames(String text) {
         text = stringReplace(text.trim()); //공백 제거
         String[] names = stringReplace(text)
@@ -51,7 +54,7 @@ public class TagService {
     /**
      * 한글, 숫자, 영문, 띄어쓰기,언더바, '-' 제외한 모든 특수문자 제거
      */
-    public static String stringReplace(String str) {
+    private static String stringReplace(String str) {
         String match = "[^\uAC00-\uD7A30-9a-zA-Z\\-_]";
         str = str.replaceAll(match, " ");
         return str;

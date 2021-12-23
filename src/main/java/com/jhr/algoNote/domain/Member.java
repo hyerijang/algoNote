@@ -11,12 +11,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 public class Member {
@@ -48,7 +50,7 @@ public class Member {
     private List<Review> reviews = new ArrayList<>();
 
     @Builder
-    public Member(String name, String email, String picture, Role role) {
+    public Member(@NonNull String name, @NonNull String email, String picture, Role role) {
         this.name = name;
         this.email = email;
         this.picture = picture;
