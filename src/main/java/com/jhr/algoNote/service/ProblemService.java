@@ -25,7 +25,7 @@ public class ProblemService {
     private final ProblemRepository problemRepository;
 
 
-    // ToDO : 현재의 register 메서드는 OCP 위배, 확장성 있는 코드로 개선할 것
+    // TODO : 현재의 register 메서드는 OCP를 위배하고 비효율적임, 확장성 있는 코드로 개선할 것
     public Long register(@NonNull Long memberId, @NonNull String title, @NonNull String content) {
         return register(memberId, title, content, null, null, null);
     }
