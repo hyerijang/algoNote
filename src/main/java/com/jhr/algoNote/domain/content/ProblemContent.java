@@ -8,23 +8,37 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProblemContent {
 
     @Id
     @GeneratedValue
     @Column(name = "problem_content_id")
     private Long id;
+
+    @NotNull
     private String text;
 
 
     @OneToOne(fetch = LAZY, mappedBy = "content")
     private Problem problem;
 
+
+    //== 생성 메서드 ==///
+    public static ProblemContent createProblemContent(@NonNull String text) {
+        ProblemContent pc = new ProblemContent();
+        pc.text = text;
+        return pc;
+    }
 
 }

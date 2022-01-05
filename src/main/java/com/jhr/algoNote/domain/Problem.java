@@ -10,26 +10,30 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Setter
 @Entity
 public class Problem extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "problem_id")
     private Long id;
 
+    @NotNull
     private String title;
 
     @ManyToOne(fetch = LAZY)
@@ -51,24 +55,51 @@ public class Problem extends BaseTimeEntity {
     private ProblemContent content;
 
     //== 연관관계 메서드 == //
-    public void setMember(Member member) {
+    private void setMember(Member member) {
         this.member = member;
         member.getProblems().add(this);
     }
 
-    public void addProblemTag(ProblemTag problemTag) {
+    private void addProblemTag(ProblemTag problemTag) {
         this.problemTags.add(problemTag);
         problemTag.setProblem(this);
     }
 
-    public void addReview(Review review) {
+    private void addReview(Review review) {
         reviews.add(review);
         review.setProblem(this);
     }
 
-    public void setContent(ProblemContent content) {
+    private void setContent(ProblemContent content) {
         this.content = content;
         content.setProblem(this);
     }
+
+    //== 생성 메서드 ==//
+
+
+    /**
+     * 문제 생성
+     */
+    @Builder
+    public static Problem createProblem(@NonNull Member member, @NonNull String title,
+        @NonNull ProblemContent content,
+        String siteName, String url, ProblemTag... tags) {
+
+        Problem problem = new Problem();
+        //필수 요소 추가
+        problem.setMember(member);
+        problem.title = title;
+        problem.setContent(content);
+
+        //비 필수 요소 추가
+        for (ProblemTag tag : tags) {
+            problem.addProblemTag(tag);
+        }
+        problem.url = url;
+        problem.siteName = siteName;
+        return problem;
+    }
+
 
 }

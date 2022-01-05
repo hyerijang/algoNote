@@ -9,12 +9,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProblemTag {
 
     @Id
@@ -29,5 +30,21 @@ public class ProblemTag {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "tag_id")
     private Tag tag;
+
+    private void setTag(Tag tag) {
+        this.tag = tag;
+    }
+
+    public void setProblem(Problem problem) {
+        this.problem = problem;
+    }
+
+    // == 생성 메서드 ==//
+    public static ProblemTag createProblemTag(Tag tag) {
+        ProblemTag pt = new ProblemTag();
+        pt.setTag(tag);
+        return pt;
+    }
+
 
 }

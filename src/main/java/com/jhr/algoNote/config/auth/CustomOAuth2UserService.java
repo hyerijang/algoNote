@@ -5,6 +5,8 @@ import com.jhr.algoNote.config.auth.dto.SessionMember;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.repository.MemberRepository;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -51,7 +53,13 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     // 유저 생성 및 수정 서비스 로직
     private Member saveOrUpdate(OAuthAttributes attributes) {
-        Member member = memberRepository.findByEmail(attributes.getEmail())
+
+        List<Member> results = memberRepository.findByEmail(attributes.getEmail());
+
+        Optional<Member> optMember = Optional.ofNullable(results.isEmpty() ? null : results.get(0));
+        // optMember 값이 비어있지 않은 경우 이름, 사진을 수정
+        // 비어있는 경우 attributes 값으로 새 Member 생성해서 넣어줌
+        Member member = optMember
             .map(entity -> {
                 entity.updateName(attributes.getName());
                 entity.updatePicture(attributes.getPicture());

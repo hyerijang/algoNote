@@ -10,12 +10,15 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 public class Member {
@@ -25,28 +28,29 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(nullable = false)
+    @NotNull
     private String name;
 
-    @Column(unique = true, nullable = false)
+    @NotNull
+    @Column(unique = true)
     private String email;
 
     private String picture;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Role role;
 
+    @NotNull
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    @Column(nullable = false)
     private List<Problem> problems = new ArrayList<>();
 
+    @NotNull
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    @Column(nullable = false)
     private List<Review> reviews = new ArrayList<>();
 
     @Builder
-    public Member(String name, String email, String picture, Role role) {
+    public Member(@NonNull String name, @NonNull String email, String picture, Role role) {
         this.name = name;
         this.email = email;
         this.picture = picture;
