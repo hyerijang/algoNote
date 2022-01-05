@@ -6,6 +6,8 @@ import com.jhr.algoNote.domain.content.ProblemContent;
 import com.jhr.algoNote.domain.tag.ProblemTag;
 import com.jhr.algoNote.domain.tag.Tag;
 import com.jhr.algoNote.repository.ProblemRepository;
+import com.jhr.algoNote.repository.ProblemSearch;
+import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ public class ProblemService {
     private final ProblemRepository problemRepository;
 
 
+    // ToDO : 현재의 register 메서드는 OCP 위배, 확장성 있는 코드로 개선할 것
     public Long register(@NonNull Long memberId, @NonNull String title, @NonNull String content) {
         return register(memberId, title, content, null, null, null);
     }
@@ -92,4 +95,11 @@ public class ProblemService {
     }
 
 
+    /**
+     * 검색
+     */
+    @Transactional
+    public List<Problem> search(ProblemSearch problemSearch) {
+        return problemRepository.findAll(problemSearch);
+    }
 }
