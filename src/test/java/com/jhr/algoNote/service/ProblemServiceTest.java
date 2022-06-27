@@ -7,6 +7,8 @@ import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.Role;
 import com.jhr.algoNote.repository.ProblemRepository;
+import com.jhr.algoNote.repository.ProblemSearch;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,8 +108,10 @@ class ProblemServiceTest {
 
     }
 
+
+    // == 태그 ==
     @Test
-    void 태그등록() {
+    void 한_문제에_같은_태그를_여러개_등록_가능() {
         //given
         Member member = createMember("홍길동", "xxx@gmail.com");
 
@@ -122,7 +126,7 @@ class ProblemServiceTest {
 
 
     @Test
-    void 태그_미등록() {
+    void 태그를_등록하지_않아도_된다() {
         //given
         Member member = createMember("홍길동", "xxx@gmail.com");
 
@@ -133,6 +137,57 @@ class ProblemServiceTest {
         Problem result = problemRepository.findById(savedProblemId);
 
         assertEquals(0, result.getProblemTags().size());
+    }
+
+    // == 검색 ==
+    @Test
+    void 사이트명으로_검색() {
+        //given
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        createProblems(member);
+        //when
+        ProblemSearch problemSearch = ProblemSearch.builder()
+            .memberId(member.getId())
+            .siteName("백준")
+            .build();
+
+        List<Problem> result = problemService.search(problemSearch);
+        //than
+        assertEquals(1, result.size());
+        assertEquals(result.get(0).getMember().getId(), member.getId(), "자신의 id와 동일해야한다.");
+        assertEquals(result.get(0).getTitle(), "오픈 채팅방");
+
+    }
+
+    @Test
+    void 문제_제목으로_검색() {
+        //given
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        Member otherMember = createMember("김영희", "xxx2@gmail.com");
+        createProblems(member);
+        createProblems(otherMember);
+        //when
+        ProblemSearch problemSearch = ProblemSearch.builder()
+            .memberId(member.getId())
+            .title("채팅")
+            .build();
+
+        List<Problem> result = problemService.search(problemSearch);
+        //than
+        assertEquals(1, result.size());
+        assertEquals(result.get(0).getMember().getId(), member.getId(), "자신의 id와 동일해야한다.");
+        assertEquals(result.get(0).getSiteName(), "백준");
+    }
+
+    // == 테스트 작성에 도움을 주는 메서드 ==
+    private void createProblems(Member member) {
+        problemService.register(member.getId(), "오픈 채팅방", "content", "", "백준",
+            "https://www.acmicpc.net/");
+        problemService.register(member.getId(), "문자열 압축", "문자열을 압축하자", "", "프로그래머스",
+            "https://programmers.co.kr/learn/challenges");
+        problemService.register(member.getId(), "크레인 인형뽑기 게임",
+            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다.", "", "프로그래머스",
+            "https://programmers.co.kr/learn/courses/30/lessons/64061");
     }
 
     private Member createMember(String name, String email) {

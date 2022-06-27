@@ -22,6 +22,7 @@ repositories {
 
 ext {
     set('snippetsDir', file("build/generated-snippets"))
+    queryDslVersion = "5.0.0"
 }
 
 dependencies {
@@ -41,6 +42,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+
+    // QueryDSL
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    annotationProcessor(
+            "javax.persistence:javax.persistence-api",
+            "javax.annotation:javax.annotation-api",
+            "com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
 }
 
 test {
@@ -65,6 +73,11 @@ jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
     finalizedBy 'jacocoTestCoverageVerification'
 
+    def Qdomains = []
+    for (qPattern in '**/QA'..'**/QZ') {
+        Qdomains.add(qPattern + '*')
+    }
+
     //패키지 제외
     afterEvaluate {
         classDirectories.setFrom(
@@ -74,13 +87,18 @@ jacocoTestReport {
                             "**/*dto*",
                             "**/*exception*",
                             "**/*Application.*"
-                    ])
+                    ] + Qdomains)
                 })
         )
     }
 }
 
 jacocoTestCoverageVerification {
+    def Qdomains = []
+    for (qPattern in '**/QA'..'**/QZ') {
+        Qdomains.add(qPattern + '*')
+    }
+
     violationRules {
 
         rule {
@@ -107,7 +125,7 @@ jacocoTestCoverageVerification {
                     "**.*Config*",
                     "**.*Dto*",
                     "**.*Exception*"
-            ]
+            ] + Qdomains
         }
 
     }
@@ -124,4 +142,13 @@ task testCoverage(type: Test) {
 
     tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
     tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
+}
+
+// QueryDSL
+sourceSets {
+    main {
+        java {
+            srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
+        }
+    }
 }
