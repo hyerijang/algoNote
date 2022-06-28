@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+  <title>ALGONOTE</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<div class="jumbotron">
+  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+  <div class="container">
+    <!--  구글 로그인 시작-->
+    <head th:replace="fragments/socialLogin :: socialLogin"/>
+    <!--    구글 로그인 끝-->
+    <p>hello</p>
+  </div>
+  <div th:replace="fragments/footer :: footer"/>
+</div>
+</body>
+</html>
