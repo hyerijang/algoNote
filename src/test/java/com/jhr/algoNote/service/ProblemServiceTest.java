@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.Role;
+import com.jhr.algoNote.dto.ProblemRegisterDto;
 import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.repository.ProblemSearch;
 import java.util.List;
@@ -219,4 +220,28 @@ class ProblemServiceTest {
         assertEquals(result.get(0).getMember().getId(), member.getId(), "자신의 id와 동일해야한다.");
 
     }
+
+
+    @Test
+    @DisplayName("DTO 사용해서 문제 등록")
+    void register_with_dto() {
+        //given
+        Member member = createMember("홍길동", "xxx@gmail.com");
+
+        String title = "title";
+        String content = "sample text";
+
+        //when
+        ProblemRegisterDto dto = ProblemRegisterDto.builder().title(title).contentText(content)
+            .build();
+        Long savedProblemId = problemService.registerWithDto(member.getId(), dto);
+
+        //than
+        Problem result = problemRepository.findById(savedProblemId);
+        assertEquals(content, result.getContent().getText());
+        assertEquals(savedProblemId, result.getId());
+
+    }
+
+
 }

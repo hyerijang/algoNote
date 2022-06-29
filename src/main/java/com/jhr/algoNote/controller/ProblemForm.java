@@ -19,5 +19,7 @@ public class ProblemForm {
     private String title;
     private String url;
     private String contentText;
+    private String tagText;
+    private String siteName;
 
 }

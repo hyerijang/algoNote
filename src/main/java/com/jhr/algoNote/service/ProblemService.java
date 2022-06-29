@@ -5,6 +5,7 @@ import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.content.ProblemContent;
 import com.jhr.algoNote.domain.tag.ProblemTag;
 import com.jhr.algoNote.domain.tag.Tag;
+import com.jhr.algoNote.dto.ProblemRegisterDto;
 import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.repository.ProblemSearch;
 import java.util.List;
@@ -25,12 +26,17 @@ public class ProblemService {
     private final ProblemRepository problemRepository;
 
 
-    // TODO : 현재의 register 메서드는 OCP를 위배하고 비효율적임, 확장성 있는 코드로 개선할 것
+    /**
+     * register 메서드는 OCP를 위배하고 비효율적임 대신 registerWithDto 메서드 사용을 권장
+     */
     @Transactional
     public Long register(@NonNull Long memberId, @NonNull String title, @NonNull String content) {
         return register(memberId, title, content, null, null, null);
     }
 
+    /**
+     * register 메서드는 OCP를 위배하고 비효율적임 대신 registerWithDto 메서드 사용을 권장
+     */
     @Transactional
     public Long register(@NonNull Long memberId, @NonNull String title, @NonNull String content,
         String tagText) {
@@ -103,5 +109,31 @@ public class ProblemService {
     @Transactional
     public List<Problem> search(ProblemSearch problemSearch) {
         return problemRepository.findAll(problemSearch);
+    }
+
+
+    @Transactional
+    public Long registerWithDto(@NonNull Long memberId, ProblemRegisterDto problemRegisterDto) {
+        //엔티티 조회
+        Member member = memberService.findOne(memberId);
+
+        //문제 내용 생성
+        ProblemContent problemContent = ProblemContent.createProblemContent(
+            problemRegisterDto.getContentText());
+
+        //태그 생성
+        ProblemTag[] problemTags = createProblemTagList(problemRegisterDto.getTagText());
+
+        //문제 생성 후 제목, 내용, 태그 등록
+        return problemRepository.save(
+            Problem.builder()
+                .member(member)
+                .title(problemRegisterDto.getTitle())
+                .content(problemContent)
+                .tags(problemTags)
+                .url(problemRegisterDto.getUrl())
+                .siteName(problemRegisterDto.getSiteName())
+                .build()
+        );
     }
 }
