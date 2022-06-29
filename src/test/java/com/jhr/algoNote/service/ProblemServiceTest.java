@@ -188,6 +188,8 @@ class ProblemServiceTest {
         problemService.register(member.getId(), "크레인 인형뽑기 게임",
             "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다.", "", "프로그래머스",
             "https://programmers.co.kr/learn/courses/30/lessons/64061");
+        problemService.register(member.getId(), "BFS",
+            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다");
     }
 
     private Member createMember(String name, String email) {
@@ -199,5 +201,22 @@ class ProblemServiceTest {
 
         memberService.join(member);
         return member;
+    }
+
+    @Test
+    void 아이디로_검색() {
+        //given
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        createProblems(member);
+        //when
+        ProblemSearch problemSearch = ProblemSearch.builder()
+            .memberId(member.getId())
+            .build();
+
+        List<Problem> result = problemService.search(problemSearch);
+        //than
+        assertEquals(4, result.size());
+        assertEquals(result.get(0).getMember().getId(), member.getId(), "자신의 id와 동일해야한다.");
+
     }
 }

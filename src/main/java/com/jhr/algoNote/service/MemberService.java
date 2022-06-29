@@ -4,6 +4,7 @@ import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.exception.EmailRedundancyException;
 import com.jhr.algoNote.repository.MemberRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,16 @@ public class MemberService {
     public Member findOne(Long memberId) {
         return memberRepository.findById(memberId);
     }
+
+    /**
+     * 회원 이메일로 조회 (단건 조회)
+     */
+    public Member findByEmail(String email) {
+        List<Member> results = memberRepository.findByEmail(email);
+        Optional<Member> optMember = Optional.ofNullable(results.isEmpty() ? null : results.get(0));
+        return optMember.get();
+    }
+
 
 
 }
