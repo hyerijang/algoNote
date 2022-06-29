@@ -1,4 +1,4 @@
-package com.jhr.algoNote.web.controller;
+package com.jhr.algoNote.controller;
 
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Role;
