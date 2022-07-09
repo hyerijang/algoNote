@@ -136,4 +136,35 @@ public class ProblemService {
                 .build()
         );
     }
+
+    public Problem findOne(Long id) {
+        return problemRepository.findById(id);
+    }
+
+
+    @Transactional
+    public Long edit(@NonNull Long memberId, ProblemRegisterDto problemRegisterDto) {
+        //엔티티 조회
+        Member member = memberService.findOne(memberId);
+        Problem problem = problemRepository.findById(problemRegisterDto.getId());
+
+        if (memberId != problem.getMember().getId()) {
+            throw new RuntimeException("작성자가 아닙니다.");
+        }
+
+        //문제 내용 수정
+        ProblemContent problemContent = problem.getContent();
+        problemContent.setText(problemRegisterDto.getContentText());
+
+        //태그 생성
+        ProblemTag[] problemTags = createProblemTagList(problemRegisterDto.getTagText());
+
+        //문제 수정
+        problem.change(problemRegisterDto.getTitle(), problemRegisterDto.getSiteName(),
+            problemRegisterDto.getUrl(), problemContent, problemTags);
+
+        return problem.getId();
+    }
+
+
 }

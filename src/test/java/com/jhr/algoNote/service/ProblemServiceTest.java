@@ -243,5 +243,59 @@ class ProblemServiceTest {
 
     }
 
+    @Test
+    void 문제_ID로_조회() {
+        //given
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        String title = "title";
+        String content = "sample text";
+        ProblemRegisterDto dto = ProblemRegisterDto.builder().title(title).contentText(content)
+            .build();
+        Long savedProblemId = problemService.registerWithDto(member.getId(), dto);
+
+        //when
+        Problem result = problemService.findOne(savedProblemId);
+        //than
+        assertEquals(content, result.getContent().getText());
+        assertEquals(savedProblemId, result.getId());
+
+    }
+
+    @Test
+    void 문제_수정() {
+        //given
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        String title = "title";
+        String content = "sample text";
+        ProblemRegisterDto dto = ProblemRegisterDto.builder()
+            .title(title)
+            .contentText(content)
+            .tagText("DP,알고리즘,카카오")
+            .build();
+        Long savedProblemId = problemService.registerWithDto(member.getId(), dto);
+        Problem problem = problemRepository.findById(savedProblemId);
+
+        //when
+        final String TITLE = "새로운제목";
+        final String TAGTEXT = "DP,배열,알고리즘,새로운태그";
+        final int TAGSIZE = 4;
+        final String CONTENT = "hello world";
+        ProblemRegisterDto dto2 = ProblemRegisterDto.builder()
+            .id(savedProblemId) // 준영속
+            .title(TITLE)
+            .tagText(TAGTEXT)
+            .contentText(CONTENT)
+            .build();
+
+        Long updatedProblemId = problemService.edit(member.getId(), dto2);
+
+        //than
+        assertEquals(savedProblemId, updatedProblemId);
+
+        Problem updatedProblem = problemService.findOne(savedProblemId);
+        assertEquals(TITLE, updatedProblem.getTitle());
+        assertEquals(CONTENT, updatedProblem.getContent().getText());
+        assertEquals(TAGSIZE, updatedProblem.getProblemTags().size());
+    }
 
 }

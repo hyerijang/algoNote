@@ -5,7 +5,6 @@ import com.jhr.algoNote.config.auth.dto.SessionMember;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.dto.ProblemRegisterDto;
-import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.repository.ProblemSearch;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ProblemService;
@@ -17,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Slf4j
@@ -26,7 +27,6 @@ public class ProblemController {
 
     private final HttpSession httpSession;
     private final ProblemService problemService;
-    private final ProblemRepository problemRepository;
     private final MemberService memberService;
 
     @GetMapping("/problems/new")
@@ -52,7 +52,7 @@ public class ProblemController {
                 .tagText(problemForm.getTagText())
                 .siteName(problemForm.getSiteName())
                 .build();
-            Long problemId = problemService.registerWithDto(member.getId(),dto);
+            Long problemId = problemService.registerWithDto(member.getId(), dto);
             log.info("registered problem id = {}", problemId);
         }
         return "redirect:/";
@@ -78,11 +78,49 @@ public class ProblemController {
 
             List<Problem> problems = problemService.search(problemSearch);
 
-            log.info("problems size ={}",problems.size());
+            log.info("problems size ={}", problems.size());
 
             model.addAttribute("problems", problems);
         }
         return "problems/problemList";
     }
+
+    // TODO : 태그 조회 추가
+    @GetMapping("/problems/{id}/edit")
+    public String updateItemForm(@PathVariable Long id, Model model) {
+        Problem problem = problemService.findOne(id);
+        ProblemForm form = new ProblemForm();
+        form.setId(problem.getId());
+        form.setTitle(problem.getTitle());
+        form.setUrl(problem.getUrl());
+        form.setContentText(problem.getContent().getText());
+//        form.setTagText(problem.getProblemTags());
+        form.setSiteName(problem.getSiteName());
+        model.addAttribute("form", form);
+        return "problems/updateProblemForm";
+    }
+
+    @PostMapping("/problems/{id}/edit")
+    public String edit(@ModelAttribute ProblemForm problemForm) {
+        SessionMember user = (SessionMember) httpSession.getAttribute("user");
+        Member member = null;
+        if (user != null) {
+            member = memberService.findByEmail(user.getEmail());
+        }
+        if (member != null) {
+            ProblemRegisterDto dto = ProblemRegisterDto.builder()
+                .title(problemForm.getTitle())
+                .contentText(problemForm.getContentText())
+                .url(problemForm.getUrl())
+                .tagText(problemForm.getTagText())
+                .siteName(problemForm.getSiteName())
+                .id(problemForm.getId())
+                .build();
+
+            problemService.edit(member.getId(), dto);
+        }
+        return "redirect:/";
+    }
+
 
 }

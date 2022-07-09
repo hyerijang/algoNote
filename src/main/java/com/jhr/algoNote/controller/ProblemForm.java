@@ -21,5 +21,6 @@ public class ProblemForm {
     private String contentText;
     private String tagText;
     private String siteName;
+    private Long id;
 
 }
