@@ -84,7 +84,7 @@ public class Problem extends BaseTimeEntity {
     @Builder
     public static Problem createProblem(@NonNull Member member, @NonNull String title,
         @NonNull ProblemContent content,
-        String siteName, String url, ProblemTag... tags) {
+        String siteName, String url, List<ProblemTag> tags) {
 
         Problem problem = new Problem();
         //필수 요소 추가
@@ -101,12 +101,10 @@ public class Problem extends BaseTimeEntity {
         return problem;
     }
 
-    public void update(String title, String siteName, String url, ProblemContent problemContent,
-        ProblemTag[] problemTags) {
+    public void update(String title, String siteName, String url, List<ProblemTag> problemTags) {
         this.title = title;
         this.siteName = siteName;
         this.url = url;
-        this.problemTags = List.of(problemTags);
-        this.content = problemContent;
+        this.problemTags = problemTags;
     }
 }

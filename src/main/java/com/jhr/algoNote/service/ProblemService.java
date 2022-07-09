@@ -9,6 +9,7 @@ import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.dto.ProblemCreateRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.repository.ProblemSearch;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +58,7 @@ public class ProblemService {
         ProblemContent problemContent = ProblemContent.createProblemContent(content);
 
         //태그 생성
-        ProblemTag[] problemTags = createProblemTagList(tagText);
+        List<ProblemTag> problemTags = createProblemTagList(tagText);
 
         //문제 생성 후 제목, 내용, 태그 등록
         return problemRepository.save(
@@ -75,16 +76,16 @@ public class ProblemService {
     /**
      * tagNames 을 활용하여 ProblemTagList 생성
      */
-    public ProblemTag[] createProblemTagList(String tagText) {
+    public List<ProblemTag> createProblemTagList(String tagText) {
 
         if (isStringEmpty(tagText)) { //태그가 입력되지 않은경우
-            return new ProblemTag[0];
+            return new ArrayList<ProblemTag>();
         }
 
         String[] tagNames = TagService.sliceTextToTagNames(tagText);
 
         //문제태그 리스트 생성
-        ProblemTag[] ProblemTagList = new ProblemTag[tagNames.length];
+        List<ProblemTag> ProblemTagList = new ArrayList<ProblemTag>();
         //태그 이름 조회 및 등록
         for (int i = 0; i < tagNames.length; i++) {
             Tag tag = tagService.findByName(tagNames[i]);
@@ -93,7 +94,7 @@ public class ProblemService {
                 tagService.saveTag(tag);
             }
             //문제태그에 태그 등록
-            ProblemTagList[i] = ProblemTag.createProblemTag(tag);
+            ProblemTagList.add(ProblemTag.createProblemTag(tag));
         }
         return ProblemTagList;
     }
@@ -123,7 +124,7 @@ public class ProblemService {
             problemCreateRequest.getContentText());
 
         //태그 생성
-        ProblemTag[] problemTags = createProblemTagList(problemCreateRequest.getTagText());
+        List<ProblemTag> problemTags = createProblemTagList(problemCreateRequest.getTagText());
 
         //문제 생성 후 제목, 내용, 태그 등록
         return problemRepository.save(
@@ -145,6 +146,7 @@ public class ProblemService {
 
     /**
      * 문제 수정, 수정시 요청자와 문제 작성자가 다르면 예외 발생
+     *
      * @param memberId
      * @param problemUpdateRequest
      * @return
@@ -160,15 +162,14 @@ public class ProblemService {
         }
 
         //문제 내용 수정
-        ProblemContent problemContent = problem.getContent();
-        problemContent.setText(problemUpdateRequest.getContentText());
+        problem.getContent().editText(problemUpdateRequest.getContentText());
 
         //태그 생성
-        ProblemTag[] problemTags = createProblemTagList(problemUpdateRequest.getTagText());
+        List<ProblemTag> problemTags = createProblemTagList(problemUpdateRequest.getTagText());
 
-        //문제 수정
-        problem.update(problemUpdateRequest.getTitle(), problemUpdateRequest.getSiteName(), problemUpdateRequest.getUrl(), problemContent,
-            problemTags);
+        //문제 정보 수정
+        problem.update(problemUpdateRequest.getTitle(), problemUpdateRequest.getSiteName(),
+            problemUpdateRequest.getUrl(), problemTags);
 
         return problem.getId();
     }
