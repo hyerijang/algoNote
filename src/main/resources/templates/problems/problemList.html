@@ -5,14 +5,14 @@
 
 <div class="container">
   <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-  <div>
+  <div class="container">
     <table class="table table-striped">
       <thead>
       <tr>
         <th>#</th>
         <th>제목</th>
         <th>url</th>
-        <th>내용</th>
+        <th>수정</th>
       </tr>
       </thead>
       <tbody>
@@ -20,6 +20,9 @@
         <td th:text="${problem.id}"></td>
         <td th:text="${problem.title}"></td>
         <td th:text="${problem.url}"></td>
+        <td>
+          <a th:href="@{/problems/{id}/edit(id=${problem.id})}" class="btn btn-primary" role="button">수정</a>
+        </td>
       </tr>
       </tbody>
     </table>
