@@ -1,7 +1,8 @@
 package com.jhr.algoNote.controller;
 
 
-import com.jhr.algoNote.config.auth.dto.SessionMember;
+import com.jhr.algoNote.config.auth.LoginUser;
+import com.jhr.algoNote.config.auth.dto.SessionUser;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.dto.ProblemUpdateRequest;
@@ -20,28 +21,31 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/problems")
 public class ProblemController {
 
     private final HttpSession httpSession;
     private final ProblemService problemService;
     private final MemberService memberService;
 
-    @GetMapping("/problems/new")
+    //URI
+    private final String CREAT = "/new";
+    private final String EDIT = "/{id}/edit";
+
+    @GetMapping(CREAT)
     public String createForm(Model model) {
         model.addAttribute("form", new ProblemForm());
         return "problems/createProblemForm";
     }
 
-    @PostMapping("/problems/new")
-    public String creat(@Valid ProblemForm problemForm) {
-        SessionMember user = (SessionMember) httpSession.getAttribute("user");
-
+    @PostMapping(CREAT)
+    public String creat(@Valid ProblemForm problemForm, @LoginUser SessionUser user) {
         Member member = null;
-
         if (user != null) {
             member = memberService.findByEmail(user.getEmail());
         }
@@ -61,12 +65,13 @@ public class ProblemController {
 
     /**
      * 로그인한 유저가 등록한 문제 조회
+     *
      * @param model
      * @return
      */
-    @GetMapping("/problems")
-    public String list(Model model) {
-        SessionMember user = (SessionMember) httpSession.getAttribute("user");
+    @GetMapping
+    public String list(Model model, @LoginUser SessionUser user) {
+
         Member member = null;
         if (user != null) {
             member = memberService.findByEmail(user.getEmail());
@@ -87,8 +92,9 @@ public class ProblemController {
     }
 
     // TODO : 태그 조회 추가
-    @GetMapping("/problems/{id}/edit")
-    public String updateItemForm(@PathVariable Long id, Model model) {
+
+    @GetMapping(EDIT)
+    public String updateProblemForm(@PathVariable Long id, Model model) {
         Problem problem = problemService.findOne(id);
         ProblemForm form = new ProblemForm();
         form.setId(problem.getId());
@@ -101,9 +107,9 @@ public class ProblemController {
         return "problems/updateProblemForm";
     }
 
-    @PostMapping("/problems/{id}/edit")
-    public String edit(@ModelAttribute ProblemForm problemForm) {
-        SessionMember user = (SessionMember) httpSession.getAttribute("user");
+    @PostMapping(EDIT)
+    public String edit(@ModelAttribute ProblemForm problemForm, @LoginUser SessionUser user) {
+
         Member member = null;
         if (user != null) {
             member = memberService.findByEmail(user.getEmail());

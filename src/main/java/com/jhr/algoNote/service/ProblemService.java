@@ -143,11 +143,17 @@ public class ProblemService {
     }
 
 
+    /**
+     * 문제 수정, 수정시 요청자와 문제 작성자가 다르면 예외 발생
+     * @param memberId
+     * @param problemUpdateRequest
+     * @return
+     */
     @Transactional
-    public Long edit(@NonNull Long memberId, ProblemUpdateRequest dto) {
+    public Long edit(@NonNull Long memberId, ProblemUpdateRequest problemUpdateRequest) {
         //엔티티 조회
         Member member = memberService.findOne(memberId);
-        Problem problem = problemRepository.findById(dto.getId());
+        Problem problem = problemRepository.findById(problemUpdateRequest.getId());
 
         if (memberId != problem.getMember().getId()) {
             throw new RuntimeException("작성자가 아닙니다.");
@@ -155,13 +161,13 @@ public class ProblemService {
 
         //문제 내용 수정
         ProblemContent problemContent = problem.getContent();
-        problemContent.setText(dto.getContentText());
+        problemContent.setText(problemUpdateRequest.getContentText());
 
         //태그 생성
-        ProblemTag[] problemTags = createProblemTagList(dto.getTagText());
+        ProblemTag[] problemTags = createProblemTagList(problemUpdateRequest.getTagText());
 
         //문제 수정
-        problem.update(dto.getTitle(), dto.getSiteName(), dto.getUrl(), problemContent,
+        problem.update(problemUpdateRequest.getTitle(), problemUpdateRequest.getSiteName(), problemUpdateRequest.getUrl(), problemContent,
             problemTags);
 
         return problem.getId();

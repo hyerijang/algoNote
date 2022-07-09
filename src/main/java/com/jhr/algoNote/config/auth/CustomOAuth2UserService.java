@@ -1,7 +1,7 @@
 package com.jhr.algoNote.config.auth;
 
 import com.jhr.algoNote.config.auth.dto.OAuthAttributes;
-import com.jhr.algoNote.config.auth.dto.SessionMember;
+import com.jhr.algoNote.config.auth.dto.SessionUser;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.repository.MemberRepository;
 import java.util.Collections;
@@ -43,7 +43,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             oAuth2User.getAttributes());
         Member member = saveOrUpdate(attributes);
         httpSession.setAttribute("user",
-            new SessionMember(member)); // SessionUser (직렬화된 dto 클래스 사용)
+            new SessionUser(member)); // SessionUser (직렬화된 dto 클래스 사용)
 
         return new DefaultOAuth2User(
             Collections.singleton(new SimpleGrantedAuthority(member.getRoleKey())),

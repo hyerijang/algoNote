@@ -12,22 +12,26 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/members")
 public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("/members/new")
+    //URI
+    private final String CREATE = "/new";
+    @GetMapping(CREATE)
     public String createForm(Model model) {
         log.info("createForm");
         model.addAttribute("memberForm", new MemberForm());
         return "members/createMemberForm";
     }
 
-    @PostMapping("/members/new")
+    @PostMapping(CREATE)
     public String create(@Valid MemberForm memberForm, BindingResult result) {
 
         if (result.hasErrors()) {
@@ -44,7 +48,7 @@ public class MemberController {
         return "redirect:/";
     }
 
-    @GetMapping("/members")
+    @GetMapping
     public String list(Model model) {
         List<Member> members = memberService.findMembers();
         model.addAttribute("members", members);
