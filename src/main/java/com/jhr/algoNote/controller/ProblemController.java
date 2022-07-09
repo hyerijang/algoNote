@@ -4,7 +4,8 @@ package com.jhr.algoNote.controller;
 import com.jhr.algoNote.config.auth.dto.SessionMember;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
-import com.jhr.algoNote.dto.ProblemRegisterDto;
+import com.jhr.algoNote.dto.ProblemUpdateRequest;
+import com.jhr.algoNote.dto.ProblemCreateRequest;
 import com.jhr.algoNote.repository.ProblemSearch;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ProblemService;
@@ -45,7 +46,7 @@ public class ProblemController {
             member = memberService.findByEmail(user.getEmail());
         }
         if (member != null) {
-            ProblemRegisterDto dto = ProblemRegisterDto.builder()
+            ProblemCreateRequest dto = ProblemCreateRequest.builder()
                 .title(problemForm.getTitle())
                 .contentText(problemForm.getContentText())
                 .url(problemForm.getUrl())
@@ -108,7 +109,7 @@ public class ProblemController {
             member = memberService.findByEmail(user.getEmail());
         }
         if (member != null) {
-            ProblemRegisterDto dto = ProblemRegisterDto.builder()
+            ProblemUpdateRequest dto = ProblemUpdateRequest.builder()
                 .title(problemForm.getTitle())
                 .contentText(problemForm.getContentText())
                 .url(problemForm.getUrl())

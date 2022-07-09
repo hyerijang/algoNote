@@ -101,7 +101,7 @@ public class Problem extends BaseTimeEntity {
         return problem;
     }
 
-    public void change(String title, String siteName, String url, ProblemContent problemContent,
+    public void update(String title, String siteName, String url, ProblemContent problemContent,
         ProblemTag[] problemTags) {
         this.title = title;
         this.siteName = siteName;

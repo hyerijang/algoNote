@@ -5,7 +5,8 @@ import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.content.ProblemContent;
 import com.jhr.algoNote.domain.tag.ProblemTag;
 import com.jhr.algoNote.domain.tag.Tag;
-import com.jhr.algoNote.dto.ProblemRegisterDto;
+import com.jhr.algoNote.dto.ProblemUpdateRequest;
+import com.jhr.algoNote.dto.ProblemCreateRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.repository.ProblemSearch;
 import java.util.List;
@@ -113,26 +114,26 @@ public class ProblemService {
 
 
     @Transactional
-    public Long registerWithDto(@NonNull Long memberId, ProblemRegisterDto problemRegisterDto) {
+    public Long registerWithDto(@NonNull Long memberId, ProblemCreateRequest problemCreateRequest) {
         //엔티티 조회
         Member member = memberService.findOne(memberId);
 
         //문제 내용 생성
         ProblemContent problemContent = ProblemContent.createProblemContent(
-            problemRegisterDto.getContentText());
+            problemCreateRequest.getContentText());
 
         //태그 생성
-        ProblemTag[] problemTags = createProblemTagList(problemRegisterDto.getTagText());
+        ProblemTag[] problemTags = createProblemTagList(problemCreateRequest.getTagText());
 
         //문제 생성 후 제목, 내용, 태그 등록
         return problemRepository.save(
             Problem.builder()
                 .member(member)
-                .title(problemRegisterDto.getTitle())
+                .title(problemCreateRequest.getTitle())
                 .content(problemContent)
                 .tags(problemTags)
-                .url(problemRegisterDto.getUrl())
-                .siteName(problemRegisterDto.getSiteName())
+                .url(problemCreateRequest.getUrl())
+                .siteName(problemCreateRequest.getSiteName())
                 .build()
         );
     }
@@ -143,10 +144,10 @@ public class ProblemService {
 
 
     @Transactional
-    public Long edit(@NonNull Long memberId, ProblemRegisterDto problemRegisterDto) {
+    public Long edit(@NonNull Long memberId, ProblemUpdateRequest dto) {
         //엔티티 조회
         Member member = memberService.findOne(memberId);
-        Problem problem = problemRepository.findById(problemRegisterDto.getId());
+        Problem problem = problemRepository.findById(dto.getId());
 
         if (memberId != problem.getMember().getId()) {
             throw new RuntimeException("작성자가 아닙니다.");
@@ -154,14 +155,14 @@ public class ProblemService {
 
         //문제 내용 수정
         ProblemContent problemContent = problem.getContent();
-        problemContent.setText(problemRegisterDto.getContentText());
+        problemContent.setText(dto.getContentText());
 
         //태그 생성
-        ProblemTag[] problemTags = createProblemTagList(problemRegisterDto.getTagText());
+        ProblemTag[] problemTags = createProblemTagList(dto.getTagText());
 
         //문제 수정
-        problem.change(problemRegisterDto.getTitle(), problemRegisterDto.getSiteName(),
-            problemRegisterDto.getUrl(), problemContent, problemTags);
+        problem.update(dto.getTitle(), dto.getSiteName(), dto.getUrl(), problemContent,
+            problemTags);
 
         return problem.getId();
     }

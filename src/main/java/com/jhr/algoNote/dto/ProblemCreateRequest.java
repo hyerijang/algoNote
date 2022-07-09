@@ -6,24 +6,22 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProblemRegisterDto {
+public class ProblemCreateRequest {
 
     private String title;
     private String url;
     private String contentText;
     private String tagText;
     private String siteName;
-    private Long id;
 
     @Builder
-    public ProblemRegisterDto(String title, String url, String contentText, String tagText,
+    public ProblemCreateRequest(String title, String url, String contentText, String tagText,
         String siteName, Long id) {
         this.title = title;
         this.url = url;
         this.contentText = contentText;
         this.tagText = tagText;
         this.siteName = siteName;
-        this.id = id;
     }
 }
 

@@ -6,7 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.Role;
-import com.jhr.algoNote.dto.ProblemRegisterDto;
+import com.jhr.algoNote.dto.ProblemUpdateRequest;
+import com.jhr.algoNote.dto.ProblemCreateRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.repository.ProblemSearch;
 import java.util.List;
@@ -232,7 +233,7 @@ class ProblemServiceTest {
         String content = "sample text";
 
         //when
-        ProblemRegisterDto dto = ProblemRegisterDto.builder().title(title).contentText(content)
+        ProblemCreateRequest dto = ProblemCreateRequest.builder().title(title).contentText(content)
             .build();
         Long savedProblemId = problemService.registerWithDto(member.getId(), dto);
 
@@ -249,7 +250,7 @@ class ProblemServiceTest {
         Member member = createMember("홍길동", "xxx@gmail.com");
         String title = "title";
         String content = "sample text";
-        ProblemRegisterDto dto = ProblemRegisterDto.builder().title(title).contentText(content)
+        ProblemCreateRequest dto = ProblemCreateRequest.builder().title(title).contentText(content)
             .build();
         Long savedProblemId = problemService.registerWithDto(member.getId(), dto);
 
@@ -265,28 +266,26 @@ class ProblemServiceTest {
     void 문제_수정() {
         //given
         Member member = createMember("홍길동", "xxx@gmail.com");
-        String title = "title";
-        String content = "sample text";
-        ProblemRegisterDto dto = ProblemRegisterDto.builder()
-            .title(title)
-            .contentText(content)
-            .tagText("DP,알고리즘,카카오")
+        ProblemCreateRequest dto = ProblemCreateRequest.builder()
+            .title("")
+            .contentText("")
             .build();
         Long savedProblemId = problemService.registerWithDto(member.getId(), dto);
         Problem problem = problemRepository.findById(savedProblemId);
 
-        //when
+        // 수정 dto 생성
         final String TITLE = "새로운제목";
         final String TAGTEXT = "DP,배열,알고리즘,새로운태그";
         final int TAGSIZE = 4;
         final String CONTENT = "hello world";
-        ProblemRegisterDto dto2 = ProblemRegisterDto.builder()
-            .id(savedProblemId) // 준영속
+        ProblemUpdateRequest dto2 = ProblemUpdateRequest.builder()
+            .id(savedProblemId)
             .title(TITLE)
             .tagText(TAGTEXT)
             .contentText(CONTENT)
             .build();
 
+        //when
         Long updatedProblemId = problemService.edit(member.getId(), dto2);
 
         //than
