@@ -58,7 +58,7 @@ public class ProblemController {
             .tagText(problemForm.getTagText())
             .site(problemForm.getSite())
             .build();
-        Long problemId = problemService.registerWithDto(member.getId(), problemCreateRequest);
+        Long problemId = problemService.register(member.getId(), problemCreateRequest);
         log.info("registered problem id = {}", problemId);
 
         return "redirect:/";

@@ -86,26 +86,27 @@ public class Problem extends BaseTimeEntity {
         String site, String url, List<ProblemTag> problemTagList) {
 
         Problem problem = new Problem();
-        //필수 요소 추가
         problem.setMember(member);
         problem.title = title;
         problem.setContent(content);
-
-        //비 필수 요소 추가
-        System.out.println("tags.size() = " + problemTagList.size());
-        for (ProblemTag problemTag : problemTagList) {
-            problem.addProblemTag(problemTag);
-            System.out.println("문제와 태그를 연결합니다." + problemTag + " " + problemTag.getProblem());
-        }
         problem.url = url;
         problem.site = site;
+
+        //문제태그 추가
+        for (ProblemTag problemTag : problemTagList) {
+            problem.addProblemTag(problemTag);
+        }
         return problem;
     }
 
-    public void update(String title, String site, String url, List<ProblemTag> problemTags) {
+    public void update(String title, String site, String url, List<ProblemTag> problemTagList) {
         this.title = title;
         this.site = site;
         this.url = url;
-        this.problemTags = problemTags;
+
+        //문제태그 추가
+        for (ProblemTag problemTag : problemTagList) {
+            addProblemTag(problemTag);
+        }
     }
 }

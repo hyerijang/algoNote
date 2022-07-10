@@ -123,6 +123,24 @@ class TagServiceTest {
     }
 
     @Test
+    @DisplayName("태그이름으로 생성될수 없는 문자")
+    void IllegalKoreanTextForTagNames() throws Exception {
+        // given
+        String st = "한글 자음 : ㄱ, ㄴ,ㄷ,ㄹ,ㅁ,ㅂ,ㅅ,ㅎㅎㅎ,"
+            +"모음 :ㅏ,ㅐㅓㅣ, ,"
+            +"태그,이름이 될 수 없습니다ㄹㄹ." ; //한글 자음,모음은 태그 이름이 될 수 없다.
+        // when
+        String[] names = TagService.sliceTextToTagNames(st);
+
+        // then
+        for (String name : names ) {
+            System.out.println("name ={" + name+"}");
+        }
+        assertEquals(8, names.length);
+
+    }
+
+    @Test
     @DisplayName("태그 이름 생성은 특수문자를 포함 할 수 없다")
     void checkWhiteSpace() throws Exception {
         // given

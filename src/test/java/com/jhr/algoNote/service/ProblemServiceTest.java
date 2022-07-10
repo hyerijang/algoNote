@@ -237,7 +237,7 @@ class ProblemServiceTest {
         //when
         ProblemCreateRequest dto = ProblemCreateRequest.builder().title(title).contentText(content)
             .build();
-        Long savedProblemId = problemService.registerWithDto(member.getId(), dto);
+        Long savedProblemId = problemService.register(member.getId(), dto);
 
         //than
         Problem result = problemRepository.findById(savedProblemId);
@@ -254,7 +254,7 @@ class ProblemServiceTest {
         String content = "sample text";
         ProblemCreateRequest dto = ProblemCreateRequest.builder().title(title).contentText(content)
             .build();
-        Long savedProblemId = problemService.registerWithDto(member.getId(), dto);
+        Long savedProblemId = problemService.register(member.getId(), dto);
 
         //when
         Problem result = problemService.findOne(savedProblemId);
@@ -272,7 +272,7 @@ class ProblemServiceTest {
             .title("")
             .contentText("")
             .build();
-        Long savedProblemId = problemService.registerWithDto(member.getId(), dto);
+        Long savedProblemId = problemService.register(member.getId(), dto);
         Problem problem = problemRepository.findById(savedProblemId);
 
         // 수정 dto 생성
@@ -309,7 +309,7 @@ class ProblemServiceTest {
             .title("")
             .contentText("")
             .build();
-        Long savedProblemId = problemService.registerWithDto(member.getId(), dto);
+        Long savedProblemId = problemService.register(member.getId(), dto);
 
         //when
         Problem problem = problemRepository.findById(savedProblemId);
@@ -330,13 +330,46 @@ class ProblemServiceTest {
             .contentText("")
             .tagText(tagText)
             .build();
-        Long savedProblemId = problemService.registerWithDto(member.getId(), dto);
+        Long savedProblemId = problemService.register(member.getId(), dto);
         // when
         Problem problem = problemRepository.findById(savedProblemId);
         // then
         String result = problemService.getTagText(problem.getProblemTags());
         System.out.println("result = " + result);
         assertEquals(tagText, result);
+
+    }
+
+    @Test
+    void 문제_태그_수정() {
+        //given
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        ProblemCreateRequest dto = ProblemCreateRequest.builder()
+            .title("")
+            .contentText("")
+            .tagText("123,1234,1")
+            .build();
+        Long savedProblemId = problemService.register(member.getId(), dto);
+        Problem problem = problemRepository.findById(savedProblemId);
+
+        // 수정 dto 생성
+        final String TAGTEXT = "DP,배열,알고리즘,새로운태그";
+        final int TAGSIZE = 4;
+        ProblemUpdateRequest updateRequest = ProblemUpdateRequest.builder()
+            .id(savedProblemId)
+            .tagText(TAGTEXT)
+            .title("")
+            .contentText("")
+            .build();
+
+        //when
+        Long updatedProblemId = problemService.edit(member.getId(), updateRequest);
+
+        //than
+        assertEquals(savedProblemId, updatedProblemId);
+        Problem updatedProblem = problemService.findOne(savedProblemId);
+        assertEquals(TAGSIZE, updatedProblem.getProblemTags().size());
+
 
     }
 

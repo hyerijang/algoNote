@@ -9,6 +9,7 @@ import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.dto.ProblemCreateRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.repository.ProblemSearch;
+import com.jhr.algoNote.repository.ProblemTagRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
@@ -27,10 +28,12 @@ public class ProblemService {
     private final TagService tagService;
     private final ProblemRepository problemRepository;
 
+    private final ProblemTagRepository problemTagRepository;
 
     /**
      * register 메서드는 OCP를 위배하고 비효율적임 대신 registerWithDto 메서드 사용을 권장
      */
+    @Deprecated
     @Transactional
     public Long register(@NonNull Long memberId, @NonNull String title, @NonNull String content) {
         return register(memberId, title, content, null, null, null);
@@ -39,6 +42,7 @@ public class ProblemService {
     /**
      * register 메서드는 OCP를 위배하고 비효율적임 대신 registerWithDto 메서드 사용을 권장
      */
+    @Deprecated
     @Transactional
     public Long register(@NonNull Long memberId, @NonNull String title, @NonNull String content,
         String tagText) {
@@ -48,6 +52,7 @@ public class ProblemService {
     /**
      * 문제 등록 with site and url
      */
+    @Deprecated
     @Transactional
     public Long register(@NonNull Long memberId, @NonNull String title, @NonNull String content,
         String tagText, String site, String url) {
@@ -58,7 +63,7 @@ public class ProblemService {
         ProblemContent problemContent = ProblemContent.createProblemContent(content);
 
         //태그 생성
-        List<ProblemTag> problemTagList = createProblemTagList(tagText);
+        List<ProblemTag> problemTagList = createProblemTagListWithText(tagText);
 
         //문제 생성 후 제목, 내용, 태그 등록
         return problemRepository.save(
@@ -76,7 +81,8 @@ public class ProblemService {
     /**
      * tagNames 을 활용하여 problemTagList 생성
      */
-    public List<ProblemTag> createProblemTagList(String tagText) {
+    @Transactional
+    public List<ProblemTag> createProblemTagListWithText(String tagText) {
 
         if (isStringEmpty(tagText)) { //태그가 입력되지 않은경우
             return new ArrayList<ProblemTag>();
@@ -114,7 +120,7 @@ public class ProblemService {
 
 
     @Transactional
-    public Long registerWithDto(@NonNull Long memberId, ProblemCreateRequest problemCreateRequest) {
+    public Long register(@NonNull Long memberId, ProblemCreateRequest problemCreateRequest) {
         //엔티티 조회
         Member member = memberService.findOne(memberId);
 
@@ -123,7 +129,8 @@ public class ProblemService {
             problemCreateRequest.getContentText());
 
         //태그 생성
-        List<ProblemTag> problemTagList = createProblemTagList(problemCreateRequest.getTagText());
+        List<ProblemTag> problemTagList = createProblemTagListWithText(
+            problemCreateRequest.getTagText());
 
         //문제 생성 후 제목, 내용, 태그 등록
         return problemRepository.save(
@@ -155,7 +162,6 @@ public class ProblemService {
         //엔티티 조회
         Member member = memberService.findOne(memberId);
         Problem problem = problemRepository.findById(problemUpdateRequest.getId());
-
         if (memberId != problem.getMember().getId()) {
             throw new IllegalArgumentException("작성자가 아닙니다.");
         }
@@ -163,10 +169,19 @@ public class ProblemService {
         //문제 내용 수정
         problem.getContent().editText(problemUpdateRequest.getContentText());
 
-        //태그 생성
-        List<ProblemTag> problemTags = createProblemTagList(problemUpdateRequest.getTagText());
+        //태그 정보 변경된 경우 태그 정보 갱신
+        String originalTegText = getTagText(problem.getProblemTags());
+        List<ProblemTag> problemTags = new ArrayList<>();
+        if (originalTegText != problemUpdateRequest.getTagText()) { //태그정보 변경된 경우
+            //기존 태그정보 삭제
+            problemTagRepository.deleteAllByProblemId(problem.getId());
+            problem.getProblemTags().clear();
 
-        //문제 정보 수정
+            //입력받은 텍스트로 문제태그 생성
+            problemTags = createProblemTagListWithText(
+                problemUpdateRequest.getTagText());
+        }
+        //문제 update
         problem.update(problemUpdateRequest.getTitle(), problemUpdateRequest.getSite(),
             problemUpdateRequest.getUrl(), problemTags);
 
@@ -194,4 +209,6 @@ public class ProblemService {
         return sb.toString();
 
     }
+
+
 }
