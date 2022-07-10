@@ -59,11 +59,16 @@ public class MemberService {
      * 회원 이메일로 조회 (단건 조회)
      */
     public Member findByEmail(String email) {
-        List<Member> results = memberRepository.findByEmail(email);
-        Optional<Member> optMember = Optional.ofNullable(results.isEmpty() ? null : results.get(0));
-        return optMember.get();
-    }
+        if (email == null) {
+            throw new NullPointerException("입력된 이메일이 null 입니다.");
+        }
 
+        List<Member> results = memberRepository.findByEmail(email);
+        if (results.isEmpty()) {
+            throw new IllegalArgumentException("등록되지 않은 회원입니다.");
+        }
+        return results.get(0);
+    }
 
 
 }

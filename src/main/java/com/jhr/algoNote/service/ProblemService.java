@@ -158,7 +158,7 @@ public class ProblemService {
         Problem problem = problemRepository.findById(problemUpdateRequest.getId());
 
         if (memberId != problem.getMember().getId()) {
-            throw new RuntimeException("작성자가 아닙니다.");
+            throw new IllegalArgumentException("작성자가 아닙니다.");
         }
 
         //문제 내용 수정

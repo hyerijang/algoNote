@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.jhr.algoNote.domain.tag.Tag;
-import com.jhr.algoNote.exception.IllegalTagNameException;
 import com.jhr.algoNote.exception.RedundantTagNameException;
 import com.jhr.algoNote.repository.TagRepository;
 import java.lang.reflect.Method;
@@ -89,7 +88,7 @@ class TagServiceTest {
     @Test
     void 태그이름_특수문자_비허용() throws Exception {
 
-        assertThrows(IllegalTagNameException.class,
+        assertThrows(IllegalArgumentException.class,
             () -> {
                 Tag.builder().name("태그!").build(); //태그 이름에 특수문자
             },
@@ -99,7 +98,7 @@ class TagServiceTest {
     @Test
     void 태그이름_공백문자_비허용() throws Exception {
 
-        assertThrows(IllegalTagNameException.class,
+        assertThrows(IllegalArgumentException.class,
             () -> {
                 Tag.builder().name("태 그").build(); //태그 이름에 공백
             },
