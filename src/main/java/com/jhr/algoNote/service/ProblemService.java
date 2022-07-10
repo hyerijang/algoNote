@@ -46,11 +46,11 @@ public class ProblemService {
     }
 
     /**
-     * 문제 등록 with siteName and url
+     * 문제 등록 with site and url
      */
     @Transactional
     public Long register(@NonNull Long memberId, @NonNull String title, @NonNull String content,
-        String tagText, String siteName, String url) {
+        String tagText, String site, String url) {
         //엔티티 조회
         Member member = memberService.findOne(memberId);
 
@@ -58,7 +58,7 @@ public class ProblemService {
         ProblemContent problemContent = ProblemContent.createProblemContent(content);
 
         //태그 생성
-        List<ProblemTag> problemTags = createProblemTagList(tagText);
+        List<ProblemTag> problemTagList = createProblemTagList(tagText);
 
         //문제 생성 후 제목, 내용, 태그 등록
         return problemRepository.save(
@@ -66,15 +66,15 @@ public class ProblemService {
                 .member(member)
                 .title(title)
                 .content(problemContent)
-                .tags(problemTags)
+                .problemTagList(problemTagList)
                 .url(url)
-                .siteName(siteName)
+                .site(site)
                 .build()
         );
     }
 
     /**
-     * tagNames 을 활용하여 ProblemTagList 생성
+     * tagNames 을 활용하여 problemTagList 생성
      */
     public List<ProblemTag> createProblemTagList(String tagText) {
 
@@ -83,9 +83,8 @@ public class ProblemService {
         }
 
         String[] tagNames = TagService.sliceTextToTagNames(tagText);
-
         //문제태그 리스트 생성
-        List<ProblemTag> ProblemTagList = new ArrayList<ProblemTag>();
+        List<ProblemTag> problemTagList = new ArrayList<ProblemTag>();
         //태그 이름 조회 및 등록
         for (int i = 0; i < tagNames.length; i++) {
             Tag tag = tagService.findByName(tagNames[i]);
@@ -94,9 +93,9 @@ public class ProblemService {
                 tagService.saveTag(tag);
             }
             //문제태그에 태그 등록
-            ProblemTagList.add(ProblemTag.createProblemTag(tag));
+            problemTagList.add(ProblemTag.createProblemTag(tag));
         }
-        return ProblemTagList;
+        return problemTagList;
     }
 
     private boolean isStringEmpty(String str) {
@@ -124,7 +123,7 @@ public class ProblemService {
             problemCreateRequest.getContentText());
 
         //태그 생성
-        List<ProblemTag> problemTags = createProblemTagList(problemCreateRequest.getTagText());
+        List<ProblemTag> problemTagList = createProblemTagList(problemCreateRequest.getTagText());
 
         //문제 생성 후 제목, 내용, 태그 등록
         return problemRepository.save(
@@ -132,9 +131,9 @@ public class ProblemService {
                 .member(member)
                 .title(problemCreateRequest.getTitle())
                 .content(problemContent)
-                .tags(problemTags)
+                .problemTagList(problemTagList)
                 .url(problemCreateRequest.getUrl())
-                .siteName(problemCreateRequest.getSiteName())
+                .site(problemCreateRequest.getSite())
                 .build()
         );
     }
@@ -168,11 +167,31 @@ public class ProblemService {
         List<ProblemTag> problemTags = createProblemTagList(problemUpdateRequest.getTagText());
 
         //문제 정보 수정
-        problem.update(problemUpdateRequest.getTitle(), problemUpdateRequest.getSiteName(),
+        problem.update(problemUpdateRequest.getTitle(), problemUpdateRequest.getSite(),
             problemUpdateRequest.getUrl(), problemTags);
 
         return problem.getId();
     }
 
+    /**
+     * ProblemTagList를 String으로 변환
+     *
+     * @param problemTagList
+     * @return
+     */
+    public String getTagText(List<ProblemTag> problemTagList) {
+        if (problemTagList.size() == 0) {
+            return "";
+        }
 
+        StringBuffer sb = new StringBuffer();
+        for (ProblemTag problemTag : problemTagList) {
+            sb.append(problemTag.getTag().getName());
+            sb.append(",");
+        }
+
+        sb.setLength(sb.length() - 1); //마지막 ','제거
+        return sb.toString();
+
+    }
 }

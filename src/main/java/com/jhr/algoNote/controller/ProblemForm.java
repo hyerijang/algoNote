@@ -1,13 +1,6 @@
 package com.jhr.algoNote.controller;
 
-import static javax.persistence.FetchType.LAZY;
-
-import com.jhr.algoNote.domain.Member;
-import com.jhr.algoNote.domain.content.ProblemContent;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +13,7 @@ public class ProblemForm {
     private String url;
     private String contentText;
     private String tagText;
-    private String siteName;
+    private String site;
     private Long id;
 
 }

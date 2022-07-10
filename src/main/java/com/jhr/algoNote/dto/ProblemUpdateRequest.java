@@ -12,17 +12,17 @@ public class ProblemUpdateRequest {
     private String url;
     private String contentText;
     private String tagText;
-    private String siteName;
+    private String site;
     private Long id;
 
     @Builder
     public ProblemUpdateRequest(String title, String url, String contentText, String tagText,
-        String siteName, Long id) {
+        String site, Long id) {
         this.title = title;
         this.url = url;
         this.contentText = contentText;
         this.tagText = tagText;
-        this.siteName = siteName;
+        this.site = site;
         this.id = id;
     }
 }

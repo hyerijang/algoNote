@@ -43,11 +43,11 @@ public class Member {
 
     @NotNull
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Problem> problems = new ArrayList<>();
+    private final List<Problem> problems = new ArrayList<>();
 
     @NotNull
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Review> reviews = new ArrayList<>();
+    private final List<Review> reviews = new ArrayList<>();
 
     @Builder
     public Member(@NonNull String name, @NonNull String email, String picture, Role role) {

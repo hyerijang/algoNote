@@ -5,11 +5,13 @@ import com.jhr.algoNote.config.auth.LoginUser;
 import com.jhr.algoNote.config.auth.dto.SessionUser;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
-import com.jhr.algoNote.dto.ProblemUpdateRequest;
+import com.jhr.algoNote.domain.Site;
 import com.jhr.algoNote.dto.ProblemCreateRequest;
+import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.repository.ProblemSearch;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ProblemService;
+import com.jhr.algoNote.service.TagService;
 import java.util.List;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -32,6 +34,7 @@ public class ProblemController {
     private final HttpSession httpSession;
     private final ProblemService problemService;
     private final MemberService memberService;
+    private final TagService tagService;
 
     //URI
     private final String CREAT = "/new";
@@ -40,19 +43,20 @@ public class ProblemController {
     @GetMapping(CREAT)
     public String createForm(Model model) {
         model.addAttribute("form", new ProblemForm());
+        //사이트 정보
+        model.addAttribute("sites", Site.values());
         return "problems/createProblemForm";
     }
 
     @PostMapping(CREAT)
     public String creat(@Valid ProblemForm problemForm, @LoginUser SessionUser user) {
         Member member = memberService.findByEmail(user.getEmail());
-
-        ProblemCreateRequest dto = ProblemCreateRequest.builder()
+        ProblemCreateRequest problemCreateRequest = ProblemCreateRequest.builder()
             .title(problemForm.getTitle())
             .contentText(problemForm.getContentText())
             .url(problemForm.getUrl())
             .tagText(problemForm.getTagText())
-            .siteName(problemForm.getSiteName())
+            .site(problemForm.getSite())
             .build();
         Long problemId = problemService.registerWithDto(member.getId(), dto);
         log.info("registered problem id = {}", problemId);
@@ -89,13 +93,17 @@ public class ProblemController {
     public String updateProblemForm(@PathVariable Long id, Model model) {
         Problem problem = problemService.findOne(id);
         ProblemForm form = new ProblemForm();
+        //문제태그정보 text로 변환
+        String tagText = problemService.getTagText(problem.getProblemTags());
         form.setId(problem.getId());
         form.setTitle(problem.getTitle());
         form.setUrl(problem.getUrl());
         form.setContentText(problem.getContent().getText());
-//        form.setTagText(problem.getProblemTags());
-        form.setSiteName(problem.getSiteName());
+        form.setTagText(tagText);
+        form.setSite(problem.getSite());
         model.addAttribute("form", form);
+        //사이트 정보
+        model.addAttribute("sites", Site.values());
         return "problems/updateProblemForm";
     }
 
@@ -109,7 +117,7 @@ public class ProblemController {
             .contentText(problemForm.getContentText())
             .url(problemForm.getUrl())
             .tagText(problemForm.getTagText())
-            .siteName(problemForm.getSiteName())
+            .site(problemForm.getSite())
             .id(problemForm.getId())
             .build();
 

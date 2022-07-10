@@ -25,6 +25,9 @@ class TagServiceTest {
     @Autowired
     TagRepository tagRepository;
 
+    @Autowired
+    ProblemService problemService;
+
     @Test
     void 태그_등록() throws Exception {
         // given
@@ -137,5 +140,7 @@ class TagServiceTest {
         result = result.replaceAll("\\s", ""); //비교를 위해 공백 제거
         assertEquals("[]", "[" + result + "]");
     }
+
+
 
 }

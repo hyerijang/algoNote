@@ -8,18 +8,18 @@ import lombok.NonNull;
 @Getter
 public class ProblemSearch {
 
-    private String title;
-    private String siteName;
+    private final String title;
+    private final String site;
     
     @NonNull
-    private Long memberId;
+    private final Long memberId;
     //    private ProblemContent content;
 
 
     @Builder
-    public ProblemSearch(String title, String siteName, Long memberId) {
+    public ProblemSearch(String title, String site, Long memberId) {
         this.title = title;
-        this.siteName = siteName;
+        this.site = site;
         this.memberId = memberId;
     }
 }

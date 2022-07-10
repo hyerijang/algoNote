@@ -1,15 +1,17 @@
 package com.jhr.algoNote.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.Role;
-import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.dto.ProblemCreateRequest;
+import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.repository.ProblemSearch;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,7 +70,7 @@ class ProblemServiceTest {
 
         assertEquals(savedProblemId, result.getId());
         assertEquals(content, result.getContent().getText());
-        assertEquals("백준", result.getSiteName());
+        assertEquals("백준", result.getSite());
     }
 
 
@@ -150,7 +152,7 @@ class ProblemServiceTest {
         //when
         ProblemSearch problemSearch = ProblemSearch.builder()
             .memberId(member.getId())
-            .siteName("백준")
+            .site("백준")
             .build();
 
         List<Problem> result = problemService.search(problemSearch);
@@ -178,7 +180,7 @@ class ProblemServiceTest {
         //than
         assertEquals(1, result.size());
         assertEquals(result.get(0).getMember().getId(), member.getId(), "자신의 id와 동일해야한다.");
-        assertEquals(result.get(0).getSiteName(), "백준");
+        assertEquals(result.get(0).getSite(), "백준");
     }
 
     // == 테스트 작성에 도움을 주는 메서드 ==
@@ -295,6 +297,47 @@ class ProblemServiceTest {
         assertEquals(TITLE, updatedProblem.getTitle());
         assertEquals(CONTENT, updatedProblem.getContent().getText());
         assertEquals(TAGSIZE, updatedProblem.getProblemTags().size());
+    }
+
+    @Test
+    public void 문제_생성_및_수정_날짜() {
+        //given
+        LocalDateTime now = LocalDateTime.now();
+
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        ProblemCreateRequest dto = ProblemCreateRequest.builder()
+            .title("")
+            .contentText("")
+            .build();
+        Long savedProblemId = problemService.registerWithDto(member.getId(), dto);
+
+        //when
+        Problem problem = problemRepository.findById(savedProblemId);
+
+        //then
+        assertThat(problem.getCreatedDate()).isAfter(now);
+        assertThat(problem.getModifiedDate()).isAfter(now);
+
+    }
+
+    @Test
+    void 문제의_태그리스트를_텍스트로_변경() {
+        // given
+        String tagText = "사과,오렌지,딸기,오렌지,사과";
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        ProblemCreateRequest dto = ProblemCreateRequest.builder()
+            .title("")
+            .contentText("")
+            .tagText(tagText)
+            .build();
+        Long savedProblemId = problemService.registerWithDto(member.getId(), dto);
+        // when
+        Problem problem = problemRepository.findById(savedProblemId);
+        // then
+        String result = problemService.getTagText(problem.getProblemTags());
+        System.out.println("result = " + result);
+        assertEquals(tagText, result);
+
     }
 
 }

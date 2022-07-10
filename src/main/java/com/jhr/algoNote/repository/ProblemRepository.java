@@ -43,7 +43,7 @@ public class ProblemRepository {
             .join(problem.member, member)
             .where(
                 memberIdEq(problemSearch.getMemberId()),
-                siteNameEq(problemSearch.getSiteName()),
+                siteEq(problemSearch.getSite()),
                 titleLike(problemSearch.getTitle()))
             .limit(1000)
             .fetch();
@@ -63,10 +63,10 @@ public class ProblemRepository {
         return problem.title.contains(title);
     }
 
-    private BooleanExpression siteNameEq(String siteName) {
-        if (siteName == null) {
+    private BooleanExpression siteEq(String site) {
+        if (site == null) {
             return null;
         }
-        return problem.siteName.eq(siteName);
+        return problem.site.eq(site);
     }
 }

@@ -22,7 +22,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -40,11 +39,11 @@ public class Problem extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    private String siteName;
+    private String site;
     private String url;
 
 
-    @OneToMany(mappedBy = "problem")
+    @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL)
     private List<ProblemTag> problemTags = new ArrayList<>();
 
     @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL)
@@ -84,7 +83,7 @@ public class Problem extends BaseTimeEntity {
     @Builder
     public static Problem createProblem(@NonNull Member member, @NonNull String title,
         @NonNull ProblemContent content,
-        String siteName, String url, List<ProblemTag> tags) {
+        String site, String url, List<ProblemTag> problemTagList) {
 
         Problem problem = new Problem();
         //필수 요소 추가
@@ -93,17 +92,19 @@ public class Problem extends BaseTimeEntity {
         problem.setContent(content);
 
         //비 필수 요소 추가
-        for (ProblemTag tag : tags) {
-            problem.addProblemTag(tag);
+        System.out.println("tags.size() = " + problemTagList.size());
+        for (ProblemTag problemTag : problemTagList) {
+            problem.addProblemTag(problemTag);
+            System.out.println("문제와 태그를 연결합니다." + problemTag + " " + problemTag.getProblem());
         }
         problem.url = url;
-        problem.siteName = siteName;
+        problem.site = site;
         return problem;
     }
 
-    public void update(String title, String siteName, String url, List<ProblemTag> problemTags) {
+    public void update(String title, String site, String url, List<ProblemTag> problemTags) {
         this.title = title;
-        this.siteName = siteName;
+        this.site = site;
         this.url = url;
         this.problemTags = problemTags;
     }
