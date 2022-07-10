@@ -198,7 +198,7 @@ class ProblemServiceTest {
         Member member = Member.builder()
             .name(name)
             .email(email)
-            .role(Role.GUEST)
+            .role(Role.USER)
             .build();
 
         memberService.join(member);

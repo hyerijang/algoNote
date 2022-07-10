@@ -42,7 +42,7 @@ public class MemberController {
             .name(memberForm.getName())
             .email(memberForm.getEmail())
             .picture(memberForm.getPicture())
-            .role(Role.GUEST) // 기본권한 : GUEST
+            .role(Role.USER) // 기본권한 : ADMIN
             .build();
         memberService.join(member);
         return "redirect:/";

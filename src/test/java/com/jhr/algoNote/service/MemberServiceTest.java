@@ -30,7 +30,7 @@ public class MemberServiceTest {
         Member member = Member.builder()
             .name("김")
             .email("xxx@gmail.com")
-            .role(Role.GUEST)
+            .role(Role.USER)
             .build();
         // when
         Long savedId = memberService.join(member);
@@ -47,7 +47,7 @@ public class MemberServiceTest {
         Member member1 = Member.builder()
             .name("김철수")
             .email(duplicateEmail)
-            .role(Role.GUEST)
+            .role(Role.USER)
             .build();
 
         System.out.println("member1.getEmail() = " + member1.getEmail());
@@ -55,7 +55,7 @@ public class MemberServiceTest {
         Member member2 = Member.builder()
             .name("김철수")
             .email(duplicateEmail)
-            .role(Role.GUEST)
+            .role(Role.USER)
             .build();
 
         // when
@@ -73,13 +73,13 @@ public class MemberServiceTest {
         Member member1 = Member.builder()
             .name("김철수")
             .email("xxx@gmail.com")
-            .role(Role.GUEST)
+            .role(Role.USER)
             .build();
 
         Member member2 = Member.builder()
             .name("김철수")
             .email("xxx2@gmail.com")
-            .role(Role.GUEST)
+            .role(Role.USER)
             .build();
 
         // when
@@ -97,7 +97,7 @@ public class MemberServiceTest {
         Member member = Member.builder()
             .name("홍길동")
             .email("xxx@gmail.com")
-            .role(Role.GUEST)
+            .role(Role.USER)
             .build();
 
         // when
@@ -115,7 +115,7 @@ public class MemberServiceTest {
         Member member = Member.builder()
             .name("홍길동")
             .email("xxx@gmail.com")
-            .role(Role.GUEST)
+            .role(Role.USER)
             .build();
         memberService.join(member);
 
@@ -133,7 +133,7 @@ public class MemberServiceTest {
         Member member = Member.builder()
             .name("홍길동")
             .email("xxx@gmail.com")
-            .role(Role.GUEST)
+            .role(Role.USER)
             .build();
         memberService.join(member);
 
@@ -152,7 +152,7 @@ public class MemberServiceTest {
             Member member = Member.builder()
                 .name(null)
                 .email("xxx@gmail.com")
-                .role(Role.GUEST)
+                .role(Role.USER)
                 .build();
             memberRepository.save(member);
         }, "이름이 null일때 에러가 발생해야합니다.");

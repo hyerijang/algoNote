@@ -45,21 +45,18 @@ public class ProblemController {
 
     @PostMapping(CREAT)
     public String creat(@Valid ProblemForm problemForm, @LoginUser SessionUser user) {
-        Member member = null;
-        if (user != null) {
-            member = memberService.findByEmail(user.getEmail());
-        }
-        if (member != null) {
-            ProblemCreateRequest dto = ProblemCreateRequest.builder()
-                .title(problemForm.getTitle())
-                .contentText(problemForm.getContentText())
-                .url(problemForm.getUrl())
-                .tagText(problemForm.getTagText())
-                .siteName(problemForm.getSiteName())
-                .build();
-            Long problemId = problemService.registerWithDto(member.getId(), dto);
-            log.info("registered problem id = {}", problemId);
-        }
+        Member member = memberService.findByEmail(user.getEmail());
+
+        ProblemCreateRequest dto = ProblemCreateRequest.builder()
+            .title(problemForm.getTitle())
+            .contentText(problemForm.getContentText())
+            .url(problemForm.getUrl())
+            .tagText(problemForm.getTagText())
+            .siteName(problemForm.getSiteName())
+            .build();
+        Long problemId = problemService.registerWithDto(member.getId(), dto);
+        log.info("registered problem id = {}", problemId);
+
         return "redirect:/";
     }
 
@@ -72,22 +69,17 @@ public class ProblemController {
     @GetMapping
     public String list(Model model, @LoginUser SessionUser user) {
 
-        Member member = null;
-        if (user != null) {
-            member = memberService.findByEmail(user.getEmail());
-        }
-        if (member != null) {
+        Member member = memberService.findByEmail(user.getEmail());
 
-            ProblemSearch problemSearch = ProblemSearch.builder()
-                .memberId(member.getId())
-                .build();
+        ProblemSearch problemSearch = ProblemSearch.builder()
+            .memberId(member.getId())
+            .build();
 
-            List<Problem> problems = problemService.search(problemSearch);
+        List<Problem> problems = problemService.search(problemSearch);
 
-            log.info("problems size ={}", problems.size());
+        log.info("problems size ={}", problems.size());
 
-            model.addAttribute("problems", problems);
-        }
+        model.addAttribute("problems", problems);
         return "problems/problemList";
     }
 
@@ -110,22 +102,19 @@ public class ProblemController {
     @PostMapping(EDIT)
     public String edit(@ModelAttribute ProblemForm problemForm, @LoginUser SessionUser user) {
 
-        Member member = null;
-        if (user != null) {
-            member = memberService.findByEmail(user.getEmail());
-        }
-        if (member != null) {
-            ProblemUpdateRequest dto = ProblemUpdateRequest.builder()
-                .title(problemForm.getTitle())
-                .contentText(problemForm.getContentText())
-                .url(problemForm.getUrl())
-                .tagText(problemForm.getTagText())
-                .siteName(problemForm.getSiteName())
-                .id(problemForm.getId())
-                .build();
+        Member member = memberService.findByEmail(user.getEmail());
 
-            problemService.edit(member.getId(), dto);
-        }
+        ProblemUpdateRequest dto = ProblemUpdateRequest.builder()
+            .title(problemForm.getTitle())
+            .contentText(problemForm.getContentText())
+            .url(problemForm.getUrl())
+            .tagText(problemForm.getTagText())
+            .siteName(problemForm.getSiteName())
+            .id(problemForm.getId())
+            .build();
+
+        problemService.edit(member.getId(), dto);
+
         return "redirect:/";
     }
 
