@@ -86,9 +86,7 @@ public class ProblemController {
         model.addAttribute("problems", problems);
         return "problems/problemList";
     }
-
-    // TODO : 태그 조회 추가
-
+    
     @GetMapping(EDIT)
     public String updateProblemForm(@PathVariable Long id, Model model) {
         Problem problem = problemService.findOne(id);

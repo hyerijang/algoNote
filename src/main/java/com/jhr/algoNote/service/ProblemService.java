@@ -5,8 +5,8 @@ import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.content.ProblemContent;
 import com.jhr.algoNote.domain.tag.ProblemTag;
 import com.jhr.algoNote.domain.tag.Tag;
-import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.dto.ProblemCreateRequest;
+import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.repository.ProblemSearch;
 import com.jhr.algoNote.repository.ProblemTagRepository;
@@ -31,7 +31,7 @@ public class ProblemService {
     private final ProblemTagRepository problemTagRepository;
 
     /**
-     * register 메서드는 OCP를 위배하고 비효율적임 대신 registerWithDto 메서드 사용을 권장
+     * OCP를 위배하고 비효율적임
      */
     @Deprecated
     @Transactional
@@ -40,7 +40,7 @@ public class ProblemService {
     }
 
     /**
-     * register 메서드는 OCP를 위배하고 비효율적임 대신 registerWithDto 메서드 사용을 권장
+     * OCP를 위배하고 비효율적임
      */
     @Deprecated
     @Transactional
@@ -50,7 +50,7 @@ public class ProblemService {
     }
 
     /**
-     * 문제 등록 with site and url
+     * 문제 등록 with site and url,  ProblemCreateRequest 를 인자로 받는 다른 register 사용을 권장
      */
     @Deprecated
     @Transactional
@@ -104,8 +104,11 @@ public class ProblemService {
         return problemTagList;
     }
 
+    /**
+     * 입력된 문자열이 null이거나, 빈 문자열이거나, 공백만으로 이루어진 문자열인 경우 true를 리턴
+     */
     private boolean isStringEmpty(String str) {
-        return str == null || str.isBlank(); //null이거나, 빈 문자열이거나, 공백만으로 이루어진 문자열인 경우 true를 리턴
+        return str == null || str.isBlank();
 
     }
 
@@ -118,7 +121,13 @@ public class ProblemService {
         return problemRepository.findAll(problemSearch);
     }
 
-
+    /**
+     * 문제 등록
+     *
+     * @param memberId
+     * @param problemCreateRequest DTO
+     * @return problemId
+     */
     @Transactional
     public Long register(@NonNull Long memberId, ProblemCreateRequest problemCreateRequest) {
         //엔티티 조회
@@ -153,9 +162,10 @@ public class ProblemService {
     /**
      * 문제 수정, 수정시 요청자와 문제 작성자가 다르면 예외 발생
      *
-     * @param memberId
+     * @param memberId 수정자 id
      * @param problemUpdateRequest
-     * @return
+     * @return 수정된 문제의 id
+     * @throws IllegalArgumentException 작성자가 아닙니다.
      */
     @Transactional
     public Long edit(@NonNull Long memberId, ProblemUpdateRequest problemUpdateRequest) {
@@ -192,7 +202,7 @@ public class ProblemService {
      * ProblemTagList를 String으로 변환
      *
      * @param problemTagList
-     * @return
+     * @return String
      */
     public String getTagText(List<ProblemTag> problemTagList) {
         if (problemTagList.size() == 0) {

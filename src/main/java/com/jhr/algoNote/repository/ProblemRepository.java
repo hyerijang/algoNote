@@ -29,9 +29,15 @@ public class ProblemRepository {
         return em.find(Problem.class, id);
     }
 
+    // == QueryDSL== //
     QProblem problem = QProblem.problem;
     QMember member = QMember.member;
 
+    /**
+     * queryDsl을 이용하여 구현
+     * @param problemSearch
+     * @return
+     */
     public List<Problem> findAll(ProblemSearch problemSearch) {
 
         BooleanBuilder builder = new BooleanBuilder();

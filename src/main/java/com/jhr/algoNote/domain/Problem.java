@@ -99,6 +99,10 @@ public class Problem extends BaseTimeEntity {
         return problem;
     }
 
+    //== 비즈니스 로직 ==//
+    /**
+     * 문제 수정
+     */
     public void update(String title, String site, String url, List<ProblemTag> problemTagList) {
         this.title = title;
         this.site = site;
