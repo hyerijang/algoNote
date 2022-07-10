@@ -162,7 +162,7 @@ public class ProblemService {
     /**
      * 문제 수정, 수정시 요청자와 문제 작성자가 다르면 예외 발생
      *
-     * @param memberId 수정자 id
+     * @param memberId             수정자 id
      * @param problemUpdateRequest
      * @return 수정된 문제의 id
      * @throws IllegalArgumentException 작성자가 아닙니다.
@@ -172,7 +172,7 @@ public class ProblemService {
         //엔티티 조회
         Member member = memberService.findOne(memberId);
         Problem problem = problemRepository.findById(problemUpdateRequest.getId());
-        if (memberId != problem.getMember().getId()) {
+        if (!memberId.equals(problem.getMember().getId())) {
             throw new IllegalArgumentException("작성자가 아닙니다.");
         }
 
@@ -182,7 +182,9 @@ public class ProblemService {
         //태그 정보 변경된 경우 태그 정보 갱신
         String originalTegText = getTagText(problem.getProblemTags());
         List<ProblemTag> problemTags = new ArrayList<>();
-        if (originalTegText != problemUpdateRequest.getTagText()) { //태그정보 변경된 경우
+        String newTagText = problemUpdateRequest.getTagText();
+        if (originalTegText.length() != newTagText.length() ||
+            !originalTegText.equals(newTagText)) { //태그정보 변경된 경우
             //기존 태그정보 삭제
             problemTagRepository.deleteAllByProblemId(problem.getId());
             problem.getProblemTags().clear();

@@ -53,8 +53,7 @@ public class TagService {
      */
     public static String[] sliceTextToTagNames(String text) {
         text = stringReplace(text).trim(); //마지막에 공백 제거
-        String[] names = text.split("\\s+"); // 공백문자 기준으로 자름
-        return names;
+        return text.split("\\s+");
     }
 
     /**
