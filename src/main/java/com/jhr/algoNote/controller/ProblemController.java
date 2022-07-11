@@ -12,6 +12,7 @@ import com.jhr.algoNote.repository.ProblemSearch;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ProblemService;
 import com.jhr.algoNote.service.TagService;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -39,6 +40,7 @@ public class ProblemController {
     //URI
     private final String CREAT = "/new";
     private final String EDIT = "/{id}/edit";
+    private final String SEARCH = "/search";
 
     @GetMapping(CREAT)
     public String createForm(Model model) {
@@ -73,10 +75,8 @@ public class ProblemController {
     @GetMapping
     public String list(Model model, @LoginUser SessionUser user) {
 
-        Member member = memberService.findByEmail(user.getEmail());
-
         ProblemSearch problemSearch = ProblemSearch.builder()
-            .memberId(member.getId())
+            .memberEmail(user.getEmail())
             .build();
 
         List<Problem> problems = problemService.search(problemSearch);
@@ -86,7 +86,7 @@ public class ProblemController {
         model.addAttribute("problems", problems);
         return "problems/problemList";
     }
-    
+
     @GetMapping(EDIT)
     public String updateProblemForm(@PathVariable Long id, Model model) {
         Problem problem = problemService.findOne(id);
@@ -122,6 +122,20 @@ public class ProblemController {
         problemService.edit(member.getId(), dto);
 
         return "redirect:/";
+    }
+
+    @GetMapping(SEARCH)
+    public String searchProblemForm(@ModelAttribute("problemSearch") ProblemSearch problemSearch,
+        Model model, @LoginUser SessionUser user) {
+        model.addAttribute("userEmail", user.getEmail());
+        //자신의 문제만 검색 가능
+        problemSearch.setMemberEmail(user.getEmail());
+        
+        //검색
+        List<Problem> problems = problemService.search(problemSearch);
+        model.addAttribute("problems", problems);
+
+        return "problems/problemSearch";
     }
 
 

@@ -35,6 +35,7 @@ public class ProblemRepository {
 
     /**
      * queryDsl을 이용하여 구현
+     *
      * @param problemSearch
      * @return
      */
@@ -48,31 +49,42 @@ public class ProblemRepository {
             .from(problem)
             .join(problem.member, member)
             .where(
-                memberIdEq(problemSearch.getMemberId()),
                 siteEq(problemSearch.getSite()),
-                titleLike(problemSearch.getTitle()))
+                titleLike(problemSearch.getTitle()),
+                emailEq(problemSearch.getMemberEmail()),
+                contentTextLike(problemSearch.getContentText())
+            )
             .limit(1000)
             .fetch();
 
     }
 
     // == 동적 쿼리 생성==
-    private BooleanExpression memberIdEq(Long memberId) {
-
-        return problem.member.id.eq(memberId);
-    }
-
     private BooleanExpression titleLike(String title) {
-        if (title == null) {
+        if (title == null || title.isBlank()) {
             return null;
         }
         return problem.title.contains(title);
     }
 
     private BooleanExpression siteEq(String site) {
-        if (site == null) {
+        if (site == null || site.isBlank()) {
             return null;
         }
         return problem.site.eq(site);
+    }
+
+    private BooleanExpression emailEq(String email) {
+        if (email == null || email.isBlank()) {
+            return null;
+        }
+        return problem.member.email.eq(email);
+    }
+
+    private BooleanExpression contentTextLike(String contentText) {
+        if (contentText == null || contentText.isBlank()) {
+            return null;
+        }
+        return problem.content.text.contains(contentText);
     }
 }

@@ -2,24 +2,26 @@ package com.jhr.algoNote.repository;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NonNull;
+import lombok.Setter;
 
 //**
 @Getter
+@Setter
 public class ProblemSearch {
-
+    //TODO : 태그 검색 기능 추가
+    //TODO : 제목+내용 검색 추가
+    
     private final String title;
     private final String site;
-    
-    @NonNull
-    private final Long memberId;
-    //    private ProblemContent content;
+    private String memberEmail;
+    private String contentText;
 
 
     @Builder
-    public ProblemSearch(String title, String site, Long memberId) {
+    public ProblemSearch(String title, String site, String memberEmail) {
         this.title = title;
         this.site = site;
-        this.memberId = memberId;
+        this.memberEmail = memberEmail;
+        this.contentText = contentText;
     }
 }

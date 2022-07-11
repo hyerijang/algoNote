@@ -151,7 +151,7 @@ class ProblemServiceTest {
         createProblems(member);
         //when
         ProblemSearch problemSearch = ProblemSearch.builder()
-            .memberId(member.getId())
+            .memberEmail(member.getEmail())
             .site("백준")
             .build();
 
@@ -172,7 +172,7 @@ class ProblemServiceTest {
         createProblems(otherMember);
         //when
         ProblemSearch problemSearch = ProblemSearch.builder()
-            .memberId(member.getId())
+            .memberEmail(member.getEmail())
             .title("채팅")
             .build();
 
@@ -208,13 +208,13 @@ class ProblemServiceTest {
     }
 
     @Test
-    void 아이디로_검색() {
+    void 이메일로_검색() {
         //given
         Member member = createMember("홍길동", "xxx@gmail.com");
         createProblems(member);
         //when
         ProblemSearch problemSearch = ProblemSearch.builder()
-            .memberId(member.getId())
+            .memberEmail(member.getEmail())
             .build();
 
         List<Problem> result = problemService.search(problemSearch);
