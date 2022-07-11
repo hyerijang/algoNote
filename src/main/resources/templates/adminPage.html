@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+  <title>ALGONOTE</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<div class="jumbotron">
+  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+  <div class="container">
+
+    <!--  구글 로그인 시작-->
+    <head th:replace="fragments/socialLogin :: socialLogin"/>
+    <!--    구글 로그인 끝-->
+
+
+    <p class="lead">회원 기능</p>
+    <p>
+      <a class="btn btn-lg btn-secondary" href="/members/new">회원 추가</a>
+      <a class="btn btn-lg btn-secondary" href="/members">회원 목록</a>
+    </p>
+    <p class="lead">문제 기능</p>
+    <p>
+      <a class="btn btn-lg btn-dark" href="/problems/new">문제 등록</a>
+      <a class="btn btn-lg btn-dark" href="/problems">문제 목록</a>
+    </p>
+    <!--    <p class="lead">주문 기능</p>-->
+    <!--    <p>-->
+    <!--      <a class="btn btn-lg btn-info" href="/order">상품 주문</a>-->
+    <!--      <a class="btn btn-lg btn-info" href="/orders">주문 내역</a>-->
+    <!--    </p>-->
+
+  </div>
+  <div th:replace="fragments/footer :: footer"/>
+</div>
+</body>
+</html>

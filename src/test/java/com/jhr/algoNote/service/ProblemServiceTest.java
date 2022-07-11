@@ -1,13 +1,17 @@
 package com.jhr.algoNote.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.Role;
+import com.jhr.algoNote.dto.ProblemCreateRequest;
+import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.repository.ProblemSearch;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,7 +70,7 @@ class ProblemServiceTest {
 
         assertEquals(savedProblemId, result.getId());
         assertEquals(content, result.getContent().getText());
-        assertEquals("백준", result.getSiteName());
+        assertEquals("백준", result.getSite());
     }
 
 
@@ -147,8 +151,8 @@ class ProblemServiceTest {
         createProblems(member);
         //when
         ProblemSearch problemSearch = ProblemSearch.builder()
-            .memberId(member.getId())
-            .siteName("백준")
+            .memberEmail(member.getEmail())
+            .site("백준")
             .build();
 
         List<Problem> result = problemService.search(problemSearch);
@@ -168,7 +172,7 @@ class ProblemServiceTest {
         createProblems(otherMember);
         //when
         ProblemSearch problemSearch = ProblemSearch.builder()
-            .memberId(member.getId())
+            .memberEmail(member.getEmail())
             .title("채팅")
             .build();
 
@@ -176,7 +180,7 @@ class ProblemServiceTest {
         //than
         assertEquals(1, result.size());
         assertEquals(result.get(0).getMember().getId(), member.getId(), "자신의 id와 동일해야한다.");
-        assertEquals(result.get(0).getSiteName(), "백준");
+        assertEquals(result.get(0).getSite(), "백준");
     }
 
     // == 테스트 작성에 도움을 주는 메서드 ==
@@ -188,16 +192,185 @@ class ProblemServiceTest {
         problemService.register(member.getId(), "크레인 인형뽑기 게임",
             "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다.", "", "프로그래머스",
             "https://programmers.co.kr/learn/courses/30/lessons/64061");
+        problemService.register(member.getId(), "BFS",
+            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다");
     }
 
     private Member createMember(String name, String email) {
         Member member = Member.builder()
             .name(name)
             .email(email)
-            .role(Role.GUEST)
+            .role(Role.USER)
             .build();
 
         memberService.join(member);
         return member;
     }
+
+    @Test
+    void 이메일로_검색() {
+        //given
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        createProblems(member);
+        //when
+        ProblemSearch problemSearch = ProblemSearch.builder()
+            .memberEmail(member.getEmail())
+            .build();
+
+        List<Problem> result = problemService.search(problemSearch);
+        //than
+        assertEquals(4, result.size());
+        assertEquals(result.get(0).getMember().getId(), member.getId(), "자신의 id와 동일해야한다.");
+
+    }
+
+
+    @Test
+    @DisplayName("DTO 사용해서 문제 등록")
+    void register_with_dto() {
+        //given
+        Member member = createMember("홍길동", "xxx@gmail.com");
+
+        String title = "title";
+        String content = "sample text";
+
+        //when
+        ProblemCreateRequest dto = ProblemCreateRequest.builder().title(title).contentText(content)
+            .build();
+        Long savedProblemId = problemService.register(member.getId(), dto);
+
+        //than
+        Problem result = problemRepository.findById(savedProblemId);
+        assertEquals(content, result.getContent().getText());
+        assertEquals(savedProblemId, result.getId());
+
+    }
+
+    @Test
+    void 문제_ID로_조회() {
+        //given
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        String title = "title";
+        String content = "sample text";
+        ProblemCreateRequest dto = ProblemCreateRequest.builder().title(title).contentText(content)
+            .build();
+        Long savedProblemId = problemService.register(member.getId(), dto);
+
+        //when
+        Problem result = problemService.findOne(savedProblemId);
+        //than
+        assertEquals(content, result.getContent().getText());
+        assertEquals(savedProblemId, result.getId());
+
+    }
+
+    @Test
+    void 문제_수정() {
+        //given
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        ProblemCreateRequest dto = ProblemCreateRequest.builder()
+            .title("")
+            .contentText("")
+            .build();
+        Long savedProblemId = problemService.register(member.getId(), dto);
+        Problem problem = problemRepository.findById(savedProblemId);
+
+        // 수정 dto 생성
+        final String TITLE = "새로운제목";
+        final String TAGTEXT = "DP,배열,알고리즘,새로운태그";
+        final int TAGSIZE = 4;
+        final String CONTENT = "hello world";
+        ProblemUpdateRequest dto2 = ProblemUpdateRequest.builder()
+            .id(savedProblemId)
+            .title(TITLE)
+            .tagText(TAGTEXT)
+            .contentText(CONTENT)
+            .build();
+
+        //when
+        Long updatedProblemId = problemService.edit(member.getId(), dto2);
+
+        //than
+        assertEquals(savedProblemId, updatedProblemId);
+
+        Problem updatedProblem = problemService.findOne(savedProblemId);
+        assertEquals(TITLE, updatedProblem.getTitle());
+        assertEquals(CONTENT, updatedProblem.getContent().getText());
+        assertEquals(TAGSIZE, updatedProblem.getProblemTags().size());
+    }
+
+    @Test
+    public void 문제_생성_및_수정_날짜() {
+        //given
+        LocalDateTime now = LocalDateTime.now();
+
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        ProblemCreateRequest dto = ProblemCreateRequest.builder()
+            .title("")
+            .contentText("")
+            .build();
+        Long savedProblemId = problemService.register(member.getId(), dto);
+
+        //when
+        Problem problem = problemRepository.findById(savedProblemId);
+
+        //then
+        assertThat(problem.getCreatedDate()).isAfter(now);
+        assertThat(problem.getModifiedDate()).isAfter(now);
+
+    }
+
+    @Test
+    void 문제의_태그리스트를_텍스트로_변경() {
+        // given
+        String tagText = "사과,오렌지,딸기,오렌지,사과";
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        ProblemCreateRequest dto = ProblemCreateRequest.builder()
+            .title("")
+            .contentText("")
+            .tagText(tagText)
+            .build();
+        Long savedProblemId = problemService.register(member.getId(), dto);
+        // when
+        Problem problem = problemRepository.findById(savedProblemId);
+        // then
+        String result = problemService.getTagText(problem.getProblemTags());
+        System.out.println("result = " + result);
+        assertEquals(tagText, result);
+
+    }
+
+    @Test
+    void 문제_태그_수정() {
+        //given
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        ProblemCreateRequest dto = ProblemCreateRequest.builder()
+            .title("")
+            .contentText("")
+            .tagText("123,1234,1")
+            .build();
+        Long savedProblemId = problemService.register(member.getId(), dto);
+        Problem problem = problemRepository.findById(savedProblemId);
+
+        // 수정 dto 생성
+        final String TAGTEXT = "DP,배열,알고리즘,새로운태그";
+        final int TAGSIZE = 4;
+        ProblemUpdateRequest updateRequest = ProblemUpdateRequest.builder()
+            .id(savedProblemId)
+            .tagText(TAGTEXT)
+            .title("")
+            .contentText("")
+            .build();
+
+        //when
+        Long updatedProblemId = problemService.edit(member.getId(), updateRequest);
+
+        //than
+        assertEquals(savedProblemId, updatedProblemId);
+        Problem updatedProblem = problemService.findOne(savedProblemId);
+        assertEquals(TAGSIZE, updatedProblem.getProblemTags().size());
+
+
+    }
+
 }

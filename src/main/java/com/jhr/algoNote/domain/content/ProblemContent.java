@@ -41,4 +41,7 @@ public class ProblemContent {
         return pc;
     }
 
+    public void editText(String contentText) {
+        this.text = contentText;
+    }
 }
