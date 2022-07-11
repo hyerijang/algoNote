@@ -15,7 +15,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 @Getter
@@ -35,7 +37,6 @@ public class Review extends BaseTimeEntity {
 
     private String title;
 
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "problem_id")
     private Problem problem;
@@ -47,6 +48,23 @@ public class Review extends BaseTimeEntity {
     @OneToMany(mappedBy = "review")
     private List<ReviewTag> reviewTags = new ArrayList<>();
 
+
+    // == 빌더 ==//
+    @Builder
+    public static Review createReview(@NonNull Member member, @NonNull String title,
+        @NonNull Problem problem,@NonNull ReviewContent content, List<ReviewTag> reviewTagList) {
+        Review review = new Review();
+        review.member = member;
+        review.title = title;
+        review.problem = problem;
+        review.content = content;
+        // 태그 추가
+        for (ReviewTag rt : reviewTagList) {
+            review.reviewTags.add(rt);
+        }
+
+        return review;
+    }
 
     //== 연관관계 메서드 == //
     public void setMember(Member member) {

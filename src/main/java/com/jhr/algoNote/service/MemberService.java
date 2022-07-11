@@ -52,7 +52,11 @@ public class MemberService {
      * 회원 id로 조회 (단건 조회)
      */
     public Member findOne(Long memberId) {
-        return memberRepository.findById(memberId);
+        Member member = memberRepository.findById(memberId);
+        if (member == null) {
+            throw new IllegalArgumentException("등록되지 않은 회원입니다.");
+        }
+        return member;
     }
 
     /**
