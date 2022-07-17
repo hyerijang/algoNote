@@ -31,9 +31,14 @@ public class ReviewService {
         Member member = memberService.findOne(memberId);
         Problem problem = problemService.findOne(reviewCreateRequest.getProblemId());
 
+        if (member.getId() != problem.getMember().getId()) {
+            throw new IllegalArgumentException("문제 작성자가 아닙니다.");
+        }
+
         //(1)리뷰태그 생성
         List<ReviewTag> reviewTagList = new ArrayList<ReviewTag>();
         String[] tagNames = TagService.sliceTextToTagNames(reviewCreateRequest.getTagText());
+
         for (int i = 0; i < tagNames.length; i++) {
             Tag tag = tagService.findByName(tagNames[i]);
             if (tag == null) { //미 등록된 태그명이면 새로 등록
@@ -41,7 +46,7 @@ public class ReviewService {
                 tagService.saveTag(tag);
             }
             //문제태그에 태그 등록
-            reviewTagList.add(ReviewTag.createProblemTag(tag));
+            reviewTagList.add(ReviewTag.createReviewTag(tag));
         }
 
         //(2)내용생성
@@ -61,6 +66,46 @@ public class ReviewService {
             .build();
 
         return reviewRepository.save(review);
+    }
+
+    /**
+     * 회원ID로 해당 회원이 작성한 모든 리뷰를 조회한다.
+     *
+     * @param memberId
+     * @return
+     */
+    public List<Review> findReviews(Long memberId) {
+        return reviewRepository.findByMemberId(memberId);
+    }
+
+    /**
+     * 리뷰 Id로 단건 조회한다.
+     */
+    public Review findOne(Long reviewId) {
+        return reviewRepository.findOne(reviewId);
+
+    }
+
+    /**
+     * ReviewTagList를 String으로 변환
+     *
+     * @param reviewTagList
+     * @return String
+     */
+    public String getTagText(List<ReviewTag> reviewTagList) {
+        if (reviewTagList.size() == 0) {
+            return "";
+        }
+
+        StringBuffer sb = new StringBuffer();
+        for (ReviewTag reviewTag : reviewTagList) {
+            sb.append(reviewTag.getTag().getName());
+            sb.append(",");
+        }
+
+        sb.setLength(sb.length() - 1); //마지막 ','제거
+        return sb.toString();
+
     }
 
 }

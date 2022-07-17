@@ -50,6 +50,7 @@ public class MemberService {
 
     /**
      * 회원 id로 조회 (단건 조회)
+     * @Throw IllegalArgumentException 등록되지 않은 회원입니다.
      */
     public Member findOne(Long memberId) {
         Member member = memberRepository.findById(memberId);

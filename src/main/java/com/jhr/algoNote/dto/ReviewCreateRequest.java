@@ -1,5 +1,7 @@
 package com.jhr.algoNote.dto;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,10 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReviewCreateRequest {
-
     private String title;
-    private String contentText;
-    private String tagText;
+    private String contentText ;
+    private String tagText ;
     private Long problemId;
 
 

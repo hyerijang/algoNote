@@ -31,7 +31,7 @@ public class ReviewTag {
     private Tag tag;
 
     // ==생성 메서드==
-    public static ReviewTag createProblemTag(Tag tag) {
+    public static ReviewTag createReviewTag(Tag tag) {
         ReviewTag rt = new ReviewTag();
         rt.setTag(tag);
         return rt;

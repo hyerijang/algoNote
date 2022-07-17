@@ -1,5 +1,6 @@
 package com.jhr.algoNote.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.jhr.algoNote.domain.Member;
@@ -37,10 +38,16 @@ class ReviewServiceTest {
     // == 테스트 작성에 도움을 주는 메서드 시작 ==
 
 
+    /**
+     * size 명의 Member 리스트를 DB에 등록한다.
+     *
+     * @param size
+     * @return List of created Members
+     */
     private List<Member> createMembers(int size) {
         ArrayList<Member> memberArrayList = new ArrayList<Member>();
         //size 명의 member 생성
-        for (int i = 1; i <= size + 1; i++) {
+        for (int i = 1; i <= size; i++) {
             Member member = Member.builder()
                 .name("User" + i)
                 .email("email" + i + "@gmail.com")
@@ -78,15 +85,24 @@ class ReviewServiceTest {
 
         //when
         ReviewCreateRequest reviewCreateRequest = ReviewCreateRequest.builder()
-            .tagText(TAG_TEXT).contentText("내용").title("제목").problemId(problem.getId())
+            .tagText(TAG_TEXT)
+            .contentText("내용")
+            .title("제목")
+            .problemId(problem.getId())
             .build();
 
         Long savedId = reviewService.createReview(member.getId(), reviewCreateRequest); // 리뷰 저장
+
         //then
         Assertions.assertNotNull(savedId);
         Review savedReview = reviewRepository.findOne(savedId);
+
+        String tagText = reviewService.getTagText(savedReview.getReviewTags());
+        System.out.println("tagText = " + tagText);
         Assertions.assertEquals(3, savedReview.getReviewTags().size());
         Assertions.assertEquals("A", savedReview.getReviewTags().get(0).getTag().getName());
+        Assertions.assertEquals(problem.getId(), savedReview.getProblem().getId());
+
     }
 
     @Test
@@ -177,6 +193,97 @@ class ReviewServiceTest {
         assertThrows(NullPointerException.class, () -> {
             reviewService.createReview(modifier.getId(), reviewCreateRequest);
         }, "작성자와 수정자가 다를 때 예외가 발생해야 합니다.");
+
+    }
+
+
+    @Test
+    @DisplayName("특정 회원이 작성한 모든 리뷰 조회")
+    void findReviews() {
+        //given
+        Member member = createMembers(1).get(0);
+        List<Problem> problemList = createProblems(member, 10);
+
+        //리뷰등록
+        for (int i = 0; i < 10; i++) {
+            Long problemId = problemList.get(i).getId();
+            ReviewCreateRequest reviewCreateRequest = ReviewCreateRequest.builder()
+                .problemId(problemId)
+                .title("TITLE" + i)
+                .contentText("SAMPLE TEXT" + i)
+                .tagText("")
+                .build();
+
+            Long reviewId = reviewService.createReview(member.getId(),
+                reviewCreateRequest); //문제에 리뷰 추가
+        }
+
+        //when
+        List<Review> reviewList = reviewService.findReviews(member.getId());
+
+        for (int i = 0; i < reviewList.size(); i++) {
+            Review review = reviewList.get(i);
+            System.out.println("review.getProblem().getId() = " + review.getProblem().getId());
+        }
+        //than
+        assertEquals(10, reviewList.size());
+
+    }
+
+
+    @Test
+    @DisplayName("리뷰 ID로 단건 조회")
+    void findReview() {
+        //given
+        Member member = createMembers(1).get(0);
+        List<Problem> problemList = createProblems(member, 10);
+
+        //리뷰등록
+
+        Long problemId = problemList.get((int) (Math.random() % problemList.size()))
+            .getId(); // 유저의 문제 중 무작위 선정
+        ReviewCreateRequest reviewCreateRequest = ReviewCreateRequest.builder()
+            .problemId(problemId)
+            .title("TITLE")
+            .contentText("SAMPLE TEXT")
+            .tagText("")
+            .build();
+
+        Long reviewId = reviewService.createReview(member.getId(), reviewCreateRequest); //문제에 리뷰 추가
+
+        //when
+        Review result = reviewService.findOne(reviewId);
+        //than
+        assertEquals("TITLE", result.getTitle());
+        assertEquals(problemId, result.getProblem().getId());
+
+    }
+
+    @Test
+    @DisplayName("리뷰에 태그 등록")
+    void reviewTag() {
+        //given
+        Member member = createMembers(1).get(0);
+        List<Problem> problemList = createProblems(member, 10);
+
+        //리뷰등록
+
+        Long problemId = problemList.get((int) (Math.random() % problemList.size()))
+            .getId(); // 유저의 문제 중 무작위 선정
+        ReviewCreateRequest reviewCreateRequest = ReviewCreateRequest.builder()
+            .problemId(problemId)
+            .title("TITLE")
+            .contentText("SAMPLE TEXT")
+            .tagText("A,B,C")
+            .build();
+
+        Long reviewId = reviewService.createReview(member.getId(), reviewCreateRequest); //문제에 리뷰 추가
+
+        //when
+        Review result = reviewService.findOne(reviewId);
+        //than
+        assertEquals(3, result.getReviewTags().size());
+        assertEquals(result.getId(), result.getReviewTags().get(0).getReview().getId());
 
     }
 
