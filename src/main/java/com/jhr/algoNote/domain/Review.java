@@ -22,7 +22,6 @@ import lombok.NonNull;
 import lombok.Setter;
 
 @Getter
-@Setter
 @Entity
 public class Review extends BaseTimeEntity {
 
@@ -58,7 +57,9 @@ public class Review extends BaseTimeEntity {
         Review review = new Review();
         review.setMember(member);
         review.title = title;
-        review.problem = problem;
+
+        //연관관계설정
+        review.addProblem(problem);
         review.setContent(content);
         // 리뷰 태그 추가
         for (ReviewTag rt : reviewTagList) {
@@ -72,6 +73,10 @@ public class Review extends BaseTimeEntity {
     public void setMember(Member member) {
         this.member = member;
         member.getReviews().add(this);
+    }
+    public void addProblem(Problem problem) {
+        this.problem = problem;
+        problem.getReviews().add(this);
     }
 
     /**

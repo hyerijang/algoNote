@@ -241,7 +241,7 @@ class ReviewServiceTest {
         //리뷰등록
 
         Long problemId = problemList.get((int) (Math.random() % problemList.size()))
-            .getId(); // 유저의 문제 중 무작위 선정
+            .getId();
         ReviewCreateRequest reviewCreateRequest = ReviewCreateRequest.builder()
             .problemId(problemId)
             .title("TITLE")
@@ -287,5 +287,34 @@ class ReviewServiceTest {
 
     }
 
+    /*
+    객체 상태에서도 정상 동작하기 위해서는 양방향 연관관계를 맺어줘야한다.
+     */
+    @Test
+    @DisplayName("리뷰 - 문제 연관관계 메서드 적용 ")
+    void problemReview() {
+        //given
+        Member member = createMembers(1).get(0);
+        List<Problem> problemList = createProblems(member, 10);
 
+        //리뷰등록
+        Problem problem = problemList.get((int) (Math.random() % problemList.size()));
+        Long problemId = problem.getId();
+        ReviewCreateRequest reviewCreateRequest = ReviewCreateRequest.builder()
+            .problemId(problemId)
+            .title("TITLE")
+            .contentText("SAMPLE TEXT")
+            .tagText("")
+            .build();
+
+        Long reviewId = reviewService.createReview(member.getId(), reviewCreateRequest); //문제에 리뷰 추가
+
+        //when
+        Review result = reviewService.findOne(reviewId);
+
+        //than
+        assertEquals(problemId, result.getProblem().getId());
+        assertEquals(1,problem.getReviews().size());
+
+    }
 }

@@ -64,11 +64,6 @@ public class Problem extends BaseTimeEntity {
         problemTag.setProblem(this);
     }
 
-    private void addReview(Review review) {
-        reviews.add(review);
-        review.setProblem(this);
-    }
-
     private void setContent(ProblemContent content) {
         this.content = content;
         content.setProblem(this);
