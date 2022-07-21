@@ -1,3 +1,4 @@
+# 운영환경
 spring:
   datasource:
     driver-class-name: org.h2.Driver
@@ -6,16 +7,7 @@ spring:
     password:
   jpa:
     hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-        check_nullability: true
+      ddl-auto: update # 운영 장비에서는 절대 crate, create-drop, update 사용하면 안된다. (개발 초기 단계는 create 또는 update)
   profiles:
-    include: oauth
+    include: oauth, log
 
-logging:
-  level:
-    org:
-      hibernate:
-        sql: debug

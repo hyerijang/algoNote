@@ -1,0 +1,21 @@
+# 개발환경
+server:
+  port: 8088 # 개발 서버 포트
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/algoNoteDev; # 개발용 H2 DB
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
