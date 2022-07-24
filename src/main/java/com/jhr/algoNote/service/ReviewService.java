@@ -31,28 +31,13 @@ public class ReviewService {
         Member member = memberService.findOne(memberId);
         Problem problem = problemService.findOne(reviewCreateRequest.getProblemId());
 
-        if (member.getId() != problem.getMember().getId()) {
-            throw new IllegalArgumentException("문제 작성자가 아닙니다.");
-        }
+        validateWriterAndEditorAreSame(member, problem);
 
         //(1)리뷰태그 생성
-        List<ReviewTag> reviewTagList = new ArrayList<ReviewTag>();
-        String[] tagNames = TagService.sliceTextToTagNames(reviewCreateRequest.getTagText());
-
-        for (int i = 0; i < tagNames.length; i++) {
-            Tag tag = tagService.findByName(tagNames[i]);
-            if (tag == null) { //미 등록된 태그명이면 새로 등록
-                tag = Tag.builder().name(tagNames[i]).build();
-                tagService.saveTag(tag);
-            }
-            //문제태그에 태그 등록
-            reviewTagList.add(ReviewTag.createReviewTag(tag));
-        }
+        List<ReviewTag> reviewTagList = createReviewTags(reviewCreateRequest.getTagText());
 
         //(2)내용생성
-        if (reviewCreateRequest.getContentText() == null) {
-            throw new NullPointerException("내용의 text 는 null일 수 없습니다.");
-        }
+        validateReviewContentIsNotNull(reviewCreateRequest);
         ReviewContent rc = new ReviewContent();
         rc.setText(reviewCreateRequest.getContentText());
 
@@ -66,6 +51,36 @@ public class ReviewService {
             .build();
 
         return reviewRepository.save(review);
+    }
+
+    private void validateWriterAndEditorAreSame(Member member, Problem problem) {
+        if (member.getId() != problem.getMember().getId()) {
+            throw new IllegalArgumentException("문제 작성자가 아닙니다.");
+        }
+    }
+
+    private void validateReviewContentIsNotNull(ReviewCreateRequest reviewCreateRequest) {
+        if (reviewCreateRequest.getContentText() == null) {
+            throw new NullPointerException("내용의 text 는 null일 수 없습니다.");
+        }
+    }
+
+    private List<ReviewTag> createReviewTags(String tagText) {
+
+        if (isStringEmpty(tagText)) { //태그가 입력되지 않은경우
+            return new ArrayList<ReviewTag>();
+        }
+
+        String[] tagNames = TagService.sliceTextToTagNames(tagText);
+        //리뷰 태그 리스트 생성
+        List<ReviewTag> reviewTagList = new ArrayList<ReviewTag>();
+        //태그 정보 조회
+        List<Tag> tagList = tagService.getTagList(tagNames);
+        //리뷰에 태그 등록
+        for (Tag tag : tagList) {
+            reviewTagList.add(ReviewTag.createReviewTag(tag));
+        }
+        return reviewTagList;
     }
 
     /**
@@ -108,4 +123,11 @@ public class ReviewService {
 
     }
 
+    /**
+     * 입력된 문자열이 null이거나, 빈 문자열이거나, 공백만으로 이루어진 문자열인 경우 true를 리턴
+     */
+    private boolean isStringEmpty(String str) {
+        return str == null || str.isBlank();
+
+    }
 }
