@@ -1,6 +1,6 @@
 package com.jhr.algoNote.config;
 
-import com.jhr.algoNote.config.auth.dto.LoginUserArgumentResolver;
+import com.jhr.algoNote.config.auth.LoginUserArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
