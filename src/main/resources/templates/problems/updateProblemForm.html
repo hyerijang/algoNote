@@ -4,9 +4,10 @@
 <body>
 <div class="container">
   <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-
-
   <div class="container">
+    <H3>
+      문제 수정
+    </H3>
     <form th:object="${form}" method="post">
       <div class="form-group">
         <input type="hidden" th:field="*{id}"/>

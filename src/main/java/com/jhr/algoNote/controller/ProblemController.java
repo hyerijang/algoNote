@@ -5,6 +5,7 @@ import com.jhr.algoNote.config.auth.LoginUser;
 import com.jhr.algoNote.config.auth.dto.SessionUser;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
+import com.jhr.algoNote.domain.Review;
 import com.jhr.algoNote.domain.Site;
 import com.jhr.algoNote.dto.ProblemCreateRequest;
 import com.jhr.algoNote.dto.ProblemUpdateRequest;
@@ -12,8 +13,9 @@ import com.jhr.algoNote.repository.ProblemSearch;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ProblemService;
 import com.jhr.algoNote.service.TagService;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,7 @@ public class ProblemController {
     private final String CREAT = "/new";
     private final String EDIT = "/{id}/edit";
     private final String SEARCH = "/search";
+    private final String DETAILS = "/{id}";
 
     @GetMapping(CREAT)
     public String createForm(Model model) {
@@ -130,7 +133,7 @@ public class ProblemController {
         model.addAttribute("userEmail", user.getEmail());
         //자신의 문제만 검색 가능
         problemSearch.setMemberEmail(user.getEmail());
-        
+
         //검색
         List<Problem> problems = problemService.search(problemSearch);
         model.addAttribute("problems", problems);
@@ -138,5 +141,31 @@ public class ProblemController {
         return "problems/problemSearch";
     }
 
+
+    @GetMapping(DETAILS)
+    public String ProblemDetailsForm(@PathVariable Long id, Model model) {
+        Problem problem = problemService.findOne(id);
+        ProblemDetailsForm form = new ProblemDetailsForm();
+        //문제태그정보 text로 변환
+        String tagText = problemService.getTagText(problem.getProblemTags());
+        form.setId(problem.getId());
+        form.setTitle(problem.getTitle());
+        form.setUrl(problem.getUrl());
+        form.setContentText(problem.getContent().getText());
+        form.setTagText(tagText);
+        form.setSite(problem.getSite());
+
+        //리뷰정보
+        Map<Long, String> reviewInfo = new HashMap<>();
+        for (Review r : problem.getReviews()) {
+            reviewInfo.put(r.getId(), r.getTitle());
+        }
+
+        form.setReviewInfo(reviewInfo);
+        model.addAttribute("form", form);
+        //사이트 정보
+        model.addAttribute("sites", Site.values());
+        return "problems/problemDetails";
+    }
 
 }

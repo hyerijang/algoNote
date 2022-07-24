@@ -6,6 +6,9 @@
 <div class="container">
   <div th:replace="fragments/bodyHeader :: bodyHeader"/>
   <div class="container">
+    <H3>
+      문제 목록
+    </H3>
     <table class="table table-striped">
       <thead>
       <tr>
@@ -18,10 +21,11 @@
       <tbody>
       <tr th:each="problem : ${problems}">
         <td th:text="${problem.id}"></td>
-        <td th:text="${problem.title}"></td>
+        <td >
+          <a th:href="@{/problems/{id}(id=${problem.id})}" th:text="${problem.title}" ></a>
+        </td>
         <td th:text="${problem.url}"></td>
         <td>
-          <a th:href="@{/problems/{id}/edit(id=${problem.id})}" class="btn btn-primary" role="button">수정</a>
         </td>
       </tr>
       </tbody>
