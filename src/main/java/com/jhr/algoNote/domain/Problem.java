@@ -86,13 +86,11 @@ public class Problem extends BaseTimeEntity {
         problem.setContent(content);
         problem.url = url;
         problem.site = site;
-
-        //문제태그 추가
-        for (ProblemTag problemTag : problemTagList) {
-            problem.addProblemTag(problemTag);
-        }
+        problem.addNewProblemTags(problemTagList);
         return problem;
     }
+
+
 
     //== 비즈니스 로직 ==//
     /**
@@ -102,10 +100,17 @@ public class Problem extends BaseTimeEntity {
         this.title = title;
         this.site = site;
         this.url = url;
+        this.addNewProblemTags(problemTagList);
+    }
 
-        //문제태그 추가
+    /**
+     * problemTag에 새로운 ProblemTag들 추가
+     * @param problemTagList 추가할 ProblemTag의 List
+     */
+    private void addNewProblemTags(List<ProblemTag> problemTagList) {
         for (ProblemTag problemTag : problemTagList) {
-            addProblemTag(problemTag);
+            this.addProblemTag(problemTag);
         }
     }
+
 }

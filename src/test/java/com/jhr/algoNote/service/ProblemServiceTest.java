@@ -206,6 +206,7 @@ class ProblemServiceTest {
         memberService.join(member);
         return member;
     }
+    // ==  테스트 작성에 도움을 주는 메서드 끝 == //
 
     @Test
     void 이메일로_검색() {
@@ -303,6 +304,11 @@ class ProblemServiceTest {
     public void 문제_생성_및_수정_날짜() {
         //given
         LocalDateTime now = LocalDateTime.now();
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         Member member = createMember("홍길동", "xxx@gmail.com");
         ProblemCreateRequest dto = ProblemCreateRequest.builder()
@@ -372,5 +378,44 @@ class ProblemServiceTest {
 
 
     }
+
+
+    /**
+     * Problem 객체의 연관 메서드인 addProblemTag, setContent 가 제대로 동작하는지 테스트
+     */
+    @Test
+    @DisplayName("연관관계 메서드 테스트")
+    void relationMethod() {
+
+        //given
+        Member member = createMember("홍길동", "xxx@gmail.com");
+        String content = "sample text";
+        String tagText = "tag1, tag2";
+
+        ProblemCreateRequest dto = ProblemCreateRequest.builder()
+            .title("title")
+            .contentText(content)
+            .tagText(tagText)
+            .build();
+
+        Problem entity = problemService.findOne(problemService.register(member.getId(), dto));
+        //when
+        // 수정 dto 생성
+
+        ProblemUpdateRequest updateRequest = ProblemUpdateRequest.builder()
+            .id(entity.getId())
+            .contentText("edit")
+            .tagText("edit")
+            .build();
+
+        Problem saved = problemService.findOne(problemService.edit(member.getId(), updateRequest));
+
+        //than
+        assertEquals(saved.getProblemTags().size(), entity.getProblemTags().size()); //addProblemTag
+        assertEquals(saved.getContent().getText(), entity.getContent().getText());// setContent
+
+
+    }
+
 
 }

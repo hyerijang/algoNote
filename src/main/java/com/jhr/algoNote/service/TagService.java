@@ -4,6 +4,7 @@ import com.jhr.algoNote.domain.tag.ReviewTag;
 import com.jhr.algoNote.domain.tag.Tag;
 import com.jhr.algoNote.exception.RedundantTagNameException;
 import com.jhr.algoNote.repository.TagRepository;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,5 +67,30 @@ public class TagService {
         return str;
     }
 
+
+    @Transactional
+    public List<Tag> getTagList(String[] tagNames) {
+        ArrayList<Tag> tagList = new ArrayList<>();
+        for (int i = 0; i < tagNames.length; i++) {
+            Tag tag = getTag(tagNames[i]);
+            tagList.add(tag);
+        }
+        return tagList;
+    }
+
+    /**
+     * 태그 조회 후, 없으면 신규 등록
+     * @param tagName
+     * @return tag
+     */
+    private Tag getTag(String tagName) {
+        Tag tag = findByName(tagName);
+        //미 등록된 태그명이면 새로 등록
+        if (tag == null) {
+            tag = Tag.builder().name(tagName).build();
+            saveTag(tag);
+        }
+        return tag;
+    }
 
 }

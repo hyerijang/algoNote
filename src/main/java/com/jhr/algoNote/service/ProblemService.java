@@ -81,8 +81,7 @@ public class ProblemService {
     /**
      * tagNames 을 활용하여 problemTagList 생성
      */
-    @Transactional
-    public List<ProblemTag> createProblemTagListWithText(String tagText) {
+    private List<ProblemTag> createProblemTagListWithText(String tagText) {
 
         if (isStringEmpty(tagText)) { //태그가 입력되지 않은경우
             return new ArrayList<ProblemTag>();
@@ -91,18 +90,15 @@ public class ProblemService {
         String[] tagNames = TagService.sliceTextToTagNames(tagText);
         //문제태그 리스트 생성
         List<ProblemTag> problemTagList = new ArrayList<ProblemTag>();
-        //태그 이름 조회 및 등록
-        for (int i = 0; i < tagNames.length; i++) {
-            Tag tag = tagService.findByName(tagNames[i]);
-            if (tag == null) { //미 등록된 태그명이면 새로 등록
-                tag = Tag.builder().name(tagNames[i]).build();
-                tagService.saveTag(tag);
-            }
-            //문제태그에 태그 등록
+        //태그 정보 조회
+        List<Tag> tagList = tagService.getTagList(tagNames);
+        //문제에 태그 등록
+        for (Tag tag : tagList) {
             problemTagList.add(ProblemTag.createProblemTag(tag));
         }
         return problemTagList;
     }
+
 
     /**
      * 입력된 문자열이 null이거나, 빈 문자열이거나, 공백만으로 이루어진 문자열인 경우 true를 리턴
@@ -172,32 +168,50 @@ public class ProblemService {
         //엔티티 조회
         Member member = memberService.findOne(memberId);
         Problem problem = problemRepository.findById(problemUpdateRequest.getId());
-        if (!memberId.equals(problem.getMember().getId())) {
-            throw new IllegalArgumentException("작성자가 아닙니다.");
-        }
+        validateWriterAndEditorAreSame(memberId, problem);
 
         //문제 내용 수정
         problem.getContent().editText(problemUpdateRequest.getContentText());
 
         //태그 정보 변경된 경우 태그 정보 갱신
-        String originalTegText = getTagText(problem.getProblemTags());
-        List<ProblemTag> problemTags = new ArrayList<>();
-        String newTagText = problemUpdateRequest.getTagText();
-        if (originalTegText.length() != newTagText.length() ||
-            !originalTegText.equals(newTagText)) { //태그정보 변경된 경우
-            //기존 태그정보 삭제
-            problemTagRepository.deleteAllByProblemId(problem.getId());
-            problem.getProblemTags().clear();
-
-            //입력받은 텍스트로 문제태그 생성
-            problemTags = createProblemTagListWithText(
-                problemUpdateRequest.getTagText());
-        }
+        List<ProblemTag> problemTags = updateTagList(
+            problemUpdateRequest.getTagText(), problem);
         //문제 update
         problem.update(problemUpdateRequest.getTitle(), problemUpdateRequest.getSite(),
             problemUpdateRequest.getUrl(), problemTags);
 
         return problem.getId();
+    }
+
+    /*
+        수정자가 작성자와 동일한지 검증
+     */
+    private void validateWriterAndEditorAreSame(Long memberId, Problem problem) {
+        if (!memberId.equals(problem.getMember().getId())) {
+            throw new IllegalArgumentException("작성자가 아닙니다.");
+        }
+    }
+
+
+    private List<ProblemTag> updateTagList(String tagText,
+        Problem problem) {
+        String originalTegText = getTagText(problem.getProblemTags());
+
+        //태그정보 변경되지 않은 경우
+        if ((originalTegText.length() == tagText.length()) &&
+            originalTegText.equals(tagText)) {
+            return problem.getProblemTags();
+        }
+
+        //태그 정보 변경 된 경우
+        //1. 기존 태그정보 삭제
+        if (problem.getProblemTags().size() > 0) {
+            problemTagRepository.deleteAllByProblemId(problem.getId());
+            problem.getProblemTags().clear();
+        }
+
+        //2. 입력받은 텍스트로 문제태그 생성
+        return createProblemTagListWithText(tagText);
     }
 
     /**
