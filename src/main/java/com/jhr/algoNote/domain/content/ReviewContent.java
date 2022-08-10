@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class ReviewContent {
     @Column(name = "review_content_id")
     private Long id;
 
+    @Lob
     @NotNull
     private String text;
 
