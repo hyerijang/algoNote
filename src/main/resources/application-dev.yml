@@ -19,3 +19,8 @@ decorator:
   datasource:
     p6spy:
       enable-logging: true
+
+# 로그 레벨
+logging:
+  level:
+    root: debug
