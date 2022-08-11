@@ -26,7 +26,7 @@ public class TagService {
         }
 
         Long savedId = tagRepository.save(tag);
-        log.info("Generate new tag : id = {},  name = {}", tag.getId(), tag.getName());
+        log.debug("Generate new tag : id = {},  name = {}", tag.getId(), tag.getName());
         return savedId;
     }
 

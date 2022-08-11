@@ -31,14 +31,14 @@ public class MemberService {
      * 중복 회원 검증 - 이메일 검증
      */
     private void validateDuplicateEmail(Member member) {
-        log.info("validate of Duplicate Email");
-        log.info("entered email = {}", member.getEmail());
         List<Member> findMembers = memberRepository.findByEmail(member.getEmail());
 
         if (!findMembers.isEmpty()) {
-
+            log.info("This email is already exist (email= {})", member.getEmail());
             throw new EmailRedundancyException("동일한 이메일로 중복 가입 할 수 없습니다.");
         }
+
+        log.info("This Email is not duplicated(email= {})", member.getEmail());
     }
 
     /**
@@ -55,6 +55,7 @@ public class MemberService {
     public Member findOne(Long memberId) {
         Member member = memberRepository.findById(memberId);
         if (member == null) {
+            log.info("This memberId is not exist (memberId={})", memberId);
             throw new IllegalArgumentException("등록되지 않은 회원입니다.");
         }
         return member;

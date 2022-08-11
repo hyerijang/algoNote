@@ -64,7 +64,7 @@ public class ProblemController {
             .site(problemForm.getSite())
             .build();
         Long problemId = problemService.register(member.getId(), problemCreateRequest);
-        log.info("registered problem id = {}", problemId);
+        log.debug("registered problem id ={}", problemId);
 
         return "redirect:/";
     }
@@ -83,8 +83,6 @@ public class ProblemController {
             .build();
 
         List<Problem> problems = problemService.search(problemSearch);
-
-        log.info("problems size ={}", problems.size());
 
         model.addAttribute("problems", problems);
         return "problems/problemList";
@@ -123,7 +121,6 @@ public class ProblemController {
             .build();
 
         problemService.edit(member.getId(), dto);
-
         return "redirect:/";
     }
 
