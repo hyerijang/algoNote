@@ -11,9 +11,11 @@ import com.jhr.algoNote.repository.ReviewRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -55,12 +57,16 @@ public class ReviewService {
 
     private void validateWriterAndEditorAreSame(Member member, Problem problem) {
         if (member.getId() != problem.getMember().getId()) {
+            log.info(
+                "user attempt to write a review with other member id (user id={}, stolen id={})",
+                member.getId(), problem.getId());
             throw new IllegalArgumentException("문제 작성자가 아닙니다.");
         }
     }
 
     private void validateReviewContentIsNotNull(ReviewCreateRequest reviewCreateRequest) {
         if (reviewCreateRequest.getContentText() == null) {
+            log.info("review text is null");
             throw new NullPointerException("내용의 text 는 null일 수 없습니다.");
         }
     }
@@ -98,7 +104,6 @@ public class ReviewService {
      */
     public Review findOne(Long reviewId) {
         return reviewRepository.findOne(reviewId);
-
     }
 
     /**

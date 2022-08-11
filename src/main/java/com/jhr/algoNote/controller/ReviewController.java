@@ -46,7 +46,7 @@ public class ReviewController {
     @PostMapping(CREATE)
     public String create(@Valid ReviewForm reviewForm, @PathVariable Long problemId,
         @LoginUser SessionUser user) {
-        log.info("문제 {}의 리뷰생성", problemId);
+
         Member member = memberService.findByEmail(user.getEmail());
         //리뷰 생성
         ReviewCreateRequest reviewCreateRequest = ReviewCreateRequest.builder()
@@ -56,14 +56,15 @@ public class ReviewController {
             .contentText(reviewForm.getContentText())
             .build();
 
-        reviewService.createReview(member.getId(), reviewCreateRequest);
+        Long reviewId = reviewService.createReview(member.getId(), reviewCreateRequest);
+
+        log.debug("review is created (problemId={}, reviewId={})", problemId,reviewId);
         return "redirect:/problems/{problemId}";
     }
 
     @GetMapping(DETAILS)
     public String detailsForm(Model model, @PathVariable Long problemId,
         @PathVariable Long reviewId) {
-        log.info("리뷰 단건 조회");
         Review review = reviewService.findOne(reviewId);
 
         ReviewForm reviewForm = new ReviewForm();

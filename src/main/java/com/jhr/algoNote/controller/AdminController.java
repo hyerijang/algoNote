@@ -19,7 +19,6 @@ public class AdminController {
 
     @RequestMapping("/admin")
     public String adminPage(Model model, @LoginUser SessionUser user) {
-        log.info("admin controller");
         if (user != null) {
             model.addAttribute("userName", user.getName());
             model.addAttribute("userImg", user.getPicture());
