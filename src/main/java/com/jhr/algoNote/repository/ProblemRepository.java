@@ -89,10 +89,12 @@ public class ProblemRepository {
     }
 
     public List<Problem> findAllWithFetchJoin() {
+        //TODO: 리뷰 조회 추가
         return em.createQuery("select distinct p from Problem p"
                 + " join fetch p.member m"
                 + " join fetch p.content c"
-                , Problem.class)
+                + " join fetch p.problemTags pts"
+                + " join fetch pts.tag t", Problem.class)
             .getResultList();
     }
 }

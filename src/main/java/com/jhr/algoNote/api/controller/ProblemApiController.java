@@ -54,6 +54,8 @@ public class ProblemApiController {
         private String name;
         private String problemContent;
 
+        private List<ProblemTagDto> problemTags = new ArrayList<>();
+//        private List<ReviewDto> reviews = new ArrayList<>();
 
         public ProblemDto(Problem problem) {
             this.problemId = problem.getId();
@@ -63,10 +65,30 @@ public class ProblemApiController {
             this.name = problem.getMember().getName();
             this.problemContent = problem.getContent().getText();
 
+            // TODO: 페치조인 최적화
+            this.problemTags = problem.getProblemTags().stream()
+                .map(pt -> new ProblemTagDto(pt.getTag().getName()))
+                .collect(toList());
 
+            // TODO :페치조인 최적화
+            // TODO : MultipleBagFetchException 해결
+//            this.reviews = problem.getReviews().stream()
+//                .map(r -> new ReviewDto(r.getTitle()))
+//                .collect(toList());
 
         }
     }
 
+    @Getter
+    @AllArgsConstructor
+    static class ProblemTagDto {
+        private String tagName;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    static class ReviewDto {
+        private String Title;
+    }
 
 }
