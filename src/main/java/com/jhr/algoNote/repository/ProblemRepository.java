@@ -87,4 +87,12 @@ public class ProblemRepository {
         }
         return problem.content.text.contains(contentText);
     }
+
+    public List<Problem> findAllWithFetchJoin() {
+        return em.createQuery("select distinct p from Problem p"
+                + " join fetch p.member m"
+                + " join fetch p.content c"
+                , Problem.class)
+            .getResultList();
+    }
 }
