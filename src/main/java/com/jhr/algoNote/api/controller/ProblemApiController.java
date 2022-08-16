@@ -3,14 +3,9 @@ package com.jhr.algoNote.api.controller;
 import static java.util.stream.Collectors.toList;
 
 import com.jhr.algoNote.domain.Problem;
-import com.jhr.algoNote.domain.Review;
-import com.jhr.algoNote.domain.tag.ProblemTag;
-import com.jhr.algoNote.domain.tag.Tag;
 import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.service.ProblemService;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -58,7 +53,7 @@ public class ProblemApiController {
 
         //TODO: 1대다 관계 고려하여 페이징
 
-//        private List<ProblemTagDto> problemTags = new ArrayList<>();
+        private List<ProblemTagDto> problemTags ;
 //        private List<ReviewDto> reviews = new ArrayList<>();
 
         public ProblemDto(Problem problem) {
@@ -68,7 +63,7 @@ public class ProblemApiController {
             this.problemUrl = problem.getUrl();
             this.name = problem.getMember().getName();
             this.problemContent = problem.getContent().getText();
-
+            this.problemTags = problem.getProblemTags().stream().map(pt -> new ProblemTagDto(pt.getTag().getName())).collect(toList());
 
 
         }
