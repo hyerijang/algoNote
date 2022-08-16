@@ -31,7 +31,7 @@ public class ProblemApiController {
     @GetMapping
     public Result problems(@RequestParam(value = "offset", defaultValue = "0") int offset,
         @RequestParam(value = "limit", defaultValue = "100") int limit) {
-        List<Problem> problems = problemQueryRepository.findAllWithFetchJoin(offset, limit);
+        List<Problem> problems = problemQueryRepository.findAll(offset, limit);
         List<ProblemDto> result = problems.stream().map(p -> new ProblemDto(p)).collect(toList());
         return new Result(result);
     }

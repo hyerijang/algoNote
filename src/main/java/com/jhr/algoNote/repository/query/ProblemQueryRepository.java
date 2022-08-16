@@ -9,10 +9,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import javax.persistence.EntityManager;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
@@ -29,13 +26,7 @@ public class ProblemQueryRepository {
     QMember member = QMember.member;
 
 
-    /**
-     * queryDsl을 이용하여 구현
-     *
-     * @param problemSearch
-     * @return
-     */
-    public List<Problem> findAll(ProblemSearch problemSearch) {
+    public List<Problem> search(ProblemSearch problemSearch) {
 
         BooleanBuilder builder = new BooleanBuilder();
 
@@ -85,7 +76,7 @@ public class ProblemQueryRepository {
         return problem.content.text.contains(contentText);
     }
 
-    public List<Problem> findAllWithFetchJoin(int offset, int limit) {
+    public List<Problem> findAll(int offset, int limit) {
         QProblem problem = QProblem.problem;
         QMember member = QMember.member;
         QProblemContent problemContent = QProblemContent.problemContent;

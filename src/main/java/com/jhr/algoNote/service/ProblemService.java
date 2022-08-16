@@ -116,7 +116,7 @@ public class ProblemService {
      */
     @Transactional
     public List<Problem> search(ProblemSearch problemSearch) {
-        return problemQueryRepository.findAll(problemSearch);
+        return problemQueryRepository.search(problemSearch);
     }
 
     /**
