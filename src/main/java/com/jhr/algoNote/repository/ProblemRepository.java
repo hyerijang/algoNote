@@ -89,8 +89,7 @@ public class ProblemRepository {
     }
 
     public List<Problem> findAllWithFetchJoin(int offset, int limit) {
-        //TODO: 리뷰 조회 추가
-        return em.createQuery("select distinct p from Problem p"
+        return em.createQuery("select p from Problem p"
                 + " join fetch p.member m"
                 + " join fetch p.content c", Problem.class)
             .setFirstResult(offset)
