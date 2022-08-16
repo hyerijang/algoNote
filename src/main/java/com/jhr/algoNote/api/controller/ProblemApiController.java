@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -31,8 +32,9 @@ public class ProblemApiController {
     private final ProblemRepository problemRepository;
 
     @GetMapping
-    public Result problems() {
-        List<Problem> problems = problemRepository.findAllWithFetchJoin();
+    public Result problems(@RequestParam(value = "offset", defaultValue = "0") int offset,
+        @RequestParam(value = "limit", defaultValue = "100") int limit) {
+        List<Problem> problems = problemRepository.findAllWithFetchJoin(offset,limit);
         List<ProblemDto> result = problems.stream().map(p -> new ProblemDto(p)).collect(toList());
         return new Result(result);
     }
@@ -54,7 +56,9 @@ public class ProblemApiController {
         private String name;
         private String problemContent;
 
-        private List<ProblemTagDto> problemTags = new ArrayList<>();
+        //TODO: 1대다 관계 고려하여 페이징
+
+//        private List<ProblemTagDto> problemTags = new ArrayList<>();
 //        private List<ReviewDto> reviews = new ArrayList<>();
 
         public ProblemDto(Problem problem) {
@@ -65,16 +69,7 @@ public class ProblemApiController {
             this.name = problem.getMember().getName();
             this.problemContent = problem.getContent().getText();
 
-            // TODO: 페치조인 최적화
-            this.problemTags = problem.getProblemTags().stream()
-                .map(pt -> new ProblemTagDto(pt.getTag().getName()))
-                .collect(toList());
 
-            // TODO :페치조인 최적화
-            // TODO : MultipleBagFetchException 해결
-//            this.reviews = problem.getReviews().stream()
-//                .map(r -> new ReviewDto(r.getTitle()))
-//                .collect(toList());
 
         }
     }
