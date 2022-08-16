@@ -29,7 +29,7 @@ public class ProblemApiController {
     @GetMapping
     public Result problems(@RequestParam(value = "offset", defaultValue = "0") int offset,
         @RequestParam(value = "limit", defaultValue = "100") int limit) {
-        List<Problem> problems = problemRepository.findAllWithFetchJoin(offset,limit);
+        List<Problem> problems = problemRepository.findAllWithFetchJoin(offset, limit);
         List<ProblemDto> result = problems.stream().map(p -> new ProblemDto(p)).collect(toList());
         return new Result(result);
     }
@@ -50,11 +50,9 @@ public class ProblemApiController {
         private String problemUrl;
         private String name;
         private String problemContent;
-
-        //TODO: 1대다 관계 고려하여 페이징
-
-        private List<ProblemTagDto> problemTags ;
-//        private List<ReviewDto> reviews = new ArrayList<>();
+        //OneToMany
+        private List<ProblemTagDto> problemTags;
+        private List<ReviewDto> reviews;
 
         public ProblemDto(Problem problem) {
             this.problemId = problem.getId();
@@ -63,8 +61,10 @@ public class ProblemApiController {
             this.problemUrl = problem.getUrl();
             this.name = problem.getMember().getName();
             this.problemContent = problem.getContent().getText();
-            this.problemTags = problem.getProblemTags().stream().map(pt -> new ProblemTagDto(pt.getTag().getName())).collect(toList());
-
+            this.problemTags = problem.getProblemTags().stream()
+                .map(pt -> new ProblemTagDto(pt.getTag().getName())).collect(toList());
+            this.reviews = problem.getReviews().stream().map(r -> new ReviewDto(r.getTitle()))
+                .collect(toList());
 
         }
     }
@@ -72,12 +72,14 @@ public class ProblemApiController {
     @Getter
     @AllArgsConstructor
     static class ProblemTagDto {
+
         private String tagName;
     }
 
     @Getter
     @AllArgsConstructor
     static class ReviewDto {
+
         private String Title;
     }
 
