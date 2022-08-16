@@ -3,6 +3,7 @@ package com.jhr.algoNote.repository;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.QMember;
 import com.jhr.algoNote.domain.QProblem;
+import com.jhr.algoNote.domain.content.QProblemContent;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -89,11 +90,16 @@ public class ProblemRepository {
     }
 
     public List<Problem> findAllWithFetchJoin(int offset, int limit) {
-        return em.createQuery("select p from Problem p"
-                + " join fetch p.member m"
-                + " join fetch p.content c", Problem.class)
-            .setFirstResult(offset)
-            .setMaxResults(limit)
-            .getResultList();
+        QProblem problem = QProblem.problem;
+        QMember member = QMember.member;
+        QProblemContent problemContent = QProblemContent.problemContent;
+        return jpaQueryFactory.select(problem)
+            .from(problem)
+            .join(problem.member, member)
+            .join(problem.content, problemContent)
+            .limit(limit)
+            .offset(offset)
+            .fetchJoin()
+            .fetch();
     }
 }
