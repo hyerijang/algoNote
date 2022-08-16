@@ -10,7 +10,7 @@ import com.jhr.algoNote.domain.Role;
 import com.jhr.algoNote.dto.ProblemCreateRequest;
 import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
-import com.jhr.algoNote.repository.ProblemSearch;
+import com.jhr.algoNote.repository.query.ProblemSearch;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;

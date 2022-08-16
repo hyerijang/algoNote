@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.repository.ProblemRepository;
+import com.jhr.algoNote.repository.query.ProblemQueryRepository;
 import com.jhr.algoNote.service.ProblemService;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -25,11 +26,12 @@ public class ProblemApiController {
 
     private final ProblemService problemService;
     private final ProblemRepository problemRepository;
+    private final ProblemQueryRepository problemQueryRepository;
 
     @GetMapping
     public Result problems(@RequestParam(value = "offset", defaultValue = "0") int offset,
         @RequestParam(value = "limit", defaultValue = "100") int limit) {
-        List<Problem> problems = problemRepository.findAllWithFetchJoin(offset, limit);
+        List<Problem> problems = problemQueryRepository.findAllWithFetchJoin(offset, limit);
         List<ProblemDto> result = problems.stream().map(p -> new ProblemDto(p)).collect(toList());
         return new Result(result);
     }

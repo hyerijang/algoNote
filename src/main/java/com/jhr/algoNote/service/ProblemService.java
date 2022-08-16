@@ -8,8 +8,9 @@ import com.jhr.algoNote.domain.tag.Tag;
 import com.jhr.algoNote.dto.ProblemCreateRequest;
 import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
-import com.jhr.algoNote.repository.ProblemSearch;
+import com.jhr.algoNote.repository.query.ProblemSearch;
 import com.jhr.algoNote.repository.ProblemTagRepository;
+import com.jhr.algoNote.repository.query.ProblemQueryRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
@@ -27,6 +28,7 @@ public class ProblemService {
     private final MemberService memberService;
     private final TagService tagService;
     private final ProblemRepository problemRepository;
+    private final ProblemQueryRepository problemQueryRepository;
 
     private final ProblemTagRepository problemTagRepository;
 
@@ -114,7 +116,7 @@ public class ProblemService {
      */
     @Transactional
     public List<Problem> search(ProblemSearch problemSearch) {
-        return problemRepository.findAll(problemSearch);
+        return problemQueryRepository.findAll(problemSearch);
     }
 
     /**
