@@ -8,6 +8,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update # 운영 장비에서는 절대 crate, create-drop, update 사용하면 안된다. (개발 초기 단계는 create 또는 update)
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
   profiles:
     include: oauth, log
 

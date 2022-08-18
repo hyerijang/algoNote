@@ -22,6 +22,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()// URL별 권한 권리
             .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**").permitAll()
             .antMatchers("/member/new").permitAll() //회원가입은 전체허용
+            .antMatchers("/api/**").permitAll() //api는 전체허용
+            .antMatchers("/error").permitAll() //에러페이지 전체허용
             .antMatchers("/admin", "/member").hasRole(Role.ADMIN.name()) // /admin, 회원조회는 ADMIN권한만 접근 가능
             .anyRequest()
             .authenticated() // anyRequest : 설정된 값들 이외 나머지 URL 나타냄, authenticated : 인증된 사용자

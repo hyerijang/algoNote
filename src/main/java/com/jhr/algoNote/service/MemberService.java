@@ -76,5 +76,14 @@ public class MemberService {
         return results.get(0);
     }
 
+    /**
+     * 이름, 사진 수정
+     */
+    @Transactional
+    public void update(Long id, String name, String picture) {
+        Member member = memberRepository.findById(id);
+        member.updateName(name);
+        member.updatePicture(picture);
 
+    }
 }
