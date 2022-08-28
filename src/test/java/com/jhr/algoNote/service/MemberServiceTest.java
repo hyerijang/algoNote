@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -156,6 +157,26 @@ public class MemberServiceTest {
                 .build();
             memberRepository.save(member);
         }, "이름이 null일때 에러가 발생해야합니다.");
+
+    }
+
+    @Test
+    void Id는_업데이트_될_수_없다() throws Exception {
+        //updatable=false
+        // given
+        Member member = Member.builder()
+            .name("name")
+            .email("xxx@gmail.com")
+            .role(Role.USER)
+            .build();
+        Long savedId = memberRepository.save(member);
+
+        //when
+        Member error = new Member(savedId, "name", "aaa@test.com", "p",
+            Role.USER); // 비영속 객체로 업데이트 시도
+        // then
+        assertThrows(InvalidDataAccessApiUsageException.class,
+            () -> memberRepository.save(error));
 
     }
 
