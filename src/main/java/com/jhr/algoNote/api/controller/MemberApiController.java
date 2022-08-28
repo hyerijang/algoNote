@@ -1,7 +1,6 @@
 package com.jhr.algoNote.api.controller;
 
 
-import com.jhr.algoNote.api.dto.CreateMemberRequest;
 import com.jhr.algoNote.api.dto.CreateMemberResponse;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Role;
@@ -9,6 +8,7 @@ import com.jhr.algoNote.service.MemberService;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +44,16 @@ public class MemberApiController {
             .role(Role.USER) // 기본권한 : ADMIN
             .build();
 
-        memberService.join(member);
+        return new CreateMemberResponse(memberService.join(member));
+    }
 
-        return new CreateMemberResponse(member.getId());
+    @Data
+    static class CreateMemberRequest {
+
+        private String name;
+        @NotEmpty(message = "회원 이메일은 필수입니다")
+        private String email;
+        private String picture;
     }
 
     @PatchMapping("/{id}")
