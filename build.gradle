@@ -51,6 +51,9 @@ dependencies {
             "com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
 
     implementation 'org.springframework.boot:spring-boot-devtools'
+
+    //테스트에 spring security 적용
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 test {
