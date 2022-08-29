@@ -10,10 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
 public class ReviewContent {
@@ -30,6 +33,7 @@ public class ReviewContent {
 
     @OneToOne(fetch = LAZY, mappedBy = "content")
     private Review review;
+
 
 
 }
