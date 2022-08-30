@@ -29,3 +29,10 @@ logging:
     org:
       hibernate:
         sql: debug
+
+
+server:
+  servlet:
+    encoding:
+      charset : UTF-8
+      force : true

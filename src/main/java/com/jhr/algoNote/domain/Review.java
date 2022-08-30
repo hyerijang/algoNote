@@ -17,13 +17,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 
 @Entity
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Review extends BaseTimeEntity {
@@ -52,7 +53,6 @@ public class Review extends BaseTimeEntity {
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewTag> reviewTags = new ArrayList<>();
 
-
     // == 빌더 ==//
     @Builder
     public static Review createReview(@NonNull Member member, @NonNull String title,
@@ -60,7 +60,6 @@ public class Review extends BaseTimeEntity {
         Review review = new Review();
         review.setMember(member);
         review.title = title;
-
         //연관관계설정
         review.addProblem(problem);
         review.setContent(content);
@@ -68,7 +67,6 @@ public class Review extends BaseTimeEntity {
         for (ReviewTag rt : reviewTagList) {
             review.addReviewTag(rt);
         }
-
         return review;
     }
 
@@ -82,11 +80,6 @@ public class Review extends BaseTimeEntity {
         problem.getReviews().add(this);
     }
 
-    /**
-     * 연관 관계 메서드 ReviewTag-Tag
-     *
-     * @param reviewTag
-     */
     public void addReviewTag(ReviewTag reviewTag) {
         this.reviewTags.add(reviewTag);
         reviewTag.setReview(this);

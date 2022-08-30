@@ -15,13 +15,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jhr.algoNote.api.controller.MemberApiController.CreateMemberRequest;
 import com.jhr.algoNote.config.auth.SecurityConfig;
 import com.jhr.algoNote.domain.Member;
-import com.jhr.algoNote.domain.Role;
+import com.jhr.algoNote.dto.MemberDto;
 import com.jhr.algoNote.repository.MemberRepository;
 import com.jhr.algoNote.service.MemberService;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.RepetitionInfo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,23 +42,36 @@ public class MemberApiControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private MemberRepository memberRepository;
-    @Autowired
-    private ObjectMapper objectMapper;
     @MockBean
     private MemberService memberService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private Member member;
+    final Long ID = 1L;
+
+    @BeforeEach
+    void setUp() {
+        member = Member.builder()
+            .id(ID)
+            .name("TEST_NAME")
+            .picture("TEST_PICTURE")
+            .email("TEST_EMAIL")
+            .build();
+
+        when(memberService.join(Mockito.any(Member.class)))
+            .thenReturn(ID);
+    }
 
     @Test
     @WithMockUser(roles = "USER")
     public void 회원_생성() throws Exception {
         //given
         CreateMemberRequest createMemberRequest = new CreateMemberRequest();
-        createMemberRequest.setName("이름");
-        createMemberRequest.setEmail("aaa@naver.com");
-        createMemberRequest.setPicture("url");
-
-        final Long ID = 1L;
-        when(memberService.join(Mockito.any(Member.class)))
-            .thenAnswer(i -> ID);
+        createMemberRequest.setName("TEST_NAME");
+        createMemberRequest.setEmail("TEST_EMAIL");
+        createMemberRequest.setPicture("TEST_PICTURE");
 
         //when
         mockMvc.perform(post("/api/members/new")
@@ -74,22 +86,16 @@ public class MemberApiControllerTest {
 
     }
 
-
+    @Test
     @WithMockUser(roles = "USER")
-    @RepeatedTest(5)
-    public void 회원_조회(RepetitionInfo repetitionInfo) throws Exception {
+    public void 회원_조회() throws Exception {
         //given
-        final Integer SIZE = repetitionInfo.getCurrentRepetition();
-        when(memberService.findMembers())
-            .thenAnswer(i -> {
-                List<Member> result = new ArrayList<>();
-                for (long id = 0; id < SIZE; id++) {
-                    result.add(
-                        new Member((Long) id, "name" + id, "email" + id + "@naver.com", "picture",
-                            Role.USER));
-                }
-                return result;
-            });
+        List<MemberDto> response = Arrays.asList(
+            new MemberDto(1L, "이름1", "사진1"),
+            new MemberDto(2L, "이름2", "사진2"),
+            new MemberDto(3L, "이름3", "사진3")
+        );
+        when(memberService.getMembers()).thenReturn(response);
 
         //when
         mockMvc.perform(get("/api/members")
@@ -99,9 +105,9 @@ public class MemberApiControllerTest {
                 .with(csrf())
             )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data", hasSize(SIZE)))
-            .andExpect(jsonPath("$.data[0].id", is(0)))
-            .andExpect(jsonPath("$.data[0].name", is("name0")))
+            .andExpect(jsonPath("$.data", hasSize(response.size())))
+            .andExpect(jsonPath("$.data[0].id", is(1L), Long.class))
+            .andExpect(jsonPath("$.data[0].name", is("이름1")))
             .andDo(print());
         //then
 

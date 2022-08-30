@@ -1,10 +1,11 @@
 package com.jhr.algoNote.service;
 
 import com.jhr.algoNote.domain.Member;
+import com.jhr.algoNote.dto.MemberDto;
 import com.jhr.algoNote.exception.EmailRedundancyException;
 import com.jhr.algoNote.repository.MemberRepository;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -86,4 +87,13 @@ public class MemberService {
         member.updatePicture(picture);
 
     }
+
+    public List<MemberDto> getMembers() {
+        List<Member> members = findMembers();
+        List<MemberDto> collect = members.stream()
+            .map(m -> new MemberDto(m.getId(), m.getName(), m.getPicture()))
+            .collect(Collectors.toList());
+        return collect;
+    }
+
 }

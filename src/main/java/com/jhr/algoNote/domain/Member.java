@@ -20,14 +20,15 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Entity
-@AllArgsConstructor
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Member {
 
     @Id
     @GeneratedValue
-    @Column(name = "member_id" , updatable = false )
+    @Column(name = "member_id", updatable = false)
     private Long id;
 
     @NotNull
@@ -51,13 +52,6 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private final List<Review> reviews = new ArrayList<>();
 
-    @Builder
-    public Member(@NonNull String name, @NonNull String email, String picture, Role role) {
-        this.name = name;
-        this.email = email;
-        this.picture = picture;
-        this.role = role;
-    }
 
     // == 비스니스 로직 ==//
 

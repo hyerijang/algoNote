@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,22 +38,24 @@ public class ReviewService {
 
         //(1)리뷰태그 생성
         List<ReviewTag> reviewTagList = createReviewTags(reviewCreateRequest.getTagText());
+        try {
+            //(2)내용생성
+            ReviewContent rc = ReviewContent.of(reviewCreateRequest.getContentText());
+            //(3)리뷰 생성
+            Review review = Review.builder()
+                .member(member)
+                .problem(problem)
+                .title(reviewCreateRequest.getTitle())
+                .reviewTagList(reviewTagList) //(1)
+                .content(rc)//(2)
+                .build();
 
-        //(2)내용생성
-        validateReviewContentIsNotNull(reviewCreateRequest);
-        ReviewContent rc = new ReviewContent();
-        rc.setText(reviewCreateRequest.getContentText());
+            return reviewRepository.save(review);
 
-        //리뷰 생성
-        Review review = Review.builder()
-            .member(member)
-            .problem(problem)
-            .title(reviewCreateRequest.getTitle())
-            .reviewTagList(reviewTagList) //(1)
-            .content(rc)//(2)
-            .build();
+        } catch (DataIntegrityViolationException e) {
+            throw new NullPointerException("내용의 text는 null일 수 없습니다.");
+        }
 
-        return reviewRepository.save(review);
     }
 
     private void validateWriterAndEditorAreSame(Member member, Problem problem) {

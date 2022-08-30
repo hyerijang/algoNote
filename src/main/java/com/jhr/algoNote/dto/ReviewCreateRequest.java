@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 public class ReviewCreateRequest {
     private String title;
+    @NotNull
     private String contentText ;
     private String tagText ;
     private Long problemId;

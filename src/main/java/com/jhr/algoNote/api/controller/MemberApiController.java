@@ -5,8 +5,6 @@ import com.jhr.algoNote.api.dto.CreateMemberResponse;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Role;
 import com.jhr.algoNote.service.MemberService;
-import java.util.List;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -87,12 +85,7 @@ public class MemberApiController {
 
     @GetMapping
     public Result members() {
-        List<Member> members = memberService.findMembers();
-        List<MemberDto> collect = members.stream()
-            .map(m -> new MemberDto(m.getId(), m.getName(), m.getPicture()))
-            .collect(Collectors.toList());
-
-        return new Result(collect);
+        return new Result(memberService.getMembers());
     }
 
     @Data
@@ -101,11 +94,5 @@ public class MemberApiController {
         private T data;
     }
 
-    @Data
-    @AllArgsConstructor
-    static class MemberDto {
-        private Long id;
-        private String name;
-        private String picture;
-    }
+
 }
