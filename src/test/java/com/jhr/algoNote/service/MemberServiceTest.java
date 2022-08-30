@@ -12,8 +12,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -148,33 +146,20 @@ public class MemberServiceTest {
         assertEquals("수정된사진", findMember.getPicture());
     }
 
-    @Test
-    void 회원_이름은_null일_수_없음() throws Exception {
-        // given
-        assertThrows(DataIntegrityViolationException.class, () -> {
-            Member member = Member.builder()
-                .name(null)
-                .email("xxx@gmail.com")
-                .role(Role.USER)
-                .build();
-            memberRepository.save(member);
-        }, "이름이 null일때 에러가 발생해야합니다.");
-
-    }
 
     @Disabled
     @Test
     void Id는_업데이트_될_수_없다() throws Exception {
         //updatable=false
         // given
-        Member member = Member.builder()
-            .name("name")
-            .email("xxx@gmail.com")
-            .role(Role.USER)
-            .build();
-        Long savedId = memberRepository.save(member);
-
-        //when
+//        Member member = Member.builder()
+//            .name("name")
+//            .email("xxx@gmail.com")
+//            .role(Role.USER)
+//            .build();
+//        Long savedId = memberRepository.save(member);
+//
+//        //when
 //        Member error = new Member(savedId, "name", "aaa@test.com", "p",
 //            Role.USER); // 비영속 객체로 업데이트 시도
 //        // then

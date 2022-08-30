@@ -83,18 +83,17 @@ public class Problem extends BaseTimeEntity {
         String site, String url, List<ProblemTag> problemTagList) {
 
         Problem problem = new Problem();
-        problem.setMember(member);
         problem.title = title;
-        problem.setContent(content);
         problem.url = url;
         problem.site = site;
-        problem.addNewProblemTags(problemTagList);
+        problem.setMember(member);
+        problem.setContent(content);
+        problem.renewalProblemTag(problemTagList);
         return problem;
     }
 
-
-
     //== 비즈니스 로직 ==//
+
     /**
      * 문제 수정
      */
@@ -102,14 +101,16 @@ public class Problem extends BaseTimeEntity {
         this.title = title;
         this.site = site;
         this.url = url;
-        this.addNewProblemTags(problemTagList);
+        this.renewalProblemTag(problemTagList);
     }
 
     /**
-     * problemTag에 새로운 ProblemTag들 추가
+     * problemTag를 비우고 새로운 ProblemTag들 추가
+     *
      * @param problemTagList 추가할 ProblemTag의 List
      */
-    private void addNewProblemTags(List<ProblemTag> problemTagList) {
+    private void renewalProblemTag(List<ProblemTag> problemTagList) {
+        this.problemTags.clear(); //초기화
         for (ProblemTag problemTag : problemTagList) {
             this.addProblemTag(problemTag);
         }

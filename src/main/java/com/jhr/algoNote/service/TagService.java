@@ -72,8 +72,7 @@ public class TagService {
     public List<Tag> getTagList(String[] tagNames) {
         ArrayList<Tag> tagList = new ArrayList<>();
         for (int i = 0; i < tagNames.length; i++) {
-            Tag tag = getTag(tagNames[i]);
-            tagList.add(tag);
+            tagList.add(getTag(tagNames[i]));
         }
         return tagList;
     }

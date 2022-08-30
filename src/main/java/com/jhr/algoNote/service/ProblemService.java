@@ -81,21 +81,16 @@ public class ProblemService {
     }
 
     /**
-     * tagNames 을 활용하여 problemTagList 생성
+     * tagText 을 활용하여 problemTagList 생성
      */
     private List<ProblemTag> createProblemTagListWithText(String tagText) {
 
-        if (isStringEmpty(tagText)) { //태그가 입력되지 않은경우
+        if (isStringEmpty(tagText)) {
             return new ArrayList<ProblemTag>();
         }
-
-        String[] tagNames = TagService.sliceTextToTagNames(tagText);
-        //문제태그 리스트 생성
         List<ProblemTag> problemTagList = new ArrayList<ProblemTag>();
-        //태그 정보 조회
-        List<Tag> tagList = tagService.getTagList(tagNames);
-        //문제에 태그 등록
-        for (Tag tag : tagList) {
+
+        for (Tag tag : tagService.getTagList(TagService.sliceTextToTagNames(tagText))) {
             problemTagList.add(ProblemTag.createProblemTag(tag));
         }
         return problemTagList;
@@ -135,11 +130,11 @@ public class ProblemService {
         ProblemContent problemContent = ProblemContent.createProblemContent(
             problemCreateRequest.getContentText());
 
-        //태그 생성
+        //태그 생성 및 등록
         List<ProblemTag> problemTagList = createProblemTagListWithText(
             problemCreateRequest.getTagText());
 
-        //문제 생성 후 제목, 내용, 태그 등록
+        //문제 등록
         return problemRepository.save(
             Problem.builder()
                 .member(member)
@@ -206,13 +201,6 @@ public class ProblemService {
         }
 
         //태그 정보 변경 된 경우
-        //1. 기존 태그정보 삭제
-        if (problem.getProblemTags().size() > 0) {
-            problemTagRepository.deleteAllByProblemId(problem.getId());
-            problem.getProblemTags().clear();
-        }
-
-        //2. 입력받은 텍스트로 문제태그 생성
         return createProblemTagListWithText(tagText);
     }
 
