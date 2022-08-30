@@ -13,6 +13,7 @@ import com.jhr.algoNote.repository.query.ProblemSearch;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ProblemService;
 import com.jhr.algoNote.service.TagService;
+import com.jhr.algoNote.service.query.ProblemQueryService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ public class ProblemController {
 
     private final HttpSession httpSession;
     private final ProblemService problemService;
+    private final ProblemQueryService problemQueryService;
     private final MemberService memberService;
     private final TagService tagService;
 
@@ -82,7 +84,7 @@ public class ProblemController {
             .memberEmail(user.getEmail())
             .build();
 
-        List<Problem> problems = problemService.search(problemSearch);
+        List<Problem> problems = problemQueryService.search(0, 100, problemSearch);
 
         model.addAttribute("problems", problems);
         return "problems/problemList";
@@ -132,7 +134,7 @@ public class ProblemController {
         problemSearch.setMemberEmail(user.getEmail());
 
         //검색
-        List<Problem> problems = problemService.search(problemSearch);
+        List<Problem> problems = problemQueryService.search(0,100,problemSearch);
         model.addAttribute("problems", problems);
 
         return "problems/problemSearch";

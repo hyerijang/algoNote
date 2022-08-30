@@ -28,7 +28,6 @@ public class ProblemService {
     private final MemberService memberService;
     private final TagService tagService;
     private final ProblemRepository problemRepository;
-    private final ProblemQueryRepository problemQueryRepository;
 
     private final ProblemTagRepository problemTagRepository;
 
@@ -109,10 +108,6 @@ public class ProblemService {
     /**
      * 검색
      */
-    @Transactional
-    public List<Problem> search(ProblemSearch problemSearch) {
-        return problemQueryRepository.search(problemSearch);
-    }
 
     /**
      * 문제 등록

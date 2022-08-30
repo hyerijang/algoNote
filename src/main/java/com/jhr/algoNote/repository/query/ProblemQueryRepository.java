@@ -24,24 +24,27 @@ public class ProblemQueryRepository {
     // == QueryDSL== //
     QProblem problem = QProblem.problem;
     QMember member = QMember.member;
+    QProblemContent problemContent = QProblemContent.problemContent;
 
 
-    public List<Problem> search(ProblemSearch problemSearch) {
+    public List<Problem> search(int offset, int limit, ProblemSearch problemSearch) { //TODO : offset, limit 추가
 
         BooleanBuilder builder = new BooleanBuilder();
-
         // == 조회 ==
         return jpaQueryFactory
             .select(problem)
             .from(problem)
             .join(problem.member, member)
+            .join(problem.content, problemContent)
             .where(
                 siteEq(problemSearch.getSite()),
                 titleLike(problemSearch.getTitle()),
                 emailEq(problemSearch.getMemberEmail()),
                 contentTextLike(problemSearch.getContentText())
             )
-            .limit(1000)
+            .fetchJoin()
+            .offset(offset)
+            .limit(limit)
             .fetch();
 
     }
@@ -77,10 +80,9 @@ public class ProblemQueryRepository {
     }
 
     public List<Problem> findAll(int offset, int limit) {
-        QProblem problem = QProblem.problem;
-        QMember member = QMember.member;
-        QProblemContent problemContent = QProblemContent.problemContent;
-        return jpaQueryFactory.select(problem)
+
+        return jpaQueryFactory
+            .select(problem)
             .from(problem)
             .join(problem.member, member)
             .join(problem.content, problemContent)

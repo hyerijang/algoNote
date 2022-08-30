@@ -120,62 +120,8 @@ class ProblemServiceTest {
     }
 
     // == 검색 ==
-    @Test
-    void 사이트명으로_검색() {
-        //given
-        //when
-        ProblemSearch problemSearch = ProblemSearch.builder()
-            .memberEmail(member.getEmail())
-            .site("백준")
-            .build();
-
-        List<Problem> result = problemService.search(problemSearch);
-        //than
-        assertAll(
-            () -> assertEquals(1, result.size()),
-            () -> assertEquals(result.get(0).getMember().getId(), member.getId(),
-                "자신의 id와 동일해야한다."),
-            () -> assertEquals(result.get(0).getTitle(), "오픈 채팅방")
-        );
-
-    }
-
-    @Test
-    void 문제_제목으로_검색() {
-        //given
-        //when
-        ProblemSearch problemSearch = ProblemSearch.builder()
-            .memberEmail(member.getEmail())
-            .title("채팅")
-            .build();
-
-        List<Problem> result = problemService.search(problemSearch);
-        //than
-        assertAll(
-            () -> assertEquals(1, result.size()),
-            () -> assertEquals(result.get(0).getMember().getId(), member.getId(),
-                "자신의 id와 동일해야한다."),
-            () -> assertEquals(result.get(0).getSite(), "백준")
-        );
-    }
 
 
-    @Test
-    void 이메일로_검색() {
-        //given
-        //when
-        ProblemSearch problemSearch = ProblemSearch.builder()
-            .memberEmail(member.getEmail())
-            .build();
-
-        List<Problem> result = problemService.search(problemSearch);
-        //than
-        assertAll(
-            () -> assertEquals(4, result.size()),
-            () -> assertEquals(result.get(0).getMember().getId(), member.getId(), "자신의 id와 동일해야한다.")
-        );
-
-    }
 
 
     @Test
