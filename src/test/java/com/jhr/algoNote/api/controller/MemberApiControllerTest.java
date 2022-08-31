@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jhr.algoNote.api.controller.MemberApiController.CreateMemberRequest;
 import com.jhr.algoNote.config.auth.SecurityConfig;
 import com.jhr.algoNote.domain.Member;
-import com.jhr.algoNote.dto.MemberDto;
+import com.jhr.algoNote.dto.MemberResponse;
 import com.jhr.algoNote.repository.MemberRepository;
 import com.jhr.algoNote.service.MemberService;
 import java.util.Arrays;
@@ -90,10 +90,10 @@ public class MemberApiControllerTest {
     @WithMockUser(roles = "USER")
     public void 회원_조회() throws Exception {
         //given
-        List<MemberDto> response = Arrays.asList(
-            new MemberDto(1L, "이름1", "사진1"),
-            new MemberDto(2L, "이름2", "사진2"),
-            new MemberDto(3L, "이름3", "사진3")
+        List<MemberResponse> response = Arrays.asList(
+            new MemberResponse(1L, "이름1", "사진1"),
+            new MemberResponse(2L, "이름2", "사진2"),
+            new MemberResponse(3L, "이름3", "사진3")
         );
         when(memberService.getMembers()).thenReturn(response);
 

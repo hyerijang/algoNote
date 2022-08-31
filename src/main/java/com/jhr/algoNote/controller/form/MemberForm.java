@@ -1,4 +1,4 @@
-package com.jhr.algoNote.controller;
+package com.jhr.algoNote.controller.form;
 
 import com.jhr.algoNote.domain.Role;
 import javax.validation.constraints.NotEmpty;

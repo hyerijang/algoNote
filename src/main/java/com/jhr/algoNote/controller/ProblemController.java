@@ -3,6 +3,8 @@ package com.jhr.algoNote.controller;
 
 import com.jhr.algoNote.config.auth.LoginUser;
 import com.jhr.algoNote.config.auth.dto.SessionUser;
+import com.jhr.algoNote.controller.form.ProblemDetailsForm;
+import com.jhr.algoNote.controller.form.ProblemForm;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.Review;

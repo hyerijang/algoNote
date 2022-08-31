@@ -1,7 +1,7 @@
 package com.jhr.algoNote.service;
 
 import com.jhr.algoNote.domain.Member;
-import com.jhr.algoNote.dto.MemberDto;
+import com.jhr.algoNote.dto.MemberResponse;
 import com.jhr.algoNote.exception.EmailRedundancyException;
 import com.jhr.algoNote.repository.MemberRepository;
 import java.util.List;
@@ -88,10 +88,10 @@ public class MemberService {
 
     }
 
-    public List<MemberDto> getMembers() {
+    public List<MemberResponse> getMembers() {
         List<Member> members = findMembers();
-        List<MemberDto> collect = members.stream()
-            .map(m -> new MemberDto(m.getId(), m.getName(), m.getPicture()))
+        List<MemberResponse> collect = members.stream()
+            .map(m -> new MemberResponse(m.getId(), m.getName(), m.getPicture()))
             .collect(Collectors.toList());
         return collect;
     }

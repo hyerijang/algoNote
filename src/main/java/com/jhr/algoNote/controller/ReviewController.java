@@ -3,6 +3,7 @@ package com.jhr.algoNote.controller;
 
 import com.jhr.algoNote.config.auth.LoginUser;
 import com.jhr.algoNote.config.auth.dto.SessionUser;
+import com.jhr.algoNote.controller.form.ReviewForm;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Review;
 import com.jhr.algoNote.dto.ReviewCreateRequest;
@@ -10,15 +11,12 @@ import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ReviewService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Slf4j

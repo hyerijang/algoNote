@@ -1,4 +1,4 @@
-package com.jhr.algoNote.controller;
+package com.jhr.algoNote.controller.form;
 
 import java.util.Map;
 import javax.validation.constraints.NotEmpty;
