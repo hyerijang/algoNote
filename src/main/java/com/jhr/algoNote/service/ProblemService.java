@@ -104,7 +104,6 @@ public class ProblemService {
 
     }
 
-
     /**
      * 검색
      */
@@ -151,26 +150,27 @@ public class ProblemService {
      * 문제 수정, 수정시 요청자와 문제 작성자가 다르면 예외 발생
      *
      * @param memberId             수정자 id
-     * @param problemUpdateRequest
+     * @param request
      * @return 수정된 문제의 id
      * @throws IllegalArgumentException 작성자가 아닙니다.
      */
     @Transactional
-    public Long edit(@NonNull Long memberId, ProblemUpdateRequest problemUpdateRequest) {
+    public Long edit(@NonNull Long memberId, ProblemUpdateRequest request) {
         //엔티티 조회
         Member member = memberService.findOne(memberId);
-        Problem problem = problemRepository.findById(problemUpdateRequest.getId());
+        Problem problem = problemRepository.findById(request.getId());
         validateWriterAndEditorAreSame(memberId, problem);
 
         //문제 내용 수정
-        problem.getContent().editText(problemUpdateRequest.getContentText());
-
-        //태그 정보 변경된 경우 태그 정보 갱신
-        List<ProblemTag> problemTags = updateTagList(
-            problemUpdateRequest.getTagText(), problem);
+        problem.getContent().editText(request.getContentText());
+        
+        //태그정보 갱신
+        boolean isRenewal = updateTagList(request.getTagText(), problem);
+        log.debug("태그정보 갱신 = {}", isRenewal);
         //문제 update
-        problem.update(problemUpdateRequest.getTitle(), problemUpdateRequest.getSite(),
-            problemUpdateRequest.getUrl(), problemTags);
+        problem.update(request.getTitle(),
+            request.getSite(),
+            request.getUrl());
 
         return problem.getId();
     }
@@ -185,18 +185,20 @@ public class ProblemService {
     }
 
 
-    private List<ProblemTag> updateTagList(String tagText,
+    private boolean updateTagList(String tagText,
         Problem problem) {
         String originalTegText = getTagText(problem.getProblemTags());
 
         //태그정보 변경되지 않은 경우
         if ((originalTegText.length() == tagText.length()) &&
             originalTegText.equals(tagText)) {
-            return problem.getProblemTags();
+            return false;
         }
 
-        //태그 정보 변경 된 경우
-        return createProblemTagListWithText(tagText);
+        //태그 정보 변경
+        problemTagRepository.deleteAllByProblemId(problem.getId());
+        problem.renewalProblemTag(createProblemTagListWithText(tagText));
+        return true;
     }
 
     /**

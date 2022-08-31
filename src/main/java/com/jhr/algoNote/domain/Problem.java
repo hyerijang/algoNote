@@ -97,11 +97,10 @@ public class Problem extends BaseTimeEntity {
     /**
      * 문제 수정
      */
-    public void update(String title, String site, String url, List<ProblemTag> problemTagList) {
+    public void update(String title, String site, String url) {
         this.title = title;
         this.site = site;
         this.url = url;
-        this.renewalProblemTag(problemTagList);
     }
 
     /**
@@ -109,8 +108,7 @@ public class Problem extends BaseTimeEntity {
      *
      * @param problemTagList 추가할 ProblemTag의 List
      */
-    private void renewalProblemTag(List<ProblemTag> problemTagList) {
-        this.problemTags.clear(); //초기화
+    public void renewalProblemTag(List<ProblemTag> problemTagList) {
         for (ProblemTag problemTag : problemTagList) {
             this.addProblemTag(problemTag);
         }

@@ -7,6 +7,7 @@ import com.jhr.algoNote.controller.form.ReviewForm;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Review;
 import com.jhr.algoNote.dto.ReviewCreateRequest;
+import com.jhr.algoNote.dto.ReviewUpdateRequest;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ReviewService;
 import javax.validation.Valid;
@@ -31,6 +32,7 @@ public class ReviewController {
 
     final String CREATE = "/problems/{problemId}/reviews/new";
     final String DETAILS = "/problems/{problemId}/reviews/{reviewId}";
+    final String EDIT = "/problems/{problemId}/reviews/{reviewId}/edit";
 
     @GetMapping(CREATE)
     public String createForm(Model model, @PathVariable Long problemId) {
@@ -73,13 +75,50 @@ public class ReviewController {
 
         ReviewForm reviewForm = new ReviewForm();
         reviewForm.setProblemId(review.getProblem().getId());
-        reviewForm.setContentText(review.getTitle());
+        reviewForm.setContentText(review.getContent().getText());
         String tagText = reviewService.getTagText(review.getReviewTags());
         reviewForm.setTagText(tagText);
         reviewForm.setTitle(review.getTitle());
+        reviewForm.setReviewId(reviewId);
 
         model.addAttribute("form", reviewForm);
         return "/reviews/reviewDetailsForm";
+    }
+
+
+    @GetMapping(EDIT)
+    public String editForm(Model model, @PathVariable Long reviewId) {
+
+        Review find = reviewService.findOne(reviewId);
+        ReviewForm reviewForm = new ReviewForm(find.getTitle(), find.getContent().getText(),
+            reviewService.getTagText(find.getReviewTags()), find.getId(),reviewId);
+        model.addAttribute("reviewForm", reviewForm);
+        //리뷰 생성 폼
+        return "/reviews/editReviewForm";
+    }
+
+    @PostMapping(EDIT)
+    public String edit(@Valid ReviewForm reviewForm, BindingResult result,
+        @PathVariable Long reviewId,
+        @LoginUser SessionUser user) {
+
+        if (result.hasErrors()) {
+            return "/reviews/editReviewForm";
+        }
+
+        Member member = memberService.findByEmail(user.getEmail());
+        //리뷰 수정
+        ReviewUpdateRequest request = ReviewUpdateRequest
+            .builder()
+            .title(reviewForm.getTitle())
+            .tagText(reviewForm.getTagText())
+            .contentText(reviewForm.getContentText())
+            .build();
+
+        reviewService.edit(member.getId(), reviewId,request);
+
+        log.debug("review is updated (reviewId={})", reviewId);
+        return "redirect:/problems/{problemId}";
     }
 
 

@@ -7,7 +7,9 @@ import com.jhr.algoNote.domain.content.ReviewContent;
 import com.jhr.algoNote.domain.tag.ReviewTag;
 import com.jhr.algoNote.domain.tag.Tag;
 import com.jhr.algoNote.dto.ReviewCreateRequest;
+import com.jhr.algoNote.dto.ReviewUpdateRequest;
 import com.jhr.algoNote.repository.ReviewRepository;
+import com.jhr.algoNote.repository.ReviewTagRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class ReviewService {
 
     private final ProblemService problemService;
     private final MemberService memberService;
+    private final ReviewTagRepository reviewTagRepository;
 
     @Transactional
     public Long createReview(Long memberId, ReviewCreateRequest reviewCreateRequest) {
@@ -64,6 +67,15 @@ public class ReviewService {
                 "user attempt to write a review with other member id (user id={}, stolen id={})",
                 member.getId(), problem.getId());
             throw new IllegalArgumentException("문제 작성자가 아닙니다.");
+        }
+    }
+
+    private void validateWriterAndEditorAreSame(Long editorId, Long writerId) {
+        if (editorId != writerId) {
+            log.info(
+                "user attempt to write a review with other member id (user id={}, stolen id={})",
+                editorId, writerId);
+            throw new IllegalArgumentException("작성자와 수정자가 다릅니다");
         }
     }
 
@@ -138,4 +150,50 @@ public class ReviewService {
         return str == null || str.isBlank();
 
     }
+
+
+    @Transactional
+    public Long edit(Long editorId, Long reviewId, ReviewUpdateRequest request) {
+
+        Review review = reviewRepository.findOne(reviewId);
+        validateWriterAndEditorAreSame(editorId, review.getMember().getId());
+
+        //태그정보 갱신
+        log.info("form을 통해 입력된 태그 = {}", request.getTagText());
+        boolean isRenewal = updateTagList(request.getTagText(), review);
+        log.debug("태그정보 갱신 = {}", isRenewal);
+        review.update(request.getTitle(), request.getContentText());
+
+        return review.getId();
+    }
+
+    private boolean updateTagList(String tagText,
+        Review review) {
+        String originalTegText = getTagText(review.getReviewTags());
+
+        //태그정보 변경되지 않은 경우
+        if ((originalTegText.length() == tagText.length()) &&
+            originalTegText.equals(tagText)) {
+            return true;
+        }
+
+        //태그 정보 변경 된 경우
+        reviewTagRepository.deleteAllByReviewId(review.getId());
+        review.renewalReviewTag(createReviewTagListWithText(tagText));
+        return false;
+    }
+
+    private List<ReviewTag> createReviewTagListWithText(String tagText) {
+
+        if (isStringEmpty(tagText)) {
+            return new ArrayList<ReviewTag>();
+        }
+        List<ReviewTag> problemTagList = new ArrayList<ReviewTag>();
+        for (Tag tag : tagService.getTagList(TagService.sliceTextToTagNames(tagText))) {
+            problemTagList.add(ReviewTag.createReviewTag(tag));
+        }
+        return problemTagList;
+    }
+
+
 }

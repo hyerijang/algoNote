@@ -64,9 +64,7 @@ public class Review extends BaseTimeEntity {
         review.addProblem(problem);
         review.setContent(content);
         // 리뷰 태그 추가
-        for (ReviewTag rt : reviewTagList) {
-            review.addReviewTag(rt);
-        }
+        review.renewalReviewTag(reviewTagList);
         return review;
     }
 
@@ -75,6 +73,7 @@ public class Review extends BaseTimeEntity {
         this.member = member;
         member.getReviews().add(this);
     }
+
     public void addProblem(Problem problem) {
         this.problem = problem;
         problem.getReviews().add(this);
@@ -90,4 +89,19 @@ public class Review extends BaseTimeEntity {
         content.setReview(this);
     }
 
+    //== 비즈니스 로직==//
+    public void update(String title) {
+        this.title = title;
+    }
+
+    public void update(String title, String contentText) {
+        this.title = title;
+        this.content.updateText(contentText);
+    }
+
+    public void renewalReviewTag(List<ReviewTag> reviewTags) {
+        for (ReviewTag rt : reviewTags) {
+            this.addReviewTag(rt);
+        }
+    }
 }

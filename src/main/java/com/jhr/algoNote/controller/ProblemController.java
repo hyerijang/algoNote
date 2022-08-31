@@ -77,7 +77,7 @@ public class ProblemController {
         Long problemId = problemService.register(member.getId(), problemCreateRequest);
         log.debug("registered problem id ={}", problemId);
 
-        return "redirect:/";
+        return "redirect:/problems";
     }
 
     /**
@@ -137,7 +137,7 @@ public class ProblemController {
             .build();
 
         problemService.edit(member.getId(), dto);
-        return "redirect:/";
+        return "redirect:/problems";
     }
 
     @GetMapping(SEARCH)
