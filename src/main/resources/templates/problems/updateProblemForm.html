@@ -8,13 +8,14 @@
     <H3>
       문제 수정
     </H3>
-    <form th:object="${form}" method="post">
+    <form th:object="${problemForm}" method="post">
       <div class="form-group">
         <input type="hidden" th:field="*{id}"/>
       </div>
       <label th:for="title">제목</label>
-      <input type="text" th:field="*{title}" class="form-control"
-             placeholder="제목을 입력하세요">
+      <input type="text" th:field="*{title}" class="form-control" placeholder="제목을 입력하세요"
+             th:class="${#fields.hasErrors('title')}? 'form-control fieldError' : 'form-control'">
+      <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Incorrect date</p>
       <div class="form-group">
         <label th:for="url">url</label>
         <input type="url" th:field="*{url}" class="form-control"

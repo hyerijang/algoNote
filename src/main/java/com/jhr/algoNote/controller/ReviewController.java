@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,15 +36,20 @@ public class ReviewController {
     public String createForm(Model model, @PathVariable Long problemId) {
         ReviewForm reviewForm = new ReviewForm();
         reviewForm.setProblemId(problemId);
-        model.addAttribute("form", reviewForm);
+        model.addAttribute("reviewForm", reviewForm);
         //리뷰 생성 폼
         return "/reviews/createReviewForm";
     }
 
 
     @PostMapping(CREATE)
-    public String create(@Valid ReviewForm reviewForm, @PathVariable Long problemId,
+    public String create(@Valid ReviewForm reviewForm, BindingResult result,
+        @PathVariable Long problemId,
         @LoginUser SessionUser user) {
+
+        if (result.hasErrors()) {
+            return "/reviews/createReviewForm";
+        }
 
         Member member = memberService.findByEmail(user.getEmail());
         //리뷰 생성
@@ -56,7 +62,7 @@ public class ReviewController {
 
         Long reviewId = reviewService.createReview(member.getId(), reviewCreateRequest);
 
-        log.debug("review is created (problemId={}, reviewId={})", problemId,reviewId);
+        log.debug("review is created (problemId={}, reviewId={})", problemId, reviewId);
         return "redirect:/problems/{problemId}";
     }
 

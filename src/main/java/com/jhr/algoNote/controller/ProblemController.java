@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,14 +52,20 @@ public class ProblemController {
 
     @GetMapping(CREAT)
     public String createForm(Model model) {
-        model.addAttribute("form", new ProblemForm());
+        model.addAttribute("problemForm", new ProblemForm());
         //사이트 정보
         model.addAttribute("sites", Site.values());
         return "problems/createProblemForm";
     }
 
     @PostMapping(CREAT)
-    public String creat(@Valid ProblemForm problemForm, @LoginUser SessionUser user) {
+    public String creat(@Valid ProblemForm problemForm, BindingResult result,
+        @LoginUser SessionUser user) {
+
+        if (result.hasErrors()) {
+            return "problems/createProblemForm";
+        }
+
         Member member = memberService.findByEmail(user.getEmail());
         ProblemCreateRequest problemCreateRequest = ProblemCreateRequest.builder()
             .title(problemForm.getTitle())
@@ -104,15 +111,20 @@ public class ProblemController {
         form.setContentText(problem.getContent().getText());
         form.setTagText(tagText);
         form.setSite(problem.getSite());
-        model.addAttribute("form", form);
+        model.addAttribute("problemForm", form);
         //사이트 정보
         model.addAttribute("sites", Site.values());
         return "problems/updateProblemForm";
     }
 
     @PostMapping(EDIT)
-    public String edit(@ModelAttribute ProblemForm problemForm, @LoginUser SessionUser user) {
+    public String edit(@Valid ProblemForm problemForm, BindingResult result,
+        @LoginUser SessionUser user
+    ) {
 
+        if (result.hasErrors()) {
+            return "problems/updateProblemForm";
+        }
         Member member = memberService.findByEmail(user.getEmail());
 
         ProblemUpdateRequest dto = ProblemUpdateRequest.builder()
@@ -136,7 +148,7 @@ public class ProblemController {
         problemSearch.setMemberEmail(user.getEmail());
 
         //검색
-        List<Problem> problems = problemQueryService.search(0,100,problemSearch);
+        List<Problem> problems = problemQueryService.search(0, 100, problemSearch);
         model.addAttribute("problems", problems);
 
         return "problems/problemSearch";
