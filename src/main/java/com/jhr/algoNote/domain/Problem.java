@@ -81,7 +81,6 @@ public class Problem extends BaseTimeEntity {
     public static Problem createProblem(@NonNull Member member, @NonNull String title,
         @NonNull ProblemContent content,
         String site, String url, List<ProblemTag> problemTagList) {
-
         Problem problem = new Problem();
         problem.title = title;
         problem.url = url;
@@ -109,6 +108,10 @@ public class Problem extends BaseTimeEntity {
      * @param problemTagList 추가할 ProblemTag의 List
      */
     public void renewalProblemTag(List<ProblemTag> problemTagList) {
+        if (problemTagList == null) {
+            return;
+        }
+
         for (ProblemTag problemTag : problemTagList) {
             this.addProblemTag(problemTag);
         }
