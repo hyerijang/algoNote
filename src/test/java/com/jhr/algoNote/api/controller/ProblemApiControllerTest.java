@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.jhr.algoNote.api.controller.ProblemApiController.CreateProblemResponse;
+import com.jhr.algoNote.dto.CreateProblemResponse;
 import com.jhr.algoNote.config.auth.SecurityConfig;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;

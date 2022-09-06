@@ -2,6 +2,8 @@ package com.jhr.algoNote.api.controller;
 
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.dto.CreateProblemRequest;
+import com.jhr.algoNote.dto.CreateProblemResponse;
+import com.jhr.algoNote.dto.Result;
 import com.jhr.algoNote.service.ProblemService;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -32,12 +34,6 @@ public class ProblemApiController {
         return new Result(problemService.findAll(offset, limit));
     }
 
-    @Data
-    @AllArgsConstructor
-    static class Result<T> {
-
-        T data;
-    }
 
     @PostMapping("/new")
     public CreateProblemResponse create(@RequestBody @Valid CreateProblemRequest request) {
@@ -47,15 +43,5 @@ public class ProblemApiController {
             problem.getMember().getId());
     }
 
-
-    @Data
-    @AllArgsConstructor
-    public static class CreateProblemResponse {
-
-        private Long Id;
-        private String title;
-        private Long memberId;
-
-    }
 
 }
