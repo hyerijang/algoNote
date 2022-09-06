@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
-import com.jhr.algoNote.domain.Role;
+import com.jhr.algoNote.dto.CreateMemberRequest;
 import com.jhr.algoNote.repository.query.ProblemSearch;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ProblemService;
@@ -21,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 class ProblemQueryServiceTest {
 
     @Autowired
-    ProblemQueryService problemQueryService;
-    @Autowired
     ProblemService problemService;
 
     @Autowired
@@ -32,13 +30,12 @@ class ProblemQueryServiceTest {
 
     @BeforeEach
     private void createProblems() {
-        member = Member.builder()
-            .name("name")
-            .email("email")
-            .role(Role.USER)
-            .build();
+        final String EMAIL = "email@gmail.com";
+        final String NAME = "NAME";
+        final String PICTURE = "PICTURE";
 
-        memberService.join(member);
+        CreateMemberRequest request = new CreateMemberRequest(NAME, EMAIL, PICTURE);
+        member = memberService.findOne(memberService.join(request).getId());
 
         problemService.register(member.getId(), "오픈 채팅방", "content", "", "백준",
             "https://www.acmicpc.net/");
@@ -60,7 +57,7 @@ class ProblemQueryServiceTest {
             .site("백준")
             .build();
 
-        List<Problem> result = problemQueryService.search(0, 100, problemSearch);
+        List<Problem> result = problemService.search(0, 100, problemSearch);
         //than
         assertAll(
             () -> assertEquals(1, result.size()),
@@ -80,7 +77,7 @@ class ProblemQueryServiceTest {
             .title("채팅")
             .build();
 
-        List<Problem> result = problemQueryService.search(0, 100, problemSearch);
+        List<Problem> result = problemService.search(0, 100, problemSearch);
         //than
         assertAll(
             () -> assertEquals(1, result.size()),
@@ -98,7 +95,7 @@ class ProblemQueryServiceTest {
             .memberEmail(member.getEmail())
             .build();
 
-        List<Problem> result = problemQueryService.search(0, 100, problemSearch);
+        List<Problem> result = problemService.search(0, 100, problemSearch);
         //than
         assertAll(
             () -> assertEquals(4, result.size()),

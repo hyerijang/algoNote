@@ -54,17 +54,5 @@ public class ProblemTest {
                 .build());
     }
 
-    @Test
-    void 문제_태그는_null_일수없음() {
-        Assertions.assertThatNullPointerException()
-            .isThrownBy(() -> Problem.builder()
-                .title("TITLE")
-                .member(member)
-                .problemTagList(null)
-                .content(problemContent)
-                .build());
-
-    }
-
 
 }

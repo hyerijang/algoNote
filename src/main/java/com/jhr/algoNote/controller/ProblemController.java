@@ -9,12 +9,11 @@ import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.Review;
 import com.jhr.algoNote.domain.Site;
-import com.jhr.algoNote.dto.ProblemUpdateRequest;
+import com.jhr.algoNote.dto.UpdateProblemRequest;
 import com.jhr.algoNote.repository.query.ProblemSearch;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ProblemService;
 import com.jhr.algoNote.service.TagService;
-import com.jhr.algoNote.service.query.ProblemQueryService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +38,6 @@ public class ProblemController {
 
     private final HttpSession httpSession;
     private final ProblemService problemService;
-    private final ProblemQueryService problemQueryService;
     private final MemberService memberService;
     private final TagService tagService;
 
@@ -87,7 +85,7 @@ public class ProblemController {
             .memberEmail(user.getEmail())
             .build();
 
-        List<Problem> problems = problemQueryService.search(0, 100, problemSearch);
+        List<Problem> problems = problemService.search(0, 100, problemSearch);
 
         model.addAttribute("problems", problems);
         return "problems/problemList";
@@ -121,7 +119,7 @@ public class ProblemController {
         }
         Member member = memberService.findByEmail(user.getEmail());
 
-        ProblemUpdateRequest dto = ProblemUpdateRequest.builder()
+        UpdateProblemRequest dto = UpdateProblemRequest.builder()
             .title(problemForm.getTitle())
             .contentText(problemForm.getContentText())
             .url(problemForm.getUrl())
@@ -142,7 +140,7 @@ public class ProblemController {
         problemSearch.setMemberEmail(user.getEmail());
 
         //검색
-        List<Problem> problems = problemQueryService.search(0, 100, problemSearch);
+        List<Problem> problems = problemService.search(0, 100, problemSearch);
         model.addAttribute("problems", problems);
 
         return "problems/problemSearch";

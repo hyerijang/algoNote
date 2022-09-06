@@ -6,8 +6,8 @@ import com.jhr.algoNote.domain.Review;
 import com.jhr.algoNote.domain.content.ReviewContent;
 import com.jhr.algoNote.domain.tag.ReviewTag;
 import com.jhr.algoNote.domain.tag.Tag;
-import com.jhr.algoNote.dto.ReviewCreateRequest;
-import com.jhr.algoNote.dto.ReviewUpdateRequest;
+import com.jhr.algoNote.dto.CreateReviewRequest;
+import com.jhr.algoNote.dto.UpdateReviewRequest;
 import com.jhr.algoNote.repository.ReviewRepository;
 import com.jhr.algoNote.repository.ReviewTagRepository;
 import java.util.ArrayList;
@@ -32,23 +32,23 @@ public class ReviewService {
     private final ReviewTagRepository reviewTagRepository;
 
     @Transactional
-    public Long createReview(Long memberId, ReviewCreateRequest reviewCreateRequest) {
+    public Long createReview(Long memberId, CreateReviewRequest createReviewRequest) {
 
         Member member = memberService.findOne(memberId);
-        Problem problem = problemService.findOne(reviewCreateRequest.getProblemId());
+        Problem problem = problemService.findOne(createReviewRequest.getProblemId());
 
         validateWriterAndEditorAreSame(member, problem);
 
         //(1)리뷰태그 생성
-        List<ReviewTag> reviewTagList = createReviewTags(reviewCreateRequest.getTagText());
+        List<ReviewTag> reviewTagList = createReviewTags(createReviewRequest.getTagText());
         try {
             //(2)내용생성
-            ReviewContent rc = ReviewContent.of(reviewCreateRequest.getContentText());
+            ReviewContent rc = ReviewContent.of(createReviewRequest.getContentText());
             //(3)리뷰 생성
             Review review = Review.builder()
                 .member(member)
                 .problem(problem)
-                .title(reviewCreateRequest.getTitle())
+                .title(createReviewRequest.getTitle())
                 .reviewTagList(reviewTagList) //(1)
                 .content(rc)//(2)
                 .build();
@@ -79,8 +79,8 @@ public class ReviewService {
         }
     }
 
-    private void validateReviewContentIsNotNull(ReviewCreateRequest reviewCreateRequest) {
-        if (reviewCreateRequest.getContentText() == null) {
+    private void validateReviewContentIsNotNull(CreateReviewRequest createReviewRequest) {
+        if (createReviewRequest.getContentText() == null) {
             log.info("review text is null");
             throw new NullPointerException("내용의 text 는 null일 수 없습니다.");
         }
@@ -153,7 +153,7 @@ public class ReviewService {
 
 
     @Transactional
-    public Long edit(Long editorId, Long reviewId, ReviewUpdateRequest request) {
+    public Long edit(Long editorId, Long reviewId, UpdateReviewRequest request) {
 
         Review review = reviewRepository.findOne(reviewId);
         validateWriterAndEditorAreSame(editorId, review.getMember().getId());

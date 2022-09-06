@@ -12,9 +12,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jhr.algoNote.api.controller.MemberApiController.CreateMemberRequest;
+import com.jhr.algoNote.dto.CreateMemberRequest;
 import com.jhr.algoNote.config.auth.SecurityConfig;
 import com.jhr.algoNote.domain.Member;
+import com.jhr.algoNote.dto.CreateMemberResponse;
 import com.jhr.algoNote.dto.MemberResponse;
 import com.jhr.algoNote.repository.MemberRepository;
 import com.jhr.algoNote.service.MemberService;
@@ -60,18 +61,15 @@ public class MemberApiControllerTest {
             .email("TEST_EMAIL")
             .build();
 
-        when(memberService.join(Mockito.any(Member.class)))
-            .thenReturn(ID);
+        when(memberService.join(Mockito.any(CreateMemberRequest.class)))
+            .thenReturn(new CreateMemberResponse(ID));
     }
 
     @Test
     @WithMockUser(roles = "USER")
     public void 회원_생성() throws Exception {
         //given
-        CreateMemberRequest createMemberRequest = new CreateMemberRequest();
-        createMemberRequest.setName("TEST_NAME");
-        createMemberRequest.setEmail("TEST_EMAIL");
-        createMemberRequest.setPicture("TEST_PICTURE");
+        CreateMemberRequest createMemberRequest = new CreateMemberRequest("TEST_NAME","TEST_EMAIL", "TEST_PICTURE");
 
         //when
         mockMvc.perform(post("/api/members/new")
@@ -95,7 +93,7 @@ public class MemberApiControllerTest {
             new MemberResponse(2L, "이름2", "사진2"),
             new MemberResponse(3L, "이름3", "사진3")
         );
-        when(memberService.getMembers()).thenReturn(response);
+        when(memberService.findMembers()).thenReturn(response);
 
         //when
         mockMvc.perform(get("/api/members")

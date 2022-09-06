@@ -1,11 +1,9 @@
 package com.jhr.algoNote.api.controller;
 
 import com.jhr.algoNote.domain.Problem;
+import com.jhr.algoNote.dto.CreateProblemRequest;
 import com.jhr.algoNote.service.ProblemService;
-import com.jhr.algoNote.service.query.ProblemQueryService;
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -27,13 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProblemApiController {
 
     private final ProblemService problemService;
-    private final ProblemQueryService problemQueryService;
-
 
     @GetMapping
     public Result problems(@RequestParam(value = "offset", defaultValue = "0") int offset,
         @RequestParam(value = "limit", defaultValue = "100") int limit) {
-        return new Result(problemQueryService.findAll(offset, limit));
+        return new Result(problemService.findAll(offset, limit));
     }
 
     @Data
@@ -44,10 +40,8 @@ public class ProblemApiController {
     }
 
     @PostMapping("/new")
-    public CreateProblemResponse create(@RequestBody  @Valid  CreateProblemRequest request) {
-        Long problemId = problemService.register(request.memberId, request.getTitle(),
-            request.getContent(),
-            request.tagText, request.site, request.getUrl());
+    public CreateProblemResponse create(@RequestBody @Valid CreateProblemRequest request) {
+        Long problemId = problemService.register(request);
         Problem problem = problemService.findOne(problemId);
         return new CreateProblemResponse(problem.getId(), problem.getTitle(),
             problem.getMember().getId());
@@ -55,25 +49,12 @@ public class ProblemApiController {
 
 
     @Data
-    static class CreateProblemRequest {
-
-        private Long memberId;
-        @NotEmpty(message = "제목은 필수입니다.")
-        private String title;
-        private String site;
-        private String url;
-        private String tagText;
-        @NotNull
-        private String content;
-    }
-
-    @Data
     @AllArgsConstructor
     public static class CreateProblemResponse {
 
-        private Long problemId;
+        private Long Id;
         private String title;
-        private Long writerId;
+        private Long memberId;
 
     }
 

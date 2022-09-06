@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
-import com.jhr.algoNote.domain.Role;
-import com.jhr.algoNote.dto.ProblemCreateRequest;
-import com.jhr.algoNote.dto.ProblemUpdateRequest;
+import com.jhr.algoNote.dto.CreateMemberRequest;
+import com.jhr.algoNote.dto.CreateProblemRequest;
+import com.jhr.algoNote.dto.UpdateProblemRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,16 +32,19 @@ class ProblemServiceTest {
     ProblemService problemService;
 
     Member member = null;
+    CreateProblemRequest request = null;
+    String TITLE = "TITLE";
+    String CONTENT_TEXT = "CONTENT_TEXT";
+    String TAGTEXT = "사과,오렌지,딸기,오렌지,사과";
 
     @BeforeEach
     private void createProblems() {
-        member = Member.builder()
-            .name("name")
-            .email("email")
-            .role(Role.USER)
-            .build();
+        final String EMAIL = "email@gmail.com";
+        final String NAME = "NAME";
+        final String PICTURE = "PICTURE";
 
-        memberService.join(member);
+        CreateMemberRequest createMemberRequest = new CreateMemberRequest(NAME, EMAIL, PICTURE);
+        member = memberService.findOne(memberService.join(createMemberRequest).getId());
 
         problemService.register(member.getId(), "오픈 채팅방", "content", "", "백준",
             "https://www.acmicpc.net/");
@@ -52,6 +55,14 @@ class ProblemServiceTest {
             "https://programmers.co.kr/learn/courses/30/lessons/64061");
         problemService.register(member.getId(), "BFS",
             "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다", "", null, null);
+
+
+        request = CreateProblemRequest.builder()
+            .memberId(member.getId())
+            .title(TITLE)
+            .contentText(CONTENT_TEXT)
+            .tagText(TAGTEXT)
+            .build();
     }
 
 
@@ -59,16 +70,14 @@ class ProblemServiceTest {
     @DisplayName("문제 등록")
     void register() {
         //given
-        String title = "title";
-        String content = "sample text";
         //when
-        Long savedProblemId = problemService.register(member.getId(), title, content, "", null,
-            null);
+        Long savedProblemId = problemService.register(request);
 
         //than
         Problem result = problemRepository.findById(savedProblemId);
         assertAll(
-            () -> assertEquals(content, result.getContent().getText()),
+            () -> assertEquals(CONTENT_TEXT, result.getContent().getText()),
+            () -> assertEquals(TITLE, result.getTitle()),
             () -> assertEquals(savedProblemId, result.getId())
         );
 
@@ -82,7 +91,6 @@ class ProblemServiceTest {
         String title = "문제 제목";
         String content = "문제 내용";
         //when
-
         Long savedProblemId = problemService.register(member.getId(), title, content, "", "백준",
             "https://www.acmicpc.net/");
 
@@ -100,14 +108,13 @@ class ProblemServiceTest {
     void 한_문제에_같은_태그를_여러개_등록_가능() {
         //given
         Long savedProblemId = problemService.register(member.getId(), "title", "sample text",
-            "그리디 그리디 병합정렬",null,null);
+            "그리디 그리디 병합정렬", null, null);
 
         //than
         Problem result = problemRepository.findById(savedProblemId);
         assertEquals(3, result.getProblemTags().size());
 
     }
-
 
     // == 검색 ==
 
@@ -118,11 +125,10 @@ class ProblemServiceTest {
         //given
         String title = "title";
         String content = "sample text";
+        CreateProblemRequest request = CreateProblemRequest.builder().title(title).contentText(content).memberId(member.getId()).build();
 
         //when
-        ProblemCreateRequest dto = ProblemCreateRequest.builder().title(title).contentText(content)
-            .build();
-        Long savedProblemId = problemService.register(member.getId(), dto);
+        Long savedProblemId = problemService.register(request);
 
         //than
         Problem result = problemRepository.findById(savedProblemId);
@@ -135,17 +141,14 @@ class ProblemServiceTest {
     @Test
     void 문제_ID로_조회() {
         //given
-        String title = "title";
-        String content = "sample text";
-        ProblemCreateRequest dto = ProblemCreateRequest.builder().title(title).contentText(content)
-            .build();
-        Long savedProblemId = problemService.register(member.getId(), dto);
+        Long savedProblemId = problemService.register(request);
 
         //when
         Problem result = problemService.findOne(savedProblemId);
         //than
         assertAll(
-            () -> assertEquals(content, result.getContent().getText()),
+            () -> assertEquals(CONTENT_TEXT, result.getContent().getText()),
+            () -> assertEquals(TITLE, result.getTitle()),
             () -> assertEquals(savedProblemId, result.getId()));
 
     }
@@ -153,19 +156,13 @@ class ProblemServiceTest {
     @Test
     void 문제_수정() {
         //given
-        ProblemCreateRequest dto = ProblemCreateRequest.builder()
-            .title("")
-            .contentText("")
-            .build();
-        Long savedProblemId = problemService.register(member.getId(), dto);
-        Problem problem = problemRepository.findById(savedProblemId);
+        Long savedProblemId = problemService.register(request);
 
-        // 수정 dto 생성
         final String TITLE = "새로운제목";
         final String TAGTEXT = "DP,배열,알고리즘,새로운태그";
         final int TAGSIZE = 4;
         final String CONTENT = "hello world";
-        ProblemUpdateRequest dto2 = ProblemUpdateRequest.builder()
+        UpdateProblemRequest dto2 = UpdateProblemRequest.builder()
             .id(savedProblemId)
             .title(TITLE)
             .tagText(TAGTEXT)
@@ -195,11 +192,7 @@ class ProblemServiceTest {
             throw new RuntimeException(e);
         }
 
-        ProblemCreateRequest dto = ProblemCreateRequest.builder()
-            .title("")
-            .contentText("")
-            .build();
-        Long savedProblemId = problemService.register(member.getId(), dto);
+        Long savedProblemId = problemService.register(request);
 
         //when
         Problem problem = problemRepository.findById(savedProblemId);
@@ -214,51 +207,42 @@ class ProblemServiceTest {
 
     @Test
     void 문제의_태그리스트를_텍스트로_변경() {
+
         // given
-        String tagText = "사과,오렌지,딸기,오렌지,사과";
-        ProblemCreateRequest dto = ProblemCreateRequest.builder()
-            .title("")
-            .contentText("")
-            .tagText(tagText)
-            .build();
-        Long savedProblemId = problemService.register(member.getId(), dto);
+        Long savedProblemId = problemService.register(request);
         // when
         Problem problem = problemRepository.findById(savedProblemId);
         // then
         String result = problemService.getTagText(problem.getProblemTags());
-        System.out.println("result = " + result);
-        assertEquals(tagText, result);
+        assertEquals(TAGTEXT, result);
 
     }
 
     @Test
     void 문제_태그_수정() {
         //given
-        ProblemCreateRequest dto = ProblemCreateRequest.builder()
-            .title("")
-            .contentText("")
-            .tagText("수정전,태그의,개수는,5개,입니다")
-            .build();
-        Long savedProblemId = problemService.register(member.getId(), dto);
-        // 수정 dto 생성
+        Long savedProblemId = problemService.register(request);
         final String TAGTEXT = "DP,배열,알고리즘,새로운태그";
         final int TAGSIZE = 4;
+        final String NEW_TITLE = "";
+        final String NEW_CONTENT = "abc";
 
-        ProblemUpdateRequest updateRequest = ProblemUpdateRequest.builder()
+        UpdateProblemRequest updateRequest = UpdateProblemRequest.builder()
             .id(savedProblemId)
             .tagText(TAGTEXT)
-            .title("")
-            .contentText("")
+            .title(NEW_TITLE)
+            .contentText(NEW_CONTENT)
             .build();
 
         //when
         Long updatedProblemId = problemService.edit(member.getId(), updateRequest);
-
         Problem updatedProblem = problemService.findOne(updatedProblemId);
 
         //than
         assertAll(
             () -> assertEquals(savedProblemId, updatedProblemId),
+            () -> assertEquals(NEW_TITLE, updatedProblem.getTitle()),
+            () -> assertEquals(NEW_CONTENT, updatedProblem.getContent().getText()),
             () -> assertEquals(TAGSIZE, updatedProblem.getProblemTags().size()));
 
 
@@ -272,20 +256,9 @@ class ProblemServiceTest {
     @DisplayName("연관관계 메서드 테스트")
     void relationMethod() {
         //given
-        String content = "sample text";
-        String tagText = "tag1, tag2";
-
-        ProblemCreateRequest dto = ProblemCreateRequest.builder()
-            .title("title")
-            .contentText(content)
-            .tagText(tagText)
-            .build();
-
-        Problem entity = problemService.findOne(problemService.register(member.getId(), dto));
+        Problem entity = problemService.findOne(problemService.register(request));
         //when
-        // 수정 dto 생성
-
-        ProblemUpdateRequest updateRequest = ProblemUpdateRequest.builder()
+        UpdateProblemRequest updateRequest = UpdateProblemRequest.builder()
             .id(entity.getId())
             .contentText("edit")
             .tagText("edit")

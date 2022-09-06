@@ -6,8 +6,8 @@ import com.jhr.algoNote.config.auth.dto.SessionUser;
 import com.jhr.algoNote.controller.form.ReviewForm;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Review;
-import com.jhr.algoNote.dto.ReviewCreateRequest;
-import com.jhr.algoNote.dto.ReviewUpdateRequest;
+import com.jhr.algoNote.dto.CreateReviewRequest;
+import com.jhr.algoNote.dto.UpdateReviewRequest;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ReviewService;
 import javax.validation.Valid;
@@ -55,14 +55,14 @@ public class ReviewController {
 
         Member member = memberService.findByEmail(user.getEmail());
         //리뷰 생성
-        ReviewCreateRequest reviewCreateRequest = ReviewCreateRequest.builder()
+        CreateReviewRequest createReviewRequest = CreateReviewRequest.builder()
             .title(reviewForm.getTitle())
             .tagText(reviewForm.getTagText())
             .problemId(reviewForm.getProblemId())
             .contentText(reviewForm.getContentText())
             .build();
 
-        Long reviewId = reviewService.createReview(member.getId(), reviewCreateRequest);
+        Long reviewId = reviewService.createReview(member.getId(), createReviewRequest);
 
         log.debug("review is created (problemId={}, reviewId={})", problemId, reviewId);
         return "redirect:/problems/{problemId}";
@@ -91,7 +91,7 @@ public class ReviewController {
 
         Review find = reviewService.findOne(reviewId);
         ReviewForm reviewForm = new ReviewForm(find.getTitle(), find.getContent().getText(),
-            reviewService.getTagText(find.getReviewTags()), find.getId(),reviewId);
+            reviewService.getTagText(find.getReviewTags()), find.getId(), reviewId);
         model.addAttribute("reviewForm", reviewForm);
         //리뷰 생성 폼
         return "/reviews/editReviewForm";
@@ -108,14 +108,10 @@ public class ReviewController {
 
         Member member = memberService.findByEmail(user.getEmail());
         //리뷰 수정
-        ReviewUpdateRequest request = ReviewUpdateRequest
-            .builder()
-            .title(reviewForm.getTitle())
-            .tagText(reviewForm.getTagText())
-            .contentText(reviewForm.getContentText())
-            .build();
+        UpdateReviewRequest request = new UpdateReviewRequest(reviewForm.getTitle(),
+            reviewForm.getContentText(), reviewForm.getTagText());
 
-        reviewService.edit(member.getId(), reviewId,request);
+        reviewService.edit(member.getId(), reviewId, request);
 
         log.debug("review is updated (reviewId={})", reviewId);
         return "redirect:/problems/{problemId}";

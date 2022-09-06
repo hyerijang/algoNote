@@ -1,7 +1,12 @@
 package com.jhr.algoNote.service;
 
 import com.jhr.algoNote.domain.Member;
+import com.jhr.algoNote.domain.Role;
+import com.jhr.algoNote.dto.CreateMemberRequest;
+import com.jhr.algoNote.dto.CreateMemberResponse;
 import com.jhr.algoNote.dto.MemberResponse;
+import com.jhr.algoNote.dto.UpdateMemberRequest;
+import com.jhr.algoNote.dto.updateMemberResponse;
 import com.jhr.algoNote.exception.EmailRedundancyException;
 import com.jhr.algoNote.repository.MemberRepository;
 import java.util.List;
@@ -22,11 +27,19 @@ public class MemberService {
     /**
      * 회원 가입
      */
+
     @Transactional
-    public Long join(Member member) {
+    public CreateMemberResponse join(CreateMemberRequest request) {
+        Member member = Member.builder()
+            .name(request.getName())
+            .email(request.getEmail())
+            .picture(request.getPicture())
+            .role(Role.USER) // 기본권한 : ADMIN
+            .build();
         validateDuplicateEmail(member); //중복 회원 검증
-        return memberRepository.save(member);
+        return new CreateMemberResponse(memberRepository.save(member));
     }
+
 
     /**
      * 중복 회원 검증 - 이메일 검증
@@ -42,15 +55,10 @@ public class MemberService {
         log.info("This Email is not duplicated(email= {})", member.getEmail());
     }
 
-    /**
-     * 회원 전체 조회
-     */
-    public List<Member> findMembers() {
-        return memberRepository.findAll();
-    }
 
     /**
      * 회원 id로 조회 (단건 조회)
+     *
      * @Throw IllegalArgumentException 등록되지 않은 회원입니다.
      */
     public Member findOne(Long memberId) {
@@ -77,23 +85,24 @@ public class MemberService {
         return results.get(0);
     }
 
-    /**
-     * 이름, 사진 수정
-     */
-    @Transactional
-    public void update(Long id, String name, String picture) {
-        Member member = memberRepository.findById(id);
-        member.updateName(name);
-        member.updatePicture(picture);
 
-    }
-
-    public List<MemberResponse> getMembers() {
-        List<Member> members = findMembers();
+    public List<MemberResponse> findMembers() {
+        List<Member> members = memberRepository.findAll();
         List<MemberResponse> collect = members.stream()
             .map(m -> new MemberResponse(m.getId(), m.getName(), m.getPicture()))
             .collect(Collectors.toList());
         return collect;
+    }
+
+    @Transactional
+    public updateMemberResponse updateMember(Long id,
+        UpdateMemberRequest request) {
+        Member member = memberRepository.findById(id);
+        member.updateName(request.getName());
+        member.updatePicture(request.getPicture());
+
+        return new updateMemberResponse(id, request.getName(),
+            request.getPicture());
     }
 
 }

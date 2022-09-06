@@ -3,6 +3,8 @@ package com.jhr.algoNote.controller;
 import com.jhr.algoNote.controller.form.MemberForm;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Role;
+import com.jhr.algoNote.dto.CreateMemberRequest;
+import com.jhr.algoNote.dto.MemberResponse;
 import com.jhr.algoNote.service.MemberService;
 import java.util.List;
 import javax.validation.Valid;
@@ -37,20 +39,14 @@ public class MemberController {
         if (result.hasErrors()) {
             return "members/createMemberForm";
         }
-
-        Member member = Member.builder()
-            .name(memberForm.getName())
-            .email(memberForm.getEmail())
-            .picture(memberForm.getPicture())
-            .role(Role.USER) // 기본권한 : ADMIN
-            .build();
-        memberService.join(member);
+        CreateMemberRequest request = new CreateMemberRequest(memberForm.getName(), memberForm.getEmail(),memberForm.getPicture());
+        memberService.join(request);
         return "redirect:/";
     }
 
     @GetMapping
     public String list(Model model) {
-        List<Member> members = memberService.findMembers();
+        List<MemberResponse> members = memberService.findMembers();
         model.addAttribute("members", members);
         return "members/memberList";
     }

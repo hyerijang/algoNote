@@ -1,14 +1,19 @@
 package com.jhr.algoNote.service;
 
+import static java.util.stream.Collectors.toList;
+
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.content.ProblemContent;
 import com.jhr.algoNote.domain.tag.ProblemTag;
 import com.jhr.algoNote.domain.tag.Tag;
-import com.jhr.algoNote.dto.ProblemCreateRequest;
-import com.jhr.algoNote.dto.ProblemUpdateRequest;
+import com.jhr.algoNote.dto.CreateProblemRequest;
+import com.jhr.algoNote.dto.ProblemResponse;
+import com.jhr.algoNote.dto.UpdateProblemRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.repository.ProblemTagRepository;
+import com.jhr.algoNote.repository.query.ProblemQueryRepository;
+import com.jhr.algoNote.repository.query.ProblemSearch;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
@@ -28,32 +33,38 @@ public class ProblemService {
     private final ProblemRepository problemRepository;
 
     private final ProblemTagRepository problemTagRepository;
+    private final ProblemQueryRepository problemQueryRepository;
 
 
-    /**
-     * 문제 등록 with site and url,  ProblemCreateRequest 를 인자로 받는 다른 register 사용을 권장
-     */
+    @Deprecated
     @Transactional
     public Long register(@NonNull Long memberId, @NonNull String title, @NonNull String content,
         String tagText, String site, String url) {
+        return register(new CreateProblemRequest(title, url, content, tagText, site, memberId));
+    }
+
+    @Transactional
+    public Long register(CreateProblemRequest createProblemRequest) {
         //엔티티 조회
-        Member member = memberService.findOne(memberId);
+        Member member = memberService.findOne(createProblemRequest.getMemberId());
 
         //문제 내용 생성
-        ProblemContent problemContent = ProblemContent.createProblemContent(content);
+        ProblemContent problemContent = ProblemContent.createProblemContent(
+            createProblemRequest.getContentText());
 
-        //태그 생성
-        List<ProblemTag> problemTagList = createProblemTagListWithText(tagText);
+        //태그 생성 및 등록
+        List<ProblemTag> problemTagList = createProblemTagListWithText(
+            createProblemRequest.getTagText());
 
-        //문제 생성 후 제목, 내용, 태그 등록
+        //문제 등록
         return problemRepository.save(
             Problem.builder()
                 .member(member)
-                .title(title)
+                .title(createProblemRequest.getTitle())
                 .content(problemContent)
                 .problemTagList(problemTagList)
-                .url(url)
-                .site(site)
+                .url(createProblemRequest.getUrl())
+                .site(createProblemRequest.getSite())
                 .build()
         );
     }
@@ -83,42 +94,6 @@ public class ProblemService {
 
     }
 
-    /**
-     * 검색
-     */
-
-    /**
-     * 문제 등록
-     *
-     * @param memberId
-     * @param problemCreateRequest DTO
-     * @return problemId
-     */
-    @Transactional
-    public Long register(@NonNull Long memberId, ProblemCreateRequest problemCreateRequest) {
-        //엔티티 조회
-        Member member = memberService.findOne(memberId);
-
-        //문제 내용 생성
-        ProblemContent problemContent = ProblemContent.createProblemContent(
-            problemCreateRequest.getContentText());
-
-        //태그 생성 및 등록
-        List<ProblemTag> problemTagList = createProblemTagListWithText(
-            problemCreateRequest.getTagText());
-
-        //문제 등록
-        return problemRepository.save(
-            Problem.builder()
-                .member(member)
-                .title(problemCreateRequest.getTitle())
-                .content(problemContent)
-                .problemTagList(problemTagList)
-                .url(problemCreateRequest.getUrl())
-                .site(problemCreateRequest.getSite())
-                .build()
-        );
-    }
 
     public Problem findOne(Long id) {
         return problemRepository.findById(id);
@@ -134,7 +109,7 @@ public class ProblemService {
      * @throws IllegalArgumentException 작성자가 아닙니다.
      */
     @Transactional
-    public Long edit(@NonNull Long memberId, ProblemUpdateRequest request) {
+    public Long edit(@NonNull Long memberId, UpdateProblemRequest request) {
         //엔티티 조회
         Member member = memberService.findOne(memberId);
 
@@ -197,6 +172,16 @@ public class ProblemService {
         sb.setLength(sb.length() - 1); //마지막 ','제거
         return sb.toString();
 
+    }
+
+
+    public List<Problem> search(int offset, int limit, ProblemSearch problemSearch) {
+        return problemQueryRepository.search(offset, limit, problemSearch);
+    }
+
+    public List<ProblemResponse> findAll(int offset, int limit) {
+        List<Problem> problems = problemQueryRepository.findAll(offset, limit);
+        return problems.stream().map(p -> new ProblemResponse(p)).collect(toList());
     }
 
 

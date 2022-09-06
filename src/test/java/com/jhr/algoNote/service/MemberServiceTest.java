@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Role;
+import com.jhr.algoNote.dto.CreateMemberRequest;
+import com.jhr.algoNote.dto.CreateMemberResponse;
+import com.jhr.algoNote.dto.MemberResponse;
 import com.jhr.algoNote.exception.EmailRedundancyException;
 import com.jhr.algoNote.repository.MemberRepository;
 import java.util.List;
@@ -24,70 +27,48 @@ public class MemberServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
+    final String EMAIL = "email@gmail.com";
+    final String NAME = "NAME";
+    final String PICTURE = "PICTURE";
 
     @Test
     public void 회원가입() throws Exception {
         // given
-        Member member = Member.builder()
-            .name("김")
-            .email("xxx@gmail.com")
-            .role(Role.USER)
-            .build();
+        CreateMemberRequest request = new CreateMemberRequest(NAME, EMAIL, PICTURE);
         // when
-        Long savedId = memberService.join(member);
-
+        CreateMemberResponse response = memberService.join(request);
+        Member member = memberService.findOne(response.getId());
         // then
-        assertEquals(member, memberRepository.findById(savedId));
+        assertEquals(EMAIL, member.getEmail());
+        assertEquals(NAME, member.getName());
+        assertEquals(PICTURE, member.getPicture());
     }
 
     @Test
     public void 메일_중복_예외() throws Exception {
         // given
-        String duplicateEmail = "xxx@gamil.com";
-
-        Member member1 = Member.builder()
-            .name("김철수")
-            .email(duplicateEmail)
-            .role(Role.USER)
-            .build();
-
-        System.out.println("member1.getEmail() = " + member1.getEmail());
-
-        Member member2 = Member.builder()
-            .name("김철수")
-            .email(duplicateEmail)
-            .role(Role.USER)
-            .build();
+        CreateMemberRequest request = new CreateMemberRequest(NAME, EMAIL, PICTURE);
+        CreateMemberRequest request2 = new CreateMemberRequest(NAME+"2", EMAIL, PICTURE+"2");
 
         // when
-        memberService.join(member1);
+        memberService.join(request);
 
         // then
         assertThrows(EmailRedundancyException.class, () -> {
-            memberService.join(member2); //예외 발생
+            memberService.join(request2); //예외 발생
         }, "예외가 발생해야 한다.");
     }
 
     @Test
     public void 회원_전체_조회() throws Exception {
         // given
-        Member member1 = Member.builder()
-            .name("김철수")
-            .email("xxx@gmail.com")
-            .role(Role.USER)
-            .build();
-
-        Member member2 = Member.builder()
-            .name("김철수")
-            .email("xxx2@gmail.com")
-            .role(Role.USER)
-            .build();
+        CreateMemberRequest request = new CreateMemberRequest(NAME, EMAIL, PICTURE);
+        CreateMemberRequest request2 = new CreateMemberRequest(NAME, "EMAIL2", PICTURE);
 
         // when
-        memberService.join(member1);
-        memberService.join(member2);
-        List<Member> result = memberService.findMembers();
-
+        memberService.join(request);
+        memberService.join(request2);
+        List<MemberResponse> result = memberService.findMembers();
         // then
         assertEquals(2, result.size());
     }
@@ -95,30 +76,21 @@ public class MemberServiceTest {
     @Test
     public void 회원_1명_조회() throws Exception {
         // given
-        Member member = Member.builder()
-            .name("홍길동")
-            .email("xxx@gmail.com")
-            .role(Role.USER)
-            .build();
+        CreateMemberRequest request = new CreateMemberRequest(NAME, EMAIL, PICTURE);
 
         // when
-        memberService.join(member);
-        Member findMember = memberService.findOne(member.getId());
-
+        CreateMemberResponse response = memberService.join(request);
+        Member member = memberService.findOne(response.getId());
         // then
-        assertEquals(member.getId(), findMember.getId());
-        assertEquals(member.getName(), findMember.getName());
+        assertEquals(NAME,member.getName());
     }
 
     @Test
     void 회원_이름_변경() throws Exception {
         // given
-        Member member = Member.builder()
-            .name("홍길동")
-            .email("xxx@gmail.com")
-            .role(Role.USER)
-            .build();
-        memberService.join(member);
+        CreateMemberRequest request = new CreateMemberRequest(NAME, EMAIL, PICTURE);
+        CreateMemberResponse response = memberService.join(request);
+        Member member = memberService.findOne(response.getId());
 
         // when
         member.updateName("수정된이름");
@@ -131,12 +103,9 @@ public class MemberServiceTest {
     @Test
     void 회원_사진_변경() throws Exception {
         // given
-        Member member = Member.builder()
-            .name("홍길동")
-            .email("xxx@gmail.com")
-            .role(Role.USER)
-            .build();
-        memberService.join(member);
+        CreateMemberRequest request = new CreateMemberRequest(NAME, EMAIL, PICTURE);
+        CreateMemberResponse response = memberService.join(request);
+        Member member = memberService.findOne(response.getId());
 
         // when
         member.updatePicture("수정된사진");
@@ -146,27 +115,6 @@ public class MemberServiceTest {
         assertEquals("수정된사진", findMember.getPicture());
     }
 
-
-    @Disabled
-    @Test
-    void Id는_업데이트_될_수_없다() throws Exception {
-        //updatable=false
-        // given
-//        Member member = Member.builder()
-//            .name("name")
-//            .email("xxx@gmail.com")
-//            .role(Role.USER)
-//            .build();
-//        Long savedId = memberRepository.save(member);
-//
-//        //when
-//        Member error = new Member(savedId, "name", "aaa@test.com", "p",
-//            Role.USER); // 비영속 객체로 업데이트 시도
-//        // then
-//        assertThrows(InvalidDataAccessApiUsageException.class,
-//            () -> memberRepository.save(error));
-
-    }
 
 
 }

@@ -10,17 +10,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jhr.algoNote.api.controller.ProblemApiController.CreateProblemRequest;
+
 import com.jhr.algoNote.api.controller.ProblemApiController.CreateProblemResponse;
 import com.jhr.algoNote.config.auth.SecurityConfig;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.content.ProblemContent;
+import com.jhr.algoNote.dto.CreateProblemRequest;
 import com.jhr.algoNote.repository.MemberRepository;
 import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ProblemService;
-import com.jhr.algoNote.service.query.ProblemQueryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -45,9 +45,6 @@ public class ProblemApiControllerTest {
     private ProblemService problemService;
     @MockBean
     private ProblemRepository problemRepository;
-
-    @MockBean
-    private ProblemQueryService problemQueryService;
 
     @MockBean
     private MemberService memberService;
@@ -95,10 +92,8 @@ public class ProblemApiControllerTest {
     @WithMockUser(roles = "USER")
     public void 문제_생성() throws Exception {
         //given
-        CreateProblemRequest createProblemRequest = new CreateProblemRequest();
-        createProblemRequest.setTitle(PROBLEM_TITLE);
-        createProblemRequest.setContent(PROBLEM_CONTENT_TEXT);
-        createProblemRequest.setMemberId(WRITER_ID);
+        CreateProblemRequest createProblemRequest = CreateProblemRequest.builder()
+            .title(PROBLEM_TITLE).contentText(PROBLEM_CONTENT_TEXT).memberId(WRITER_ID).build();
 
         CreateProblemResponse createProblemResponse = new CreateProblemResponse(PROBLEM_ID,
             PROBLEM_TITLE, WRITER_ID);
@@ -111,7 +106,7 @@ public class ProblemApiControllerTest {
                 .with(csrf())
                 .content(objectMapper.writeValueAsString(createProblemRequest)))
             .andExpect(status().isOk())
-            .andExpect((jsonPath("$.writerId", is(WRITER_ID), Long.class)))
+            .andExpect((jsonPath("$.memberId", is(WRITER_ID), Long.class)))
             .andExpect((jsonPath("$.title", is(PROBLEM_TITLE), String.class)))
             .andDo(print());
 

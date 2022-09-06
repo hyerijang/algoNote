@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class MemberResponse {
+public class updateMemberResponse {
+
     private Long id;
     private String name;
     private String picture;
