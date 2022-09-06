@@ -13,11 +13,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class ProblemTagRepository {
+
     private final EntityManager em;
 
-    public void deleteAllByProblemId(Long problemID) {
-        String jpql="DELETE FROM ProblemTag where problem.id = :problemid";
-        Query query = em.createQuery(jpql).setParameter("problemid", problemID);
-        query.executeUpdate();
+
+    public void deleteAllByProblemId(Problem problem) {
+        String jpql = "DELETE FROM ProblemTag where problem.id = :problemid";
+        Query query = em.createQuery(jpql).setParameter("problemid", problem.getId());
+        query.executeUpdate(); //벌크 연산 :데이터베이스에 직접 쿼리 (엔티티에 반영 X)
+        problem.getProblemTags().clear(); //엔티티 clear
     }
 }

@@ -48,7 +48,7 @@ class ProblemQueryServiceTest {
             "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다.", "", "프로그래머스",
             "https://programmers.co.kr/learn/courses/30/lessons/64061");
         problemService.register(member.getId(), "BFS",
-            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다");
+            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다", "tag1, tag2,tag3", null, null);
     }
 
     @Test

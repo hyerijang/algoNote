@@ -10,9 +10,7 @@ import com.jhr.algoNote.domain.Role;
 import com.jhr.algoNote.dto.ProblemCreateRequest;
 import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
-import com.jhr.algoNote.repository.query.ProblemSearch;
 import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,7 +51,7 @@ class ProblemServiceTest {
             "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다.", "", "프로그래머스",
             "https://programmers.co.kr/learn/courses/30/lessons/64061");
         problemService.register(member.getId(), "BFS",
-            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다");
+            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다", "", null, null);
     }
 
 
@@ -64,7 +62,8 @@ class ProblemServiceTest {
         String title = "title";
         String content = "sample text";
         //when
-        Long savedProblemId = problemService.register(member.getId(), title, content);
+        Long savedProblemId = problemService.register(member.getId(), title, content, "", null,
+            null);
 
         //than
         Problem result = problemRepository.findById(savedProblemId);
@@ -101,7 +100,7 @@ class ProblemServiceTest {
     void 한_문제에_같은_태그를_여러개_등록_가능() {
         //given
         Long savedProblemId = problemService.register(member.getId(), "title", "sample text",
-            "그리디 그리디 병합정렬");
+            "그리디 그리디 병합정렬",null,null);
 
         //than
         Problem result = problemRepository.findById(savedProblemId);
@@ -109,19 +108,8 @@ class ProblemServiceTest {
 
     }
 
-    @Test
-    void 태그를_등록하지_않아도_된다() {
-        //given
-        //when
-        Long savedProblemId = problemService.register(member.getId(), "title", "sample text");
-        //than
-        Problem result = problemRepository.findById(savedProblemId);
-        assertEquals(0, result.getProblemTags().size());
-    }
 
     // == 검색 ==
-
-
 
 
     @Test
@@ -249,14 +237,13 @@ class ProblemServiceTest {
         ProblemCreateRequest dto = ProblemCreateRequest.builder()
             .title("")
             .contentText("")
-            .tagText("123,1234,1")
+            .tagText("수정전,태그의,개수는,5개,입니다")
             .build();
         Long savedProblemId = problemService.register(member.getId(), dto);
-        Problem problem = problemRepository.findById(savedProblemId);
-
         // 수정 dto 생성
         final String TAGTEXT = "DP,배열,알고리즘,새로운태그";
         final int TAGSIZE = 4;
+
         ProblemUpdateRequest updateRequest = ProblemUpdateRequest.builder()
             .id(savedProblemId)
             .tagText(TAGTEXT)
@@ -266,7 +253,8 @@ class ProblemServiceTest {
 
         //when
         Long updatedProblemId = problemService.edit(member.getId(), updateRequest);
-        Problem updatedProblem = problemService.findOne(savedProblemId);
+
+        Problem updatedProblem = problemService.findOne(updatedProblemId);
 
         //than
         assertAll(

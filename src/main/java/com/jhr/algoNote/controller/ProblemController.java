@@ -9,7 +9,6 @@ import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.Review;
 import com.jhr.algoNote.domain.Site;
-import com.jhr.algoNote.dto.ProblemCreateRequest;
 import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.repository.query.ProblemSearch;
 import com.jhr.algoNote.service.MemberService;
@@ -67,14 +66,9 @@ public class ProblemController {
         }
 
         Member member = memberService.findByEmail(user.getEmail());
-        ProblemCreateRequest problemCreateRequest = ProblemCreateRequest.builder()
-            .title(problemForm.getTitle())
-            .contentText(problemForm.getContentText())
-            .url(problemForm.getUrl())
-            .tagText(problemForm.getTagText())
-            .site(problemForm.getSite())
-            .build();
-        Long problemId = problemService.register(member.getId(), problemCreateRequest);
+        Long problemId = problemService.register(member.getId(), problemForm.getTitle(),
+            problemForm.getContentText(), problemForm.getTagText(), problemForm.getSite(),
+            problemForm.getUrl());
         log.debug("registered problem id ={}", problemId);
 
         return "redirect:/problems";

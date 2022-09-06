@@ -8,9 +8,7 @@ import com.jhr.algoNote.domain.tag.Tag;
 import com.jhr.algoNote.dto.ProblemCreateRequest;
 import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
-import com.jhr.algoNote.repository.query.ProblemSearch;
 import com.jhr.algoNote.repository.ProblemTagRepository;
-import com.jhr.algoNote.repository.query.ProblemQueryRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
@@ -31,29 +29,10 @@ public class ProblemService {
 
     private final ProblemTagRepository problemTagRepository;
 
-    /**
-     * OCP를 위배하고 비효율적임
-     */
-    @Deprecated
-    @Transactional
-    public Long register(@NonNull Long memberId, @NonNull String title, @NonNull String content) {
-        return register(memberId, title, content, null, null, null);
-    }
-
-    /**
-     * OCP를 위배하고 비효율적임
-     */
-    @Deprecated
-    @Transactional
-    public Long register(@NonNull Long memberId, @NonNull String title, @NonNull String content,
-        String tagText) {
-        return register(memberId, title, content, tagText, null, null);
-    }
 
     /**
      * 문제 등록 with site and url,  ProblemCreateRequest 를 인자로 받는 다른 register 사용을 권장
      */
-    @Deprecated
     @Transactional
     public Long register(@NonNull Long memberId, @NonNull String title, @NonNull String content,
         String tagText, String site, String url) {
@@ -149,7 +128,7 @@ public class ProblemService {
     /**
      * 문제 수정, 수정시 요청자와 문제 작성자가 다르면 예외 발생
      *
-     * @param memberId             수정자 id
+     * @param memberId 수정자 id
      * @param request
      * @return 수정된 문제의 id
      * @throws IllegalArgumentException 작성자가 아닙니다.
@@ -158,15 +137,15 @@ public class ProblemService {
     public Long edit(@NonNull Long memberId, ProblemUpdateRequest request) {
         //엔티티 조회
         Member member = memberService.findOne(memberId);
+
+        //태그정보 갱신
+        updateTagList(request.getId(), request.getTagText());
+
+        //문제 수정
         Problem problem = problemRepository.findById(request.getId());
         validateWriterAndEditorAreSame(memberId, problem);
 
-        //문제 내용 수정
         problem.getContent().editText(request.getContentText());
-        
-        //태그정보 갱신
-        boolean isRenewal = updateTagList(request.getTagText(), problem);
-        log.debug("태그정보 갱신 = {}", isRenewal);
         //문제 update
         problem.update(request.getTitle(),
             request.getSite(),
@@ -185,21 +164,18 @@ public class ProblemService {
     }
 
 
-    private boolean updateTagList(String tagText,
-        Problem problem) {
-        String originalTegText = getTagText(problem.getProblemTags());
+    @Transactional
+    protected boolean updateTagList(Long problemId, String tagText) {
 
-        //태그정보 변경되지 않은 경우
-        if ((originalTegText.length() == tagText.length()) &&
-            originalTegText.equals(tagText)) {
-            return false;
-        }
-
-        //태그 정보 변경
-        problemTagRepository.deleteAllByProblemId(problem.getId());
+        Problem problem = problemRepository.findById(problemId);
+        //기존 태그 삭제
+        problemTagRepository.deleteAllByProblemId(problem);
+        //태그 갱신
         problem.renewalProblemTag(createProblemTagListWithText(tagText));
+
         return true;
     }
+
 
     /**
      * ProblemTagList를 String으로 변환
