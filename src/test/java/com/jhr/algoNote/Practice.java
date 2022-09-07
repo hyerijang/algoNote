@@ -9,7 +9,6 @@ public class Practice {
     @DisplayName("스터디 만들기")
     @RepeatedTest(5)
     void repeatTest(RepetitionInfo repetitionInfo) {
-
         int currentRepetition = repetitionInfo.getCurrentRepetition();
         System.out.println("currentRepetition = " + currentRepetition);
     }

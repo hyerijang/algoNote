@@ -61,9 +61,6 @@ public class TagTest {
         String[] names = TagService.sliceTextToTagNames(st);
 
         // then
-        for (String name : names) {
-            System.out.println("name ={" + name + "}");
-        }
         assertEquals(8, names.length);
 
     }

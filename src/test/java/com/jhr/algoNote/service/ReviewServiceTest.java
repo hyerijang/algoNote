@@ -97,7 +97,6 @@ class ReviewServiceTest {
         Review savedReview = reviewRepository.findOne(savedId);
 
         String tagText = reviewService.getTagText(savedReview.getReviewTags());
-        System.out.println("tagText = " + tagText);
         Assertions.assertEquals(3, savedReview.getReviewTags().size());
         Assertions.assertEquals("A", savedReview.getReviewTags().get(0).getTag().getName());
         Assertions.assertEquals(problem.getId(), savedReview.getProblem().getId());
@@ -218,10 +217,6 @@ class ReviewServiceTest {
         //when
         List<Review> reviewList = reviewService.findReviews(memberId);
 
-        for (int i = 0; i < reviewList.size(); i++) {
-            Review review = reviewList.get(i);
-            System.out.println("review.getProblem().getId() = " + review.getProblem().getId());
-        }
         //than
         assertEquals(10, reviewList.size());
 
