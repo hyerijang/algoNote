@@ -24,7 +24,7 @@ public class ReviewTag {
 
     @Id
     @GeneratedValue
-    @Column(name = "review_tag_id")
+    @Column(name = "review_tag_id", updatable = false)
     private Long id;
 
     @ManyToOne(fetch = LAZY)

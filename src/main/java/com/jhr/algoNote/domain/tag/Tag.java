@@ -19,7 +19,7 @@ public class Tag {
 
     @Id
     @GeneratedValue
-    @Column(name = "tag_id")
+    @Column(name = "tag_id", updatable = false)
     Long id;
 
     @Column(unique = true)

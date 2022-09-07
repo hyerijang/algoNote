@@ -27,7 +27,7 @@ public class ProblemContent {
 
     @Id
     @GeneratedValue
-    @Column(name = "problem_content_id")
+    @Column(name = "problem_content_id", updatable = false)
     private Long id;
 
     @Lob

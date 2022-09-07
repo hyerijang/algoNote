@@ -22,7 +22,7 @@ public class ProblemTag {
 
     @Id
     @GeneratedValue
-    @Column(name = "problem_tag_id")
+    @Column(name = "problem_tag_id", updatable = false)
     private Long id;
 
     @ManyToOne(fetch = LAZY)

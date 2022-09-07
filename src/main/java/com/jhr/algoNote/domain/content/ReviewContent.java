@@ -25,7 +25,7 @@ public class ReviewContent {
 
     @Id
     @GeneratedValue
-    @Column(name = "review_content_id")
+    @Column(name = "review_content_id", updatable = false)
     private Long id;
 
     @Lob

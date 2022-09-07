@@ -33,7 +33,7 @@ public class Problem extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
-    @Column(name = "problem_id")
+    @Column(name = "problem_id", updatable = false)
     private Long id;
 
     @NotNull

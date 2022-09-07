@@ -32,7 +32,7 @@ public class Review extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
-    @Column(name = "review_id")
+    @Column(name = "review_id", updatable = false)
     private Long id;
 
     @ManyToOne(fetch = LAZY)
