@@ -91,7 +91,8 @@ jacocoTestReport {
                             "**/*config*",
                             "**/*dto*",
                             "**/*exception*",
-                            "**/*Application.*"
+                            "**/*Application.*",
+                            "**/*web*"
                     ] + Qdomains)
                 })
         )
@@ -129,7 +130,10 @@ jacocoTestCoverageVerification {
                     "**.*Application*",
                     "**.*Config*",
                     "**.*Dto*",
-                    "**.*Exception*"
+                    "**.*Exception*",
+                    "**.*Request*",
+                    "**.*Response*",
+                    "**.*Form*"
             ] + Qdomains
         }
 
@@ -153,7 +157,7 @@ task testCoverage(type: Test) {
 sourceSets {
     main {
         java {
-            srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
+            srcDirs = ["$projectDir/src/main/java"]
         }
     }
 }
