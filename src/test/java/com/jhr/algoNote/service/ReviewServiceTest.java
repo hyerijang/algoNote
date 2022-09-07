@@ -1,5 +1,6 @@
 package com.jhr.algoNote.service;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -10,10 +11,10 @@ import com.jhr.algoNote.dto.CreateMemberRequest;
 import com.jhr.algoNote.dto.CreateProblemRequest;
 import com.jhr.algoNote.dto.CreateReviewRequest;
 import com.jhr.algoNote.dto.MemberResponse;
+import com.jhr.algoNote.dto.UpdateReviewRequest;
 import com.jhr.algoNote.repository.ReviewRepository;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @SpringBootTest
 class ReviewServiceTest {
+
 
     @Autowired
     ReviewRepository reviewRepository;
@@ -167,25 +169,26 @@ class ReviewServiceTest {
     }
 
 
-    // FIXME : 리뷰 수정 만들고 다시 시도
-    @Disabled
     @Test
     @DisplayName("작성자와 수정자가 다름")
     public void updateRequestFromInvalidedUser() {
 
         //given
-        Long memberId = createMembers(3).get(0).getId();
-        Problem problem = createProblems(memberId, 1).get(0);
-        final String TAG_TEXT = "A,B,C";
+        List<MemberResponse> members = createMembers(3);
+        Long writerId = members.get(0).getId();
+        Problem problem = createProblems(writerId, 1).get(0);
+        CreateReviewRequest createReviewRequest = CreateReviewRequest.builder()
+            .contentText("내용").title("제목").problemId(problem.getId())
+            .build();
+        Long reviewId = reviewService.createReview(writerId, createReviewRequest);
 
         //when
-        CreateReviewRequest createReviewRequest = CreateReviewRequest.builder()
-            .tagText(TAG_TEXT).contentText("내용").title("제목").problemId(problem.getId())
+        UpdateReviewRequest updateReviewRequest = UpdateReviewRequest.builder().title("새로운제목")
             .build();
-        Long modifierId = createMembers(3).get(1).getId(); // writer 와 다른 member
+        Long modifierId = members.get(1).getId();// writer 와 다른 member
         //then
-        assertThrows(NullPointerException.class, () -> {
-            reviewService.createReview(modifierId, createReviewRequest);
+        assertThrows(IllegalArgumentException.class, () -> {
+            reviewService.patch(modifierId, reviewId, updateReviewRequest);
         }, "작성자와 수정자가 다를 때 예외가 발생해야 합니다.");
 
     }
@@ -309,6 +312,42 @@ class ReviewServiceTest {
         //than
         assertEquals(problemId, result.getProblem().getId());
         assertEquals(1, problem.getReviews().size());
+
+    }
+
+    @Test
+    @DisplayName("리뷰 수정")
+    public void updateContent() {
+
+        //given
+        Long writerId = createMembers(3).get(0).getId();
+        Problem problem = createProblems(writerId, 1).get(0);
+        CreateReviewRequest createReviewRequest = CreateReviewRequest.builder()
+            .contentText("내용").title("제목").tagText("태그").problemId(problem.getId())
+            .build();
+        Long reviewId = reviewService.createReview(writerId, createReviewRequest);
+
+        final String NEW_TITLE = "새로운제목";
+        final String NEW_CONTENT_TEXT = "새로운내용";
+        final String NEW_TAG_TEXT = "새로운,태그들";
+        UpdateReviewRequest updateReviewRequest = UpdateReviewRequest.builder()
+            .title(NEW_TITLE)
+            .contentText(NEW_CONTENT_TEXT)
+            .tagText(NEW_TAG_TEXT)
+            .build();
+
+        //when
+        reviewService.patch(writerId, reviewId, updateReviewRequest);
+        Review result = reviewService.findOne(reviewId);
+
+        //then
+        assertAll(
+            () -> assertEquals(reviewId, result.getId()),
+            () -> assertEquals(NEW_CONTENT_TEXT, result.getContent().getText()),
+            () -> assertEquals(NEW_TITLE, result.getTitle()),
+            () -> assertEquals(NEW_TAG_TEXT, reviewService.getTagText(result.getReviewTags()))
+            );
+
 
     }
 }

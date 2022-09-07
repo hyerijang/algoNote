@@ -1,5 +1,6 @@
 package com.jhr.algoNote.repository;
 
+import com.jhr.algoNote.domain.Review;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +13,10 @@ import org.springframework.stereotype.Repository;
 public class ReviewTagRepository {
     private final EntityManager em;
 
-    public void deleteAllByReviewId(Long reviewId) {
+    public void deleteAllByReview(Review review) {
         String jpql="DELETE FROM ReviewTag where review.id = :reviewId";
-        Query query = em.createQuery(jpql).setParameter("reviewId", reviewId);
+        Query query = em.createQuery(jpql).setParameter("reviewId", review.getId());
         query.executeUpdate();
+        review.getReviewTags().clear();
     }
 }

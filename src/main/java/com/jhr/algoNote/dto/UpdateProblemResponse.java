@@ -26,7 +26,7 @@ public class UpdateProblemResponse {
             .id(problem.getId())
             .title(problem.getTitle())
             .url(problem.getUrl())
-            .site(problem.getSite())
+            .site(problem.getSite().getName())
             .contentText(problem.getContent().getText())
             .tagText(tagText)
             .build();

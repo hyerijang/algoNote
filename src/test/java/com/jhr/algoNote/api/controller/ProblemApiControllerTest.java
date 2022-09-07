@@ -1,9 +1,12 @@
 package com.jhr.algoNote.api.controller;
 
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -11,28 +14,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.jhr.algoNote.domain.tag.ProblemTag;
-import com.jhr.algoNote.domain.tag.Tag;
-import com.jhr.algoNote.dto.CreateProblemResponse;
 import com.jhr.algoNote.config.auth.SecurityConfig;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.content.ProblemContent;
 import com.jhr.algoNote.dto.CreateProblemRequest;
+import com.jhr.algoNote.dto.CreateProblemResponse;
+import com.jhr.algoNote.dto.ProblemResponse;
 import com.jhr.algoNote.dto.UpdateProblemRequest;
 import com.jhr.algoNote.dto.UpdateProblemResponse;
 import com.jhr.algoNote.repository.MemberRepository;
 import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ProblemService;
-import com.jhr.algoNote.service.TagService;
 import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -91,7 +89,6 @@ public class ProblemApiControllerTest {
             .member(member)
             .build();
 
-
         when(problemService.register(Mockito.any(Long.class), Mockito.anyString(),
             Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())
         ).thenReturn(PROBLEM_ID);
@@ -123,6 +120,7 @@ public class ProblemApiControllerTest {
             .andDo(print());
 
     }
+
     @Test
     @WithMockUser(roles = "USER")
     public void 문제_수정() throws Exception {
@@ -134,16 +132,16 @@ public class ProblemApiControllerTest {
         final String UPDATED_TAG_TEXT = "14500,백준,BFS";
 
         UpdateProblemRequest request = UpdateProblemRequest.builder()
-            .title(UPDATED_TITLE).contentText(UPDATED_CONTENT_TEXT).tagText(UPDATED_TAG_TEXT).build();
+            .title(UPDATED_TITLE).contentText(UPDATED_CONTENT_TEXT).tagText(UPDATED_TAG_TEXT)
+            .build();
 
-        problem.patch(UPDATED_TITLE,UPDATED_CONTENT_TEXT,UPDATED_SITE, UPDATED_URL);
+        problem.patch(UPDATED_TITLE, UPDATED_CONTENT_TEXT, UPDATED_SITE, UPDATED_URL);
         UpdateProblemResponse response = UpdateProblemResponse.of(problem, UPDATED_TAG_TEXT);
 
         when(problemService.update(Mockito.any(), Mockito.any())).thenReturn(response);
 
-
         //when
-        mockMvc.perform(patch("/api/problems/"+PROBLEM_ID)
+        mockMvc.perform(patch("/api/problems/" + PROBLEM_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
@@ -158,5 +156,28 @@ public class ProblemApiControllerTest {
 
     }
 
+    @Test
+    @WithMockUser(roles = "USER")
+    public void 문제_조회() throws Exception {
+        //given
+        ArrayList<ProblemResponse> response = new ArrayList<>();
+        response.add(new ProblemResponse(problem));
+        when(problemService.findAll(Mockito.anyInt(), Mockito.anyInt())).thenReturn(response);
+
+        //when
+        mockMvc.perform(get("/api/problems/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .with(csrf())
+                .param("offset","0")
+                .param("limit", "1000")
+                .content(objectMapper.writeValueAsString("request")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data", hasSize(response.size())))
+            .andExpect(jsonPath("$.data[0].id", is(PROBLEM_ID), Long.class))
+            .andDo(print());
+
+    }
 
 }

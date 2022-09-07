@@ -153,17 +153,11 @@ public class ReviewService {
 
 
     @Transactional
-    public Long edit(Long editorId, Long reviewId, UpdateReviewRequest request) {
-
+    public Long patch(Long editorId, Long reviewId, UpdateReviewRequest request) {
         Review review = reviewRepository.findOne(reviewId);
         validateWriterAndEditorAreSame(editorId, review.getMember().getId());
-
-        //태그정보 갱신
-        log.info("form을 통해 입력된 태그 = {}", request.getTagText());
-        boolean isRenewal = updateTagList(request.getTagText(), review);
-        log.debug("태그정보 갱신 = {}", isRenewal);
-        review.update(request.getTitle(), request.getContentText());
-
+        updateTagList(request.getTagText(), review);
+        review.patch(request.getTitle(), request.getContentText());
         return review.getId();
     }
 
@@ -178,7 +172,7 @@ public class ReviewService {
         }
 
         //태그 정보 변경 된 경우
-        reviewTagRepository.deleteAllByReviewId(review.getId());
+        reviewTagRepository.deleteAllByReview(review);
         review.renewalReviewTag(createReviewTagListWithText(tagText));
         return false;
     }

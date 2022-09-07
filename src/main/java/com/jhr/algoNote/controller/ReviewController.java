@@ -111,7 +111,7 @@ public class ReviewController {
         UpdateReviewRequest request = new UpdateReviewRequest(reviewForm.getTitle(),
             reviewForm.getContentText(), reviewForm.getTagText());
 
-        reviewService.edit(member.getId(), reviewId, request);
+        reviewService.patch(member.getId(), reviewId, request);
 
         log.debug("review is updated (reviewId={})", reviewId);
         return "redirect:/problems/{problemId}";

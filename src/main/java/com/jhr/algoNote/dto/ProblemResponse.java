@@ -13,23 +13,24 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ProblemResponse {
 
-    private Long problemId;
-    private String problemTitle;
-    private String problemSite;
-    private String problemUrl;
+    private Long id;
+    private String title;
+    private String site;
+    private String url;
     private String name;
-    private String problemContent;
+    private String contentText;
     //OneToMany
     private List<ProblemTagDto> problemTags;
     private List<ReviewDto> reviews;
 
     public ProblemResponse(Problem problem) {
-        this.problemId = problem.getId();
-        this.problemTitle = problem.getTitle();
-        this.problemSite = problem.getSite();
-        this.problemUrl = problem.getUrl();
+        this.id = problem.getId();
+        this.title = problem.getTitle();
+
+        this.site = problem.getSite().getName();
+        this.url = problem.getUrl();
         this.name = problem.getMember().getName();
-        this.problemContent = problem.getContent().getText();
+        this.contentText = problem.getContent().getText();
         this.problemTags = problem.getProblemTags().stream()
             .map(pt -> new ProblemTagDto(pt.getTag().getName())).collect(toList());
         this.reviews = problem.getReviews().stream().map(r -> new ReviewDto(r.getTitle()))

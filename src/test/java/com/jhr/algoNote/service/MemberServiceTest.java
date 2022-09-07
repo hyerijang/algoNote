@@ -4,14 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.jhr.algoNote.domain.Member;
-import com.jhr.algoNote.domain.Role;
 import com.jhr.algoNote.dto.CreateMemberRequest;
 import com.jhr.algoNote.dto.CreateMemberResponse;
 import com.jhr.algoNote.dto.MemberResponse;
+import com.jhr.algoNote.dto.UpdateMemberRequest;
+import com.jhr.algoNote.dto.UpdateMemberResponse;
 import com.jhr.algoNote.exception.EmailRedundancyException;
 import com.jhr.algoNote.repository.MemberRepository;
 import java.util.List;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,7 +48,7 @@ public class MemberServiceTest {
     public void 메일_중복_예외() throws Exception {
         // given
         CreateMemberRequest request = new CreateMemberRequest(NAME, EMAIL, PICTURE);
-        CreateMemberRequest request2 = new CreateMemberRequest(NAME+"2", EMAIL, PICTURE+"2");
+        CreateMemberRequest request2 = new CreateMemberRequest(NAME + "2", EMAIL, PICTURE + "2");
 
         // when
         memberService.join(request);
@@ -82,7 +82,7 @@ public class MemberServiceTest {
         CreateMemberResponse response = memberService.join(request);
         Member member = memberService.findOne(response.getId());
         // then
-        assertEquals(NAME,member.getName());
+        assertEquals(NAME, member.getName());
     }
 
     @Test
@@ -115,6 +115,39 @@ public class MemberServiceTest {
         assertEquals("수정된사진", findMember.getPicture());
     }
 
+    @Test
+    public void 회원_이메일로_조회() throws Exception {
+        // given
+        CreateMemberRequest request = new CreateMemberRequest(NAME, EMAIL, PICTURE);
+        CreateMemberResponse response = memberService.join(request);
+        // when
+        Member member = memberService.findByEmail(EMAIL);
+        // then
+        assertEquals(NAME, member.getName());
+    }
+
+    @Test
+    public void 존재하지_않는_이메일로_조회() throws Exception {
+        // given
+        String NOT_EXIST_EMAIL = "존재하지않는이메일";
+        // when
+        // then
+        assertThrows(IllegalArgumentException.class, () -> memberService.findByEmail(NOT_EXIST_EMAIL));
+    }
+
+    @Test
+    public void 회원_수정() throws Exception {
+        // given
+        CreateMemberRequest request = new CreateMemberRequest(NAME, EMAIL, PICTURE);
+        Long id = memberService.join(request).getId();
+        // when
+        UpdateMemberResponse response = memberService.updateMember(id,
+            new UpdateMemberRequest("새로운이름", "새로운사진"));
+        Member member = memberService.findOne(id);
+
+        // then
+        assertEquals("새로운이름", member.getName());
+    }
 
 
 }

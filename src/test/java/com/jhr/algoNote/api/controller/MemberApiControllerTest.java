@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -17,6 +18,7 @@ import com.jhr.algoNote.config.auth.SecurityConfig;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.dto.CreateMemberResponse;
 import com.jhr.algoNote.dto.MemberResponse;
+import com.jhr.algoNote.dto.UpdateMemberResponse;
 import com.jhr.algoNote.repository.MemberRepository;
 import com.jhr.algoNote.service.MemberService;
 import java.util.Arrays;
@@ -39,6 +41,7 @@ import org.springframework.test.web.servlet.MockMvc;
     })
 public class MemberApiControllerTest {
 
+
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -50,19 +53,19 @@ public class MemberApiControllerTest {
     private ObjectMapper objectMapper;
 
     private Member member;
-    final Long ID = 1L;
+    final Long MEMBER_ID = 123456789L;
 
     @BeforeEach
     void setUp() {
         member = Member.builder()
-            .id(ID)
+            .id(MEMBER_ID)
             .name("TEST_NAME")
             .picture("TEST_PICTURE")
             .email("TEST_EMAIL")
             .build();
 
         when(memberService.join(Mockito.any(CreateMemberRequest.class)))
-            .thenReturn(new CreateMemberResponse(ID));
+            .thenReturn(new CreateMemberResponse(MEMBER_ID));
     }
 
     @Test
@@ -79,7 +82,7 @@ public class MemberApiControllerTest {
                 .with(csrf())
                 .content(objectMapper.writeValueAsString(createMemberRequest)))
             .andExpect(status().isOk())
-            .andExpect((jsonPath("$.id", is(ID), Long.class)))
+            .andExpect((jsonPath("$.id", is(MEMBER_ID), Long.class)))
             .andDo(print());
 
     }
@@ -106,6 +109,31 @@ public class MemberApiControllerTest {
             .andExpect(jsonPath("$.data", hasSize(response.size())))
             .andExpect(jsonPath("$.data[0].id", is(1L), Long.class))
             .andExpect(jsonPath("$.data[0].name", is("이름1")))
+            .andDo(print());
+        //then
+
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    public void 회원_수정() throws Exception {
+        //given
+        final String NAME = "새로운이름";
+        final String PICTURE = "새로운사진";
+        UpdateMemberResponse response = new UpdateMemberResponse(member.getId(), NAME, PICTURE);
+        when(memberService.updateMember(Mockito.any(),Mockito.any())).thenReturn(response);
+        //when
+        mockMvc.perform(patch("/api/members/"+ MEMBER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content(objectMapper.writeValueAsString(response))
+                .with(csrf())
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(MEMBER_ID), Long.class))
+            .andExpect(jsonPath("$.name", is(NAME)))
+            .andExpect(jsonPath("$.picture", is(PICTURE)))
             .andDo(print());
         //then
 

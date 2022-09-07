@@ -29,6 +29,7 @@ public class ProblemTest {
                 .member(member)
                 .problemTagList(problemTagList)
                 .content(problemContent)
+                .site("BAEKJOON")
                 .build());
     }
 
@@ -53,6 +54,8 @@ public class ProblemTest {
                 .content(problemContent)
                 .build());
     }
+
+
 
 
 }

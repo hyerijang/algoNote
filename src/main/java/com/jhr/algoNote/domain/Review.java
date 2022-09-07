@@ -90,13 +90,13 @@ public class Review extends BaseTimeEntity {
     }
 
     //== 비즈니스 로직==//
-    public void update(String title) {
-        this.title = title;
-    }
-
-    public void update(String title, String contentText) {
-        this.title = title;
-        this.content.updateText(contentText);
+    public void patch(String title, String contentText) {
+        if (title != null) {
+            this.title = title;
+        }
+        if (contentText != null) {
+            this.content.updateText(contentText);
+        }
     }
 
     public void renewalReviewTag(List<ReviewTag> reviewTags) {

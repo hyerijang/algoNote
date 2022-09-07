@@ -56,7 +56,7 @@ public class ProblemController {
     }
 
     @PostMapping(CREAT)
-    public String creat(@Valid ProblemForm problemForm, BindingResult result,
+    public String create(@Valid ProblemForm problemForm, BindingResult result,
         @LoginUser SessionUser user) {
 
         if (result.hasErrors()) {
@@ -102,7 +102,7 @@ public class ProblemController {
         form.setUrl(problem.getUrl());
         form.setContentText(problem.getContent().getText());
         form.setTagText(tagText);
-        form.setSite(problem.getSite());
+        form.setSite(problem.getSite().getName());
         model.addAttribute("problemForm", form);
         //사이트 정보
         model.addAttribute("sites", Site.values());
@@ -157,7 +157,7 @@ public class ProblemController {
         form.setUrl(problem.getUrl());
         form.setContentText(problem.getContent().getText());
         form.setTagText(tagText);
-        form.setSite(problem.getSite());
+        form.setSite(problem.getSite().getName());
 
         //리뷰정보
         Map<Long, String> reviewInfo = new HashMap<>();

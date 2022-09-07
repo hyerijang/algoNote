@@ -3,6 +3,7 @@ package com.jhr.algoNote.repository.query;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.QMember;
 import com.jhr.algoNote.domain.QProblem;
+import com.jhr.algoNote.domain.Site;
 import com.jhr.algoNote.domain.content.QProblemContent;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -27,7 +28,8 @@ public class ProblemQueryRepository {
     QProblemContent problemContent = QProblemContent.problemContent;
 
 
-    public List<Problem> search(int offset, int limit, ProblemSearch problemSearch) { //TODO : offset, limit 추가
+    public List<Problem> search(int offset, int limit,
+        ProblemSearch problemSearch) { //TODO : offset, limit 추가
 
         BooleanBuilder builder = new BooleanBuilder();
         // == 조회 ==
@@ -62,7 +64,7 @@ public class ProblemQueryRepository {
         if (site == null || site.isBlank()) {
             return null;
         }
-        return problem.site.eq(site);
+        return problem.site.eq(Site.valueOf(site));
     }
 
     private BooleanExpression emailEq(String email) {

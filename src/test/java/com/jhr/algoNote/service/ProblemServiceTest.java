@@ -8,9 +8,12 @@ import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.dto.CreateMemberRequest;
 import com.jhr.algoNote.dto.CreateProblemRequest;
+import com.jhr.algoNote.dto.ProblemResponse;
 import com.jhr.algoNote.dto.UpdateProblemRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
+import com.jhr.algoNote.repository.query.ProblemQueryRepository;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,38 +34,44 @@ class ProblemServiceTest {
     @Autowired
     ProblemService problemService;
 
+    @Autowired
+    ProblemQueryRepository problemQueryRepository;
+
     Member member = null;
-    CreateProblemRequest request = null;
+    CreateProblemRequest createProblemRequest = null;
     String TITLE = "TITLE";
     String CONTENT_TEXT = "CONTENT_TEXT";
     String TAGTEXT = "사과,오렌지,딸기,오렌지,사과";
 
-    @BeforeEach
-    private void createProblems() {
-        final String EMAIL = "email@gmail.com";
-        final String NAME = "NAME";
-        final String PICTURE = "PICTURE";
+    Long PROBLEMS_SIZE = -1L;
 
-        CreateMemberRequest createMemberRequest = new CreateMemberRequest(NAME, EMAIL, PICTURE);
+    @BeforeEach
+    private void init() {
+        CreateMemberRequest createMemberRequest = new CreateMemberRequest("NAME", "EMAIL",
+            "PICTURE");
         member = memberService.findOne(memberService.join(createMemberRequest).getId());
 
-        problemService.register(member.getId(), "오픈 채팅방", "content", "", "백준",
-            "https://www.acmicpc.net/");
-        problemService.register(member.getId(), "문자열 압축", "문자열을 압축하자", "", "프로그래머스",
-            "https://programmers.co.kr/learn/challenges");
-        problemService.register(member.getId(), "크레인 인형뽑기 게임",
-            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다.", "", "프로그래머스",
-            "https://programmers.co.kr/learn/courses/30/lessons/64061");
-        problemService.register(member.getId(), "BFS",
-            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다", "", null, null);
-
-
-        request = CreateProblemRequest.builder()
+        PROBLEMS_SIZE =  createProblems();
+        createProblemRequest = CreateProblemRequest.builder()
             .memberId(member.getId())
             .title(TITLE)
             .contentText(CONTENT_TEXT)
             .tagText(TAGTEXT)
             .build();
+    }
+
+    private Long createProblems() {
+        problemService.register(member.getId(), "오픈 채팅방", "content", "", "BAEKJOON",
+            "https://www.acmicpc.net/");
+        problemService.register(member.getId(), "문자열 압축", "문자열을 압축하자", "", "PROGRAMMERS",
+            "https://programmers.co.kr/learn/challenges");
+        problemService.register(member.getId(), "크레인 인형뽑기 게임",
+            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다.", "", "PROGRAMMERS",
+            "https://programmers.co.kr/learn/courses/30/lessons/64061");
+        problemService.register(member.getId(), "BFS",
+            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다", "", null, null);
+
+        return 4L;
     }
 
 
@@ -71,7 +80,7 @@ class ProblemServiceTest {
     void register() {
         //given
         //when
-        Long savedProblemId = problemService.register(request);
+        Long savedProblemId = problemService.register(createProblemRequest);
 
         //than
         Problem result = problemRepository.findById(savedProblemId);
@@ -91,7 +100,8 @@ class ProblemServiceTest {
         String title = "문제 제목";
         String content = "문제 내용";
         //when
-        Long savedProblemId = problemService.register(member.getId(), title, content, "", "백준",
+        Long savedProblemId = problemService.register(member.getId(), title, content, "",
+            "LEETCODE",
             "https://www.acmicpc.net/");
 
         //than
@@ -99,7 +109,7 @@ class ProblemServiceTest {
         assertAll(
             () -> assertEquals(savedProblemId, result.getId()),
             () -> assertEquals(content, result.getContent().getText()),
-            () -> assertEquals("백준", result.getSite())
+            () -> assertEquals("LEETCODE", result.getSite().getCode())
         );
     }
 
@@ -125,7 +135,8 @@ class ProblemServiceTest {
         //given
         String title = "title";
         String content = "sample text";
-        CreateProblemRequest request = CreateProblemRequest.builder().title(title).contentText(content).memberId(member.getId()).build();
+        CreateProblemRequest request = CreateProblemRequest.builder().title(title)
+            .contentText(content).memberId(member.getId()).build();
 
         //when
         Long savedProblemId = problemService.register(request);
@@ -141,7 +152,7 @@ class ProblemServiceTest {
     @Test
     void 문제_ID로_조회() {
         //given
-        Long savedProblemId = problemService.register(request);
+        Long savedProblemId = problemService.register(createProblemRequest);
 
         //when
         Problem result = problemService.findOne(savedProblemId);
@@ -156,7 +167,7 @@ class ProblemServiceTest {
     @Test
     void 문제_수정() {
         //given
-        Long savedProblemId = problemService.register(request);
+        Long savedProblemId = problemService.register(createProblemRequest);
 
         final String TITLE = "새로운제목";
         final String TAGTEXT = "DP,배열,알고리즘,새로운태그";
@@ -169,7 +180,7 @@ class ProblemServiceTest {
             .build();
 
         //when
-        Long updatedProblemId = problemService.update(member.getId(),savedProblemId, dto2);
+        Long updatedProblemId = problemService.update(member.getId(), savedProblemId, dto2);
 
         //than
         assertEquals(savedProblemId, updatedProblemId);
@@ -191,7 +202,7 @@ class ProblemServiceTest {
             throw new RuntimeException(e);
         }
 
-        Long savedProblemId = problemService.register(request);
+        Long savedProblemId = problemService.register(createProblemRequest);
 
         //when
         Problem problem = problemRepository.findById(savedProblemId);
@@ -208,7 +219,7 @@ class ProblemServiceTest {
     void 문제의_태그리스트를_텍스트로_변경() {
 
         // given
-        Long savedProblemId = problemService.register(request);
+        Long savedProblemId = problemService.register(createProblemRequest);
         // when
         Problem problem = problemRepository.findById(savedProblemId);
         // then
@@ -220,7 +231,7 @@ class ProblemServiceTest {
     @Test
     void 문제_태그_수정() {
         //given
-        Long savedProblemId = problemService.register(request);
+        Long savedProblemId = problemService.register(createProblemRequest);
         final String TAGTEXT = "DP,배열,알고리즘,새로운태그";
         final int TAGSIZE = 4;
         final String NEW_TITLE = "";
@@ -233,7 +244,8 @@ class ProblemServiceTest {
             .build();
 
         //when
-        Long updatedProblemId = problemService.update(member.getId(), savedProblemId, updateRequest);
+        Long updatedProblemId = problemService.update(member.getId(), savedProblemId,
+            updateRequest);
         Problem updatedProblem = problemService.findOne(updatedProblemId);
 
         //than
@@ -254,14 +266,15 @@ class ProblemServiceTest {
     @DisplayName("연관관계 메서드 테스트")
     void relationMethod() {
         //given
-        Problem entity = problemService.findOne(problemService.register(request));
+        Problem entity = problemService.findOne(problemService.register(createProblemRequest));
         //when
         UpdateProblemRequest updateRequest = UpdateProblemRequest.builder()
             .contentText("edit")
             .tagText("edit")
             .build();
 
-        Problem saved = problemService.findOne(problemService.update(member.getId(),entity.getId(), updateRequest));
+        Problem saved = problemService.findOne(
+            problemService.update(member.getId(), entity.getId(), updateRequest));
 
         //than
         assertAll(
@@ -272,4 +285,17 @@ class ProblemServiceTest {
     }
 
 
+    @Test
+    @DisplayName("List<ProblemResponse> 를 반환하는 findAll() 테스트")
+    void 조회테스트() {
+        //given
+
+        //when
+        List<ProblemResponse> result = problemService.findAll(0, 100);
+
+        //then
+        assertAll(
+            () -> assertEquals(PROBLEMS_SIZE, result.size()));
+
+    }
 }

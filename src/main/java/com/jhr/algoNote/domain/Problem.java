@@ -9,6 +9,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -40,8 +42,8 @@ public class Problem extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-
-    private String site;
+    @Enumerated(EnumType.STRING)
+    private Site site;
     private String url;
 
 
@@ -85,7 +87,7 @@ public class Problem extends BaseTimeEntity {
         problem.id = id;
         problem.title = title;
         problem.url = url;
-        problem.site = site;
+        problem.site = site == null ? Site.NO : Site.valueOf(site);
         problem.setMember(member);
         problem.setContent(content);
         problem.renewalProblemTag(problemTagList);
@@ -94,18 +96,6 @@ public class Problem extends BaseTimeEntity {
 
     //== 비즈니스 로직 ==//
 
-    public void patch(String title, String site, String url) {
-        if (!isEmptyOrNull(title)) {
-            this.title = title;
-        }
-        if (!isEmptyOrNull(site)) {
-            this.site = site;
-        }
-        if (!isEmptyOrNull(url)) {
-            this.url = url;
-        }
-
-    }
 
     public void patch(String title, String contentText,  String site, String url) {
         if (!isEmptyOrNull(title)) {
@@ -116,7 +106,7 @@ public class Problem extends BaseTimeEntity {
             this.getContent().editText(contentText);
         }
         if (!isEmptyOrNull(site)) {
-            this.site = site;
+            this.site = Site.valueOf(site);
         }
         if (!isEmptyOrNull(url)) {
             this.url = url;

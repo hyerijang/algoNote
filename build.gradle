@@ -92,7 +92,8 @@ jacocoTestReport {
                             "**/*dto*",
                             "**/*exception*",
                             "**/*Application.*",
-                            "**/*web*"
+                            "**/*web*",
+                            "**/*form*"
                     ] + Qdomains)
                 })
         )

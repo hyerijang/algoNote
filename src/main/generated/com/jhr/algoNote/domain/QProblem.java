@@ -40,7 +40,7 @@ public class QProblem extends EntityPathBase<Problem> {
 
     public final ListPath<Review, QReview> reviews = this.<Review, QReview>createList("reviews", Review.class, QReview.class, PathInits.DIRECT2);
 
-    public final StringPath site = createString("site");
+    public final EnumPath<Site> site = createEnum("site", Site.class);
 
     public final StringPath title = createString("title");
 

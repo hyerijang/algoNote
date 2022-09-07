@@ -37,12 +37,12 @@ class ProblemQueryServiceTest {
         CreateMemberRequest request = new CreateMemberRequest(NAME, EMAIL, PICTURE);
         member = memberService.findOne(memberService.join(request).getId());
 
-        problemService.register(member.getId(), "오픈 채팅방", "content", "", "백준",
+        problemService.register(member.getId(), "오픈 채팅방", "content", "", "BAEKJOON",
             "https://www.acmicpc.net/");
-        problemService.register(member.getId(), "문자열 압축", "문자열을 압축하자", "", "프로그래머스",
+        problemService.register(member.getId(), "문자열 압축", "문자열을 압축하자", "", "PROGRAMMERS",
             "https://programmers.co.kr/learn/challenges");
         problemService.register(member.getId(), "크레인 인형뽑기 게임",
-            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다.", "", "프로그래머스",
+            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다.", "", "PROGRAMMERS",
             "https://programmers.co.kr/learn/courses/30/lessons/64061");
         problemService.register(member.getId(), "BFS",
             "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다", "tag1, tag2,tag3", null, null);
@@ -54,7 +54,7 @@ class ProblemQueryServiceTest {
         //when
         ProblemSearch problemSearch = ProblemSearch.builder()
             .memberEmail(member.getEmail())
-            .site("백준")
+            .site("BAEKJOON")
             .build();
 
         List<Problem> result = problemService.search(0, 100, problemSearch);
@@ -82,8 +82,7 @@ class ProblemQueryServiceTest {
         assertAll(
             () -> assertEquals(1, result.size()),
             () -> assertEquals(result.get(0).getMember().getId(), member.getId(),
-                "자신의 id와 동일해야한다."),
-            () -> assertEquals(result.get(0).getSite(), "백준")
+                "자신의 id와 동일해야한다.")
         );
     }
 

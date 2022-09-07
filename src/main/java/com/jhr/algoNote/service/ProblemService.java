@@ -128,7 +128,7 @@ public class ProblemService {
         Problem problem = problemRepository.findById(problemId);
 
         if (!equals(tagText, getTagText(problem.getProblemTags()))) {
-            problemTagRepository.deleteAllByProblemId(problem);
+            problemTagRepository.deleteAllByProblem(problem);
             problem.renewalProblemTag(createProblemTagListWithText(tagText));
             return true;
         }
