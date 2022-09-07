@@ -128,6 +128,7 @@ public class Problem extends BaseTimeEntity {
      * @param problemTagList 추가할 ProblemTag의 List
      */
     public void renewalProblemTag(List<ProblemTag> problemTagList) {
+        this.problemTags.clear();
         if (problemTagList == null) {
             return;
         }

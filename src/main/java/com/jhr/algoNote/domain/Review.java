@@ -100,6 +100,10 @@ public class Review extends BaseTimeEntity {
     }
 
     public void renewalReviewTag(List<ReviewTag> reviewTags) {
+        this.reviewTags.clear();
+        if (reviewTags == null) {
+            return;
+        }
         for (ReviewTag rt : reviewTags) {
             this.addReviewTag(rt);
         }

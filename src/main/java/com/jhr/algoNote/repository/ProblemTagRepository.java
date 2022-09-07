@@ -1,6 +1,5 @@
 package com.jhr.algoNote.repository;
 
-import com.jhr.algoNote.domain.Problem;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +14,9 @@ public class ProblemTagRepository {
     private final EntityManager em;
 
 
-    public void deleteAllByProblem(Problem problem) {
+    public void deleteAllByProblemId(Long problemId) {
         String jpql = "DELETE FROM ProblemTag where problem.id = :problemid";
-        Query query = em.createQuery(jpql).setParameter("problemid", problem.getId());
+        Query query = em.createQuery(jpql).setParameter("problemid", problemId);
         query.executeUpdate(); //벌크 연산 :데이터베이스에 직접 쿼리 (엔티티에 반영 X)
-        problem.getProblemTags().clear(); //엔티티 clear
     }
 }

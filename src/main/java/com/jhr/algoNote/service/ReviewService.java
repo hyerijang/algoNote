@@ -172,7 +172,7 @@ public class ReviewService {
         }
 
         //태그 정보 변경 된 경우
-        reviewTagRepository.deleteAllByReview(review);
+        reviewTagRepository.deleteAllByReviewId(review.getId());
         review.renewalReviewTag(createReviewTagListWithText(tagText));
         return false;
     }

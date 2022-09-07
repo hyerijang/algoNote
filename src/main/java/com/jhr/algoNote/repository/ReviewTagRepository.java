@@ -13,10 +13,9 @@ import org.springframework.stereotype.Repository;
 public class ReviewTagRepository {
     private final EntityManager em;
 
-    public void deleteAllByReview(Review review) {
+    public void deleteAllByReviewId(Long reviewId) {
         String jpql="DELETE FROM ReviewTag where review.id = :reviewId";
-        Query query = em.createQuery(jpql).setParameter("reviewId", review.getId());
+        Query query = em.createQuery(jpql).setParameter("reviewId", reviewId);
         query.executeUpdate();
-        review.getReviewTags().clear();
     }
 }
