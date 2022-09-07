@@ -163,14 +163,13 @@ class ProblemServiceTest {
         final int TAGSIZE = 4;
         final String CONTENT = "hello world";
         UpdateProblemRequest dto2 = UpdateProblemRequest.builder()
-            .id(savedProblemId)
             .title(TITLE)
             .tagText(TAGTEXT)
             .contentText(CONTENT)
             .build();
 
         //when
-        Long updatedProblemId = problemService.edit(member.getId(), dto2);
+        Long updatedProblemId = problemService.update(member.getId(),savedProblemId, dto2);
 
         //than
         assertEquals(savedProblemId, updatedProblemId);
@@ -228,14 +227,13 @@ class ProblemServiceTest {
         final String NEW_CONTENT = "abc";
 
         UpdateProblemRequest updateRequest = UpdateProblemRequest.builder()
-            .id(savedProblemId)
             .tagText(TAGTEXT)
             .title(NEW_TITLE)
             .contentText(NEW_CONTENT)
             .build();
 
         //when
-        Long updatedProblemId = problemService.edit(member.getId(), updateRequest);
+        Long updatedProblemId = problemService.update(member.getId(), savedProblemId, updateRequest);
         Problem updatedProblem = problemService.findOne(updatedProblemId);
 
         //than
@@ -259,12 +257,11 @@ class ProblemServiceTest {
         Problem entity = problemService.findOne(problemService.register(request));
         //when
         UpdateProblemRequest updateRequest = UpdateProblemRequest.builder()
-            .id(entity.getId())
             .contentText("edit")
             .tagText("edit")
             .build();
 
-        Problem saved = problemService.findOne(problemService.edit(member.getId(), updateRequest));
+        Problem saved = problemService.findOne(problemService.update(member.getId(),entity.getId(), updateRequest));
 
         //than
         assertAll(

@@ -72,7 +72,7 @@ public class MemberApiControllerTest {
         CreateMemberRequest createMemberRequest = new CreateMemberRequest("TEST_NAME","TEST_EMAIL", "TEST_PICTURE");
 
         //when
-        mockMvc.perform(post("/api/members/new")
+        mockMvc.perform(post("/api/members")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")

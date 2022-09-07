@@ -17,7 +17,7 @@ public class UpdateProblemRequest {
     private String contentText;
     private String tagText;
     private String site;
-    private Long id;
+
 
 }
 

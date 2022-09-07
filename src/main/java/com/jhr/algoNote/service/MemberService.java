@@ -6,7 +6,7 @@ import com.jhr.algoNote.dto.CreateMemberRequest;
 import com.jhr.algoNote.dto.CreateMemberResponse;
 import com.jhr.algoNote.dto.MemberResponse;
 import com.jhr.algoNote.dto.UpdateMemberRequest;
-import com.jhr.algoNote.dto.updateMemberResponse;
+import com.jhr.algoNote.dto.UpdateMemberResponse;
 import com.jhr.algoNote.exception.EmailRedundancyException;
 import com.jhr.algoNote.repository.MemberRepository;
 import java.util.List;
@@ -95,13 +95,13 @@ public class MemberService {
     }
 
     @Transactional
-    public updateMemberResponse updateMember(Long id,
+    public UpdateMemberResponse updateMember(Long id,
         UpdateMemberRequest request) {
         Member member = memberRepository.findById(id);
         member.updateName(request.getName());
         member.updatePicture(request.getPicture());
 
-        return new updateMemberResponse(id, request.getName(),
+        return new UpdateMemberResponse(id, request.getName(),
             request.getPicture());
     }
 

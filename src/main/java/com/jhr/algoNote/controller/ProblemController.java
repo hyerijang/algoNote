@@ -125,10 +125,9 @@ public class ProblemController {
             .url(problemForm.getUrl())
             .tagText(problemForm.getTagText())
             .site(problemForm.getSite())
-            .id(problemForm.getId())
             .build();
 
-        problemService.edit(member.getId(), dto);
+        problemService.update(member.getId(),problemForm.getId(), dto);
         return "redirect:/problems";
     }
 

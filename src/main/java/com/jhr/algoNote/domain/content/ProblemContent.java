@@ -47,6 +47,8 @@ public class ProblemContent {
     }
 
     public void editText(String contentText) {
-        this.text = contentText;
+        if (contentText != null) {
+            this.text = contentText;
+        }
     }
 }

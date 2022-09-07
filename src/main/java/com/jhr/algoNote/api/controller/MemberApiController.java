@@ -5,7 +5,7 @@ import com.jhr.algoNote.dto.CreateMemberRequest;
 import com.jhr.algoNote.dto.CreateMemberResponse;
 import com.jhr.algoNote.dto.Result;
 import com.jhr.algoNote.dto.UpdateMemberRequest;
-import com.jhr.algoNote.dto.updateMemberResponse;
+import com.jhr.algoNote.dto.UpdateMemberResponse;
 import com.jhr.algoNote.service.MemberService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,14 +27,14 @@ public class MemberApiController {
 
     private final MemberService memberService;
 
-    @PostMapping("/new")
+    @PostMapping
     public CreateMemberResponse create(
         @RequestBody @Valid CreateMemberRequest createMemberRequest) {
         return memberService.join(createMemberRequest);
     }
 
     @PatchMapping("/{id}")
-    public updateMemberResponse update(
+    public UpdateMemberResponse update(
         @PathVariable Long id,
         @RequestBody @Valid UpdateMemberRequest updateMemberRequest) {
         return memberService.updateMember(id, updateMemberRequest);

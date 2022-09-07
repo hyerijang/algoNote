@@ -80,8 +80,9 @@ public class Problem extends BaseTimeEntity {
     @Builder
     public static Problem createProblem(@NonNull Member member, @NonNull String title,
         @NonNull ProblemContent content,
-        String site, String url, List<ProblemTag> problemTagList) {
+        String site, String url, List<ProblemTag> problemTagList, Long id) {
         Problem problem = new Problem();
+        problem.id = id;
         problem.title = title;
         problem.url = url;
         problem.site = site;
@@ -93,14 +94,43 @@ public class Problem extends BaseTimeEntity {
 
     //== 비즈니스 로직 ==//
 
-    /**
-     * 문제 수정
-     */
-    public void update(String title, String site, String url) {
-        this.title = title;
-        this.site = site;
-        this.url = url;
+    public void patch(String title, String site, String url) {
+        if (!isEmptyOrNull(title)) {
+            this.title = title;
+        }
+        if (!isEmptyOrNull(site)) {
+            this.site = site;
+        }
+        if (!isEmptyOrNull(url)) {
+            this.url = url;
+        }
+
     }
+
+    public void patch(String title, String contentText,  String site, String url) {
+        if (!isEmptyOrNull(title)) {
+            this.title = title;
+        }
+        if (!isEmptyOrNull(contentText))
+        {
+            this.getContent().editText(contentText);
+        }
+        if (!isEmptyOrNull(site)) {
+            this.site = site;
+        }
+        if (!isEmptyOrNull(url)) {
+            this.url = url;
+        }
+
+    }
+
+    private static boolean isEmptyOrNull(String str) {
+        if (str == null) {
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * problemTag를 비우고 새로운 ProblemTag들 추가

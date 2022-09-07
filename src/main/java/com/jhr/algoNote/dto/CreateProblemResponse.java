@@ -2,8 +2,6 @@ package com.jhr.algoNote.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class CreateProblemResponse {
 
-    private Long Id;
+    private Long id;
     private String title;
     private Long memberId;
 
