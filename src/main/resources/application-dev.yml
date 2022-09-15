@@ -23,4 +23,4 @@ decorator:
 # 로그 레벨
 logging:
   level:
-    root: debug
+    root: info
