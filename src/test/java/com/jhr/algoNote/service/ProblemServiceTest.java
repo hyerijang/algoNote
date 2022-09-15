@@ -1,9 +1,5 @@
 package com.jhr.algoNote.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.dto.CreateMemberRequest;
@@ -12,14 +8,20 @@ import com.jhr.algoNote.dto.ProblemResponse;
 import com.jhr.algoNote.dto.UpdateProblemRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
 import com.jhr.algoNote.repository.query.ProblemQueryRepository;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Transactional
@@ -37,6 +39,9 @@ class ProblemServiceTest {
     @Autowired
     ProblemQueryRepository problemQueryRepository;
 
+    @Autowired
+    EntityManager entityManager;
+
     Member member = null;
     CreateProblemRequest createProblemRequest = null;
     String TITLE = "TITLE";
@@ -48,28 +53,28 @@ class ProblemServiceTest {
     @BeforeEach
     private void init() {
         CreateMemberRequest createMemberRequest = new CreateMemberRequest("NAME", "EMAIL",
-            "PICTURE");
+                "PICTURE");
         member = memberService.findOne(memberService.join(createMemberRequest).getId());
 
-        PROBLEMS_SIZE =  createProblems();
+        PROBLEMS_SIZE = createProblems();
         createProblemRequest = CreateProblemRequest.builder()
-            .memberId(member.getId())
-            .title(TITLE)
-            .contentText(CONTENT_TEXT)
-            .tagText(TAGTEXT)
-            .build();
+                .memberId(member.getId())
+                .title(TITLE)
+                .contentText(CONTENT_TEXT)
+                .tagText(TAGTEXT)
+                .build();
     }
 
     private Long createProblems() {
         problemService.register(member.getId(), "오픈 채팅방", "content", "", "BAEKJOON",
-            "https://www.acmicpc.net/");
+                "https://www.acmicpc.net/");
         problemService.register(member.getId(), "문자열 압축", "문자열을 압축하자", "", "PROGRAMMERS",
-            "https://programmers.co.kr/learn/challenges");
+                "https://programmers.co.kr/learn/challenges");
         problemService.register(member.getId(), "크레인 인형뽑기 게임",
-            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다.", "", "PROGRAMMERS",
-            "https://programmers.co.kr/learn/courses/30/lessons/64061");
+                "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다.", "", "PROGRAMMERS",
+                "https://programmers.co.kr/learn/courses/30/lessons/64061");
         problemService.register(member.getId(), "BFS",
-            "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다", "", null, null);
+                "게임개발자인 \"죠르디\"는 크레인 인형뽑기 기계를 모바일 게임으로 만들려고 합니다", "", null, null);
 
         return 4L;
     }
@@ -81,14 +86,14 @@ class ProblemServiceTest {
         //given
         //when
         Long savedProblemId = problemService.register(createProblemRequest);
-
         //than
         Problem result = problemRepository.findById(savedProblemId);
         assertAll(
-            () -> assertEquals(CONTENT_TEXT, result.getContent().getText()),
-            () -> assertEquals(TITLE, result.getTitle()),
-            () -> assertEquals(savedProblemId, result.getId())
+                () -> assertEquals(CONTENT_TEXT, result.getContent().getText()),
+                () -> assertEquals(TITLE, result.getTitle()),
+                () -> assertEquals(savedProblemId, result.getId())
         );
+
 
     }
 
@@ -101,15 +106,15 @@ class ProblemServiceTest {
         String content = "문제 내용";
         //when
         Long savedProblemId = problemService.register(member.getId(), title, content, "",
-            "LEETCODE",
-            "https://www.acmicpc.net/");
+                "LEETCODE",
+                "https://www.acmicpc.net/");
 
         //than
         Problem result = problemRepository.findById(savedProblemId);
         assertAll(
-            () -> assertEquals(savedProblemId, result.getId()),
-            () -> assertEquals(content, result.getContent().getText()),
-            () -> assertEquals("LEETCODE", result.getSite().getCode())
+                () -> assertEquals(savedProblemId, result.getId()),
+                () -> assertEquals(content, result.getContent().getText()),
+                () -> assertEquals("LEETCODE", result.getSite().getCode())
         );
     }
 
@@ -118,7 +123,7 @@ class ProblemServiceTest {
     void 한_문제에_같은_태그를_여러개_등록_가능() {
         //given
         Long savedProblemId = problemService.register(member.getId(), "title", "sample text",
-            "그리디 그리디 병합정렬", null, null);
+                "그리디 그리디 병합정렬", null, null);
 
         //than
         Problem result = problemRepository.findById(savedProblemId);
@@ -136,7 +141,7 @@ class ProblemServiceTest {
         String title = "title";
         String content = "sample text";
         CreateProblemRequest request = CreateProblemRequest.builder().title(title)
-            .contentText(content).memberId(member.getId()).build();
+                .contentText(content).memberId(member.getId()).build();
 
         //when
         Long savedProblemId = problemService.register(request);
@@ -144,8 +149,8 @@ class ProblemServiceTest {
         //than
         Problem result = problemRepository.findById(savedProblemId);
         assertAll(
-            () -> assertEquals(content, result.getContent().getText()),
-            () -> assertEquals(savedProblemId, result.getId()));
+                () -> assertEquals(content, result.getContent().getText()),
+                () -> assertEquals(savedProblemId, result.getId()));
 
     }
 
@@ -158,9 +163,9 @@ class ProblemServiceTest {
         Problem result = problemService.findOne(savedProblemId);
         //than
         assertAll(
-            () -> assertEquals(CONTENT_TEXT, result.getContent().getText()),
-            () -> assertEquals(TITLE, result.getTitle()),
-            () -> assertEquals(savedProblemId, result.getId()));
+                () -> assertEquals(CONTENT_TEXT, result.getContent().getText()),
+                () -> assertEquals(TITLE, result.getTitle()),
+                () -> assertEquals(savedProblemId, result.getId()));
 
     }
 
@@ -174,10 +179,13 @@ class ProblemServiceTest {
         final int TAGSIZE = 4;
         final String CONTENT = "hello world";
         UpdateProblemRequest dto2 = UpdateProblemRequest.builder()
-            .title(TITLE)
-            .tagText(TAGTEXT)
-            .contentText(CONTENT)
-            .build();
+                .title(TITLE)
+                .tagText(TAGTEXT)
+                .contentText(CONTENT)
+                .build();
+
+        entityManager.flush();
+        entityManager.clear();
 
         //when
         Long updatedProblemId = problemService.update(member.getId(), savedProblemId, dto2);
@@ -187,9 +195,9 @@ class ProblemServiceTest {
 
         Problem updatedProblem = problemService.findOne(savedProblemId);
         assertAll(
-            () -> assertEquals(TITLE, updatedProblem.getTitle()),
-            () -> assertEquals(CONTENT, updatedProblem.getContent().getText()),
-            () -> assertEquals(TAGSIZE, updatedProblem.getProblemTags().size()));
+                () -> assertEquals(TITLE, updatedProblem.getTitle()),
+                () -> assertEquals(CONTENT, updatedProblem.getContent().getText()),
+                () -> assertEquals(TAGSIZE, updatedProblem.getProblemTags().size()));
     }
 
     @Test
@@ -209,8 +217,8 @@ class ProblemServiceTest {
 
         //then
         assertAll(
-            () -> assertThat(problem.getCreatedDate()).isAfter(now),
-            () -> assertThat(problem.getModifiedDate()).isAfter(now)
+                () -> assertThat(problem.getCreatedDate()).isAfter(now),
+                () -> assertThat(problem.getModifiedDate()).isAfter(now)
         );
 
     }
@@ -232,58 +240,34 @@ class ProblemServiceTest {
     void 문제_태그_수정() {
         //given
         Long savedProblemId = problemService.register(createProblemRequest);
+
         final String TAGTEXT = "DP,배열,알고리즘,새로운태그";
         final int TAGSIZE = 4;
         final String NEW_TITLE = "";
         final String NEW_CONTENT = "abc";
 
         UpdateProblemRequest updateRequest = UpdateProblemRequest.builder()
-            .tagText(TAGTEXT)
-            .title(NEW_TITLE)
-            .contentText(NEW_CONTENT)
-            .build();
+                .tagText(TAGTEXT)
+                .title(NEW_TITLE)
+                .contentText(NEW_CONTENT)
+                .build();
+
+        entityManager.flush();
+        entityManager.clear();
 
         //when
         Long updatedProblemId = problemService.update(member.getId(), savedProblemId,
-            updateRequest);
+                updateRequest);
         Problem updatedProblem = problemService.findOne(updatedProblemId);
 
         //than
         assertAll(
-            () -> assertEquals(savedProblemId, updatedProblemId),
-            () -> assertEquals(NEW_TITLE, updatedProblem.getTitle()),
-            () -> assertEquals(NEW_CONTENT, updatedProblem.getContent().getText()),
-            () -> assertEquals(TAGSIZE, updatedProblem.getProblemTags().size()));
+                () -> assertEquals(NEW_TITLE, updatedProblem.getTitle()),
+                () -> assertEquals(NEW_CONTENT, updatedProblem.getContent().getText()),
+                () -> assertEquals(TAGSIZE, updatedProblem.getProblemTags().size()));
 
 
     }
-
-
-    /**
-     * Problem 객체의 연관 메서드인 addProblemTag, setContent 가 제대로 동작하는지 테스트
-     */
-    @Test
-    @DisplayName("연관관계 메서드 테스트")
-    void relationMethod() {
-        //given
-        Problem entity = problemService.findOne(problemService.register(createProblemRequest));
-        //when
-        UpdateProblemRequest updateRequest = UpdateProblemRequest.builder()
-            .contentText("edit")
-            .tagText("edit")
-            .build();
-
-        Problem saved = problemService.findOne(
-            problemService.update(member.getId(), entity.getId(), updateRequest));
-
-        //than
-        assertAll(
-            () -> assertEquals(saved.getProblemTags().size(), entity.getProblemTags().size()),
-            () -> assertEquals(saved.getContent().getText(), entity.getContent().getText()));
-
-
-    }
-
 
     @Test
     @DisplayName("List<ProblemResponse> 를 반환하는 findAll() 테스트")
@@ -295,7 +279,7 @@ class ProblemServiceTest {
 
         //then
         assertAll(
-            () -> assertEquals(PROBLEMS_SIZE, result.size()));
+                () -> assertEquals(PROBLEMS_SIZE, result.size()));
 
     }
 }

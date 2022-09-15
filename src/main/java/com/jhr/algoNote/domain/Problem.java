@@ -43,7 +43,7 @@ public class Problem extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
     @Enumerated(EnumType.STRING)
-    private Site site;
+    private Site site = Site.NO;
     private String url;
 
 
@@ -128,7 +128,6 @@ public class Problem extends BaseTimeEntity {
      * @param problemTagList 추가할 ProblemTag의 List
      */
     public void renewalProblemTag(List<ProblemTag> problemTagList) {
-        this.problemTags.clear();
         if (problemTagList == null) {
             return;
         }

@@ -17,6 +17,8 @@ import com.jhr.algoNote.repository.query.ProblemQueryRepository;
 import com.jhr.algoNote.repository.query.ProblemSearch;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.jhr.algoNote.repository.query.ProblemTagQueryRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,7 @@ public class ProblemService {
     private final ProblemTagRepository problemTagRepository;
     private final ProblemQueryRepository problemQueryRepository;
 
+    private final ProblemTagQueryRepository problemTagQueryRepository;
 
     @Deprecated
     @Transactional
@@ -120,20 +123,8 @@ public class ProblemService {
             throw new IllegalArgumentException("작성자가 아닙니다.");
         }
     }
+    
 
-
-    @Transactional
-    protected boolean updateTagList(Long problemId, String tagText) {
-
-        Problem problem = problemRepository.findById(problemId);
-
-        if (!equals(tagText, getTagText(problem.getProblemTags()))) {
-            problemTagRepository.deleteAllByProblemId(problem.getId());
-            problem.renewalProblemTag(createProblemTagListWithText(tagText));
-            return true;
-        }
-        return false;
-    }
 
     private static boolean equals(String tagText, String originalTegText) {
         if ((originalTegText.length() == tagText.length()) &&
@@ -178,9 +169,15 @@ public class ProblemService {
 
 
     @Transactional
-    public UpdateProblemResponse update(Long id, UpdateProblemRequest request) {
-        updateTagList(id, request.getTagText());
-        Problem problem = problemRepository.findById(id);
+    public UpdateProblemResponse update(Long problemId, UpdateProblemRequest request) {
+
+        if (!equals(request.getTagText(), getTagText(problemTagQueryRepository.findAllByProblemId(problemId)))) {
+            problemTagRepository.deleteAllByProblemId(problemId); //벌크연산
+            Problem problem = problemRepository.findById(problemId);
+            problem.renewalProblemTag(createProblemTagListWithText(request.getTagText()));
+        }
+
+        Problem problem = problemRepository.findById(problemId);
         problem.patch(request.getTitle(), request.getContentText(), request.getSite(),
             request.getUrl());
         return UpdateProblemResponse.of(problem,getTagText(problem.getProblemTags()));

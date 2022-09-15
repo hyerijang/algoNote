@@ -1,11 +1,12 @@
 package com.jhr.algoNote.service;
 
-import com.jhr.algoNote.domain.tag.ReviewTag;
 import com.jhr.algoNote.domain.tag.Tag;
 import com.jhr.algoNote.exception.RedundantTagNameException;
 import com.jhr.algoNote.repository.TagRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class TagService {
             throw new RedundantTagNameException("중복되는 태그 이름입니다.");
         }
 
-        Long savedId = tagRepository.save(tag);
+        Long savedId = tagRepository.save(tag).getId();
         log.debug("Generate new tag : id = {},  name = {}", tag.getId(), tag.getName());
         return savedId;
     }
@@ -72,8 +73,28 @@ public class TagService {
     public List<Tag> getTagList(String[] tagNames) {
         ArrayList<Tag> tagList = new ArrayList<>();
         for (int i = 0; i < tagNames.length; i++) {
-            tagList.add(getTag(tagNames[i]));
+            Tag tag = findByName(tagNames[i]);
+            //미 등록된 태그명이면 새로 등록
+            if (tag == null) {
+                tag = Tag.builder().name(tagNames[i]).build();
+                tagRepository.save(tag);
+            }
+            tagList.add(tag);
         }
+        return tagList;
+    }
+
+    private ArrayList<Tag> getTags(String[] tagNames) {
+        ArrayList<Tag> tagList = new ArrayList<>();
+        for (int i = 0; i < tagNames.length; i++) {
+            Tag tag = findByName(tagNames[i]);
+            //미 등록된 태그명이면 새로 등록
+            if (tag == null) {
+                tag = Tag.builder().name(tagNames[i]).build();
+            }
+            tagList.add(tag);
+        }
+
         return tagList;
     }
 
@@ -87,7 +108,6 @@ public class TagService {
         //미 등록된 태그명이면 새로 등록
         if (tag == null) {
             tag = Tag.builder().name(tagName).build();
-            saveTag(tag);
         }
         return tag;
     }
