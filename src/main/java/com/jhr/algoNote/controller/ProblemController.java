@@ -150,7 +150,7 @@ public class ProblemController {
         form.setUrl(problem.getUrl());
         form.setContentText(problem.getContent().getText());
         form.setTagText(tagText);
-        form.setSite(problem.getSite());
+        form.setSite(Site.valueOf(problem.getSite()).getName());
 
         //리뷰정보
         Map<Long, String> reviewInfo = new HashMap<>();

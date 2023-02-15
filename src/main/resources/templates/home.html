@@ -14,20 +14,23 @@
         <p class="lead"> 알고리즘 문제 및 풀이를 기록하는<br>알고리즘 문제 풀이 저장소입니다.</p>
         <hr class="my-4">
         <p>The dots will somehow connect in my future!</p>
-<!--        <p class="lead">-->
-<!--            <a class="btn btn-primary btn-lg" href="/problems" role="button">문제 관리</a>-->
-<!--        </p>-->
+        <!--        <p class="lead">-->
+        <!--            <a class="btn btn-primary btn-lg" href="/problems" role="button">문제 관리</a>-->
+        <!--        </p>-->
     </div>
     <!--카드 그룹-->
     <div class="card-group row row-cols-1 row-cols-md-3 g-4">
 
         <div class="col" th:each="problem : ${problems}">
-            <div class="card h-100" >
-
-                <div class="card-body">
-                    <h5 class="card-title" th:href="@{/problems/{id}(id=${problem.id})}" th:text="${problem.title}">Problem title</h5>
-                    <p class="card-text" > #태그, #태그2</p>
-                    <p class="card-text siteName" th:text="${problem.site}" ></p>
+            <!--카드-->
+            <div class="card h-100">
+                <div class="card-body" th:onclick="'location.href=\''+ @{/problems/{id}(id=${problem.id})} + '\''">
+                    <div class="cover">
+                        <h5 class="card-title" th:text="${problem.title}">
+                            Problem title</h5>
+                        <h6 class="badge bg-secondary" th:text="${problem.site}"></h6>
+                    </div>
+                    <p class="card-text" th:text="${problem.tagText}"> 태그,태그2</p>
                     <p class="card-text review">리뷰 쓰기</p>
                 </div>
             </div>
@@ -36,30 +39,30 @@
     </div>
 
 </div>
-<div class="container">
-    <!--관리자 페이지-->
-    <!--      관리자인 경우에만 접근 가능하도록 수정할 것-->
-    <p class="lead">관리 기능</p>
-    <p>
-        <a class="btn btn-lg btn-dark" role="button" href="/admin">관리자 페이지</a>
-    </p>
+<!--<div class="container">-->
+<!--    &lt;!&ndash;관리자 페이지&ndash;&gt;-->
+<!--    &lt;!&ndash;      관리자인 경우에만 접근 가능하도록 수정할 것&ndash;&gt;-->
+<!--    <p class="lead">관리 기능</p>-->
+<!--    <p>-->
+<!--        <a class="btn btn-lg btn-dark" role="button" href="/admin">관리자 페이지</a>-->
+<!--    </p>-->
 
 
-    <p class="lead">문제 기능</p>
-    <p>
-        <a class="btn btn-lg btn-dark" href="/problems/new">문제 등록</a>
+<!--    <p class="lead">문제 기능</p>-->
+<!--    <p>-->
+<!--        <a class="btn btn-lg btn-dark" href="/problems/new">문제 등록</a>-->
 
-    </p>
-    <p>
-        <a class="btn btn-lg btn-dark" href="/problems">문제 조회</a>
+<!--    </p>-->
+<!--    <p>-->
+<!--        <a class="btn btn-lg btn-dark" href="/problems">문제 조회</a>-->
 
-    </p>
-    <p>
-        <a class="btn btn-lg btn-dark" href="/problems/search">문제 검색</a>
+<!--    </p>-->
+<!--    <p>-->
+<!--        <a class="btn btn-lg btn-dark" href="/problems/search">문제 검색</a>-->
 
-    </p>
+<!--    </p>-->
 
-</div>
+<!--</div>-->
 <div th:replace="fragments/footer :: footer"/>
 </div>
 

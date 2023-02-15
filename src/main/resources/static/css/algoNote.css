@@ -24,9 +24,9 @@
     display: flex;
     justify-content: space-between;
 }
-
-.siteName{
-    color : blue;
+.card:hover{
+    box-shadow: 0.2em 0.2em #e9ecef;
+    transform: scale(1.02);
 }
 
 
