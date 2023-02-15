@@ -14,47 +14,25 @@
         <p class="lead"> 알고리즘 문제 및 풀이를 기록하는<br>알고리즘 문제 풀이 저장소입니다.</p>
         <hr class="my-4">
         <p>The dots will somehow connect in my future!</p>
-        <p class="lead">
-            <a class="btn btn-primary btn-lg" href="/problems" role="button">문제 목록</a>
-        </p>
+<!--        <p class="lead">-->
+<!--            <a class="btn btn-primary btn-lg" href="/problems" role="button">문제 관리</a>-->
+<!--        </p>-->
     </div>
     <!--카드 그룹-->
     <div class="card-group row row-cols-1 row-cols-md-3 g-4">
-        <div class="col">
-            <div class="card h-100">
+
+        <div class="col" th:each="problem : ${problems}">
+            <div class="card h-100" >
+
                 <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
-                        additional
-                        content. This content is a little bit longer.</p>
+                    <h5 class="card-title" th:href="@{/problems/{id}(id=${problem.id})}" th:text="${problem.title}">Problem title</h5>
+                    <p class="card-text" > #태그, #태그2</p>
+                    <p class="card-text siteName" th:text="${problem.site}" ></p>
                     <p class="card-text review">리뷰 쓰기</p>
                 </div>
             </div>
         </div>
 
-        <div class="col">
-            <div class="card h-100">
-
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
-                        additional
-                        content. This content is a little bit longer.</p>
-                    <p class="card-text review">리뷰 쓰기</p>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
-                        additional
-                        content. This content is a little bit longer.</p>
-                    <p class="card-text review">리뷰 쓰기</p>
-                </div>
-            </div>
-        </div>
     </div>
 
 </div>
