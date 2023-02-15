@@ -1,51 +1,90 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header">
-  <title>ALGONOTE</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>ALGONOTE</title>
 </head>
-
+<div th:replace="fragments/scripts" :: scripts></div>
 <body>
-<div class="jumbotron">
-  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-  <div class="container">
-    <!--  구글 로그인 시작-->
-    <head th:replace="fragments/socialLogin :: socialLogin"/>
-    <!--    구글 로그인 끝-->
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+</div>
+<div class="wrap">
+    <div class="jumbotron">
+        <h1 class="display-4">Hello, This is AlgoNote!</h1>
+        <p class="lead"> 알고리즘 문제 및 풀이를 기록하는<br>알고리즘 문제 풀이 저장소입니다.</p>
+        <hr class="my-4">
+        <p>The dots will somehow connect in my future!</p>
+        <p class="lead">
+            <a class="btn btn-primary btn-lg" href="/problems" role="button">문제 목록</a>
+        </p>
+    </div>
+    <!--카드 그룹-->
+    <div class="card-group row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
+                        additional
+                        content. This content is a little bit longer.</p>
+                    <p class="card-text review">리뷰 쓰기</p>
+                </div>
+            </div>
+        </div>
 
+        <div class="col">
+            <div class="card h-100">
 
-    <!--            <div th:if="${not #strings.isEmpty(userName)}" class="col-md-2">-->
-    <!--                <a href="/posts/save" role="button" class="btn btn-primary float-right">글 등록</a>-->
-    <!--            </div>-->
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
+                        additional
+                        content. This content is a little bit longer.</p>
+                    <p class="card-text review">리뷰 쓰기</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
+                        additional
+                        content. This content is a little bit longer.</p>
+                    <p class="card-text review">리뷰 쓰기</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-
+</div>
+<div class="container">
     <!--관리자 페이지-->
     <!--      관리자인 경우에만 접근 가능하도록 수정할 것-->
     <p class="lead">관리 기능</p>
     <p>
-      <a class="btn btn-lg btn-dark" role="button" href="/admin">관리자 페이지</a>
+        <a class="btn btn-lg btn-dark" role="button" href="/admin">관리자 페이지</a>
     </p>
 
 
     <p class="lead">문제 기능</p>
     <p>
-      <a class="btn btn-lg btn-dark" href="/problems/new">문제 등록</a>
+        <a class="btn btn-lg btn-dark" href="/problems/new">문제 등록</a>
 
     </p>
     <p>
-      <a class="btn btn-lg btn-dark" href="/problems">문제 조회</a>
+        <a class="btn btn-lg btn-dark" href="/problems">문제 조회</a>
 
     </p>
     <p>
-      <a class="btn btn-lg btn-dark" href="/problems/search">문제 검색</a>
+        <a class="btn btn-lg btn-dark" href="/problems/search">문제 검색</a>
 
     </p>
 
-  </div>
-  <div th:replace="fragments/footer :: footer"/>
+</div>
+<div th:replace="fragments/footer :: footer"/>
 </div>
 
-</div>
 
 </body>
 </html>

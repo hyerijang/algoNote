@@ -4,13 +4,11 @@
   <div th:if="${not #strings.isEmpty(userName)}">
     <img style="width:45px; height:45px" src="/image/unnamed.png" th:src="${userImg}"
          class="rounded-circle img-thumbnail img-responsive">
-    <span id="login-user" th:text="${userName}">사용자</span> 님, 안녕하세요.
+<!--    <span id="login-user" th:text="${userName}">사용자</span>-->
     <a href="/logout" class="btn btn-sm btn-info active" role="button">Logout</a>
   </div>
   <div th:if="${#strings.isEmpty(userName)}">
-    <p class="lead">구글 로그인</p>
     <!-- 스프링 시큐리티에서 기본 제공하는 URL - 별도 컨트롤러 작성 필요 없음 -->
-    <a href="/oauth2/authorization/google" class="btn btn-sm btn-success active" role="button">Google
-      Login</a>
+    <a href="/oauth2/authorization/google" class="btn btn-sm btn-success active" role="button">Login</a>
   </div>
 </div>

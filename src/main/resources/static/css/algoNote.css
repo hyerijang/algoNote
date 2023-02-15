@@ -1,0 +1,28 @@
+
+.wrap {
+    margin: auto;
+}
+
+.card-group {
+    padding: 0em 1em;
+    margin: auto;
+}
+
+.jumbotron {
+    background-color: #eee;
+    margin: auto;
+    padding: 1em 1em;
+}
+
+.review {
+    color: orange;
+    font-weight: bold;
+}
+
+.cover {
+    /*좌우정렬*/
+    display: flex;
+    justify-content: space-between;
+}
+
+

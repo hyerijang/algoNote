@@ -1,64 +1,64 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header"/>
+<div th:replace="fragments/scripts" :: scripts></div>
 <body>
-
 <div class="container">
-  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-  <H3>
-    문제 검색
-  </H3>
-  <form class="row gy-2 gx-3 ">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+    <H3>
+        문제 검색
+    </H3>
+    <form class="row gy-2 gx-3 ">
 
-    <div class="col-auto" th:object="${problemSearch}">
-      <label th:for="title" class="control-label">제목</label>
-      <input th:type="text" th:field="*{title}" class="form-control " placeholder="문제 제목">
+        <div class="col-auto" th:object="${problemSearch}">
+            <label th:for="title" class="control-label">제목</label>
+            <input th:type="text" th:field="*{title}" class="form-control " placeholder="문제 제목">
+        </div>
+        <div class="col-auto" th:object="${problemSearch}">
+            <label th:for="site" class="control-label">사이트</label>
+            <select th:field="*{site}" class=" form-control ">
+                <option value="">사이트</option>
+                <option th:each="status : ${T(com.jhr.algoNote.domain.Site).values()}"
+                        th:value="${status.code}"
+                        th:text="${status.name}"></option>
+            </select>
+        </div>
+        <div class="col-auto" th:object="${problemSearch}">
+            <label th:for="contentText" class="control-label">내용</label>
+            <input th:type="text" th:field="*{contentText}" class="form-control" placeholder="문제 내용">
+
+        </div>
+        <div class="col-3 d-flex align-self-end">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+
+
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>제목</th>
+                <th>url</th>
+                <th>수정</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="problem : ${problems}">
+                <td th:text="${problem.id}"></td>
+                <td th:text="${problem.title}"></td>
+                <td th:text="${problem.url}"></td>
+                <td>
+                    <a th:href="@{/problems/{id}/edit(id=${problem.id})}" class="btn btn-primary"
+                       role="button">수정</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-    <div class="col-auto" th:object="${problemSearch}">
-      <label th:for="site" class="control-label">사이트</label>
-      <select th:field="*{site}" class=" form-control ">
-        <option value="">사이트</option>
-        <option th:each="status : ${T(com.jhr.algoNote.domain.Site).values()}"
-                th:value="${status.code}"
-                th:text="${status.name}"></option>
-      </select>
-    </div>
-    <div class="col-auto" th:object="${problemSearch}">
-      <label th:for="contentText" class="control-label">내용</label>
-      <input th:type="text" th:field="*{contentText}" class="form-control" placeholder="문제 내용">
 
-    </div>
-    <div class="col-3 d-flex align-self-end">
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </div>
-  </form>
-
-
-  <div class="container">
-    <table class="table table-striped">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th>제목</th>
-        <th>url</th>
-        <th>수정</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="problem : ${problems}">
-        <td th:text="${problem.id}"></td>
-        <td th:text="${problem.title}"></td>
-        <td th:text="${problem.url}"></td>
-        <td>
-          <a th:href="@{/problems/{id}/edit(id=${problem.id})}" class="btn btn-primary"
-             role="button">수정</a>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div th:replace="fragments/footer :: footer"/>
+    <div th:replace="fragments/footer :: footer"/>
 
 </div> <!-- /container -->
 

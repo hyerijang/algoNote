@@ -1,38 +1,38 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header"/>
+<div th:replace="fragments/scripts" :: scripts></div>
 <body>
-
 <div class="container">
-  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-  <div class="container">
-    <H3>
-      문제 목록
-    </H3>
-    <table class="table table-striped">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th>제목</th>
-        <th>url</th>
-        <th>수정</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="problem : ${problems}">
-        <td th:text="${problem.id}"></td>
-        <td >
-          <a th:href="@{/problems/{id}(id=${problem.id})}" th:text="${problem.title}" ></a>
-        </td>
-        <td th:text="${problem.url}"></td>
-        <td>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+    <div class="container">
+        <H3>
+            문제 목록
+        </H3>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>제목</th>
+                <th>url</th>
+                <th>수정</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="problem : ${problems}">
+                <td th:text="${problem.id}"></td>
+                <td>
+                    <a th:href="@{/problems/{id}(id=${problem.id})}" th:text="${problem.title}"></a>
+                </td>
+                <td th:text="${problem.url}"></td>
+                <td>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-  <div th:replace="fragments/footer :: footer"/>
+    <div th:replace="fragments/footer :: footer"/>
 
 </div> <!-- /container -->
 
