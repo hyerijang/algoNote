@@ -31,6 +31,11 @@
                     </option>
                 </select>
             </div>
+
+
+<!--           TODO : 내용 입력 파트 : toast ui 프래그먼트로 변경할 것-->
+<!--            <div th:replace="fragments/toastUi :: editor"/>-->
+
             <div class="form-group">
                 <label th:for="contentText">내용</label>
                 <div th:replace="fragments/autoResizeTextArea :: autoResizeTextAreaContentText" ></div>
