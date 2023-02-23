@@ -23,9 +23,55 @@
     /*좌우정렬*/
     display: flex;
     justify-content: space-between;
+    align-items: start;
 }
+
+.cover-url {
+    /*좌우정렬*/
+    display: flex;
+    /*justify-content: space-between;*/
+    align-items: start;
+}
+
 .card:hover{
     box-shadow: 0.2em 0.2em #e9ecef;
     transform: scale(1.02);
 }
 
+.form-content{
+    background-color: #00ff00;
+}
+
+
+.detail-url{
+    font-size: 0.7rem;
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.icon-url{
+    height: 0.7rem;
+    margin: 0rem 0.2rem;
+    width: auto;
+}
+
+.body-header{
+    padding: 0.3rem 0.5rem;
+
+}
+
+.detail-title{
+    background-color: #eee;
+}
+
+.detail-cover{
+    padding: 0.3rem 0.5rem;
+}
+
+.detail-tags{
+    font-size: 1.0rem;
+    color: black;
+
+}

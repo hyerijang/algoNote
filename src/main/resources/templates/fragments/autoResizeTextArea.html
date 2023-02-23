@@ -23,3 +23,12 @@
     </script>
 </div>
 
+<div class="form-group" th:fragment="autoResizeContentTextReadonly">
+    <textarea class="animated form-control-plaintext"  th:text="*{contentText}" readonly></textarea>
+    <script>
+        $(function () {
+            $('.normal').autosize();
+            $('.animated').autosize({append: "\n"});
+        });
+    </script>
+</div>
