@@ -1,7 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
+<!--example-->
 <div class="form-group" th:fragment="autoResizeTextArea">
+    <textarea class="form-control animated"  th:field="*{fieldName}"></textarea>
+    <script>
+        $(function () {
+            $('.normal').autosize();
+            $('.animated').autosize({append: "\n"});
+        });
+    </script>
+</div>
+
+<!--contentText-->
+<div class="form-group" th:fragment="autoResizeTextAreaContentText">
     <textarea class="form-control animated"  th:field="*{contentText}"></textarea>
     <script>
         $(function () {
