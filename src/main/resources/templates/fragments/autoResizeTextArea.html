@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div class="form-group" th:fragment="autoResizeTextArea">
+    <textarea class="form-control animated"  th:field="*{contentText}"></textarea>
+    <script>
+        $(function () {
+            $('.normal').autosize();
+            $('.animated').autosize({append: "\n"});
+        });
+    </script>
+</div>
+
