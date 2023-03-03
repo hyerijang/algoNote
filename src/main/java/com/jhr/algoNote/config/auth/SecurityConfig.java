@@ -21,6 +21,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()// URL별 권한 권리
             .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**").permitAll()
+            .antMatchers("/img/**").permitAll()
             .antMatchers("/member/new").permitAll() //회원가입은 전체허용
             .antMatchers("/api/**").permitAll() //api는 전체허용
             .antMatchers("/error").permitAll() //에러페이지 전체허용
