@@ -23,14 +23,11 @@
         <div id="viewer" class="toast-ui-viewer"></div>
         <script th:inline="javascript">
             const Viewer = toastui.Editor;
-            const {Editor} = toastui;
-            const {codeSyntaxHighlight} = Editor.plugin;
             var contentText = [[*{contentText}]]; // 기존 문서 읽기
             const viewer = new Viewer({
                 el: document.querySelector('#viewer'),
                 height: '600px',
                 initialValue: contentText,
-                plugins: [codeSyntaxHighlight]
             });
         </script>
 
