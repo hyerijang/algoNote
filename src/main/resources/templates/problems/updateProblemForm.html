@@ -9,7 +9,7 @@
     <H3>
         문제 수정
     </H3>
-    <form th:object="${form}" method="post">
+    <form th:object="${form}" method="post" onsubmit="return setContentTextFromEditor()">
         <div class="form-group">
             <input type="hidden" th:field="*{id}"/>
         </div>
@@ -33,12 +33,9 @@
         </div>
 
 
-        <!--           TODO : 내용 입력 파트 : toast ui 프래그먼트로 변경할 것-->
-        <!--            <div th:replace="fragments/toastUi :: editor"/>-->
-
         <div class="form-group">
-            <label th:for="contentText">내용</label>
-            <div th:replace="fragments/autoResizeTextArea :: autoResizeTextAreaContentText"></div>
+            <textarea class="form-control animated" th:field="*{contentText}" hidden></textarea>
+            <div th:replace="fragments/toastUi :: editor"/>
         </div>
         <div class="form-group">
             <label th:for="tagText">태그</label>
@@ -52,5 +49,15 @@
     <br/>
     <div th:replace="fragments/footer :: footer"/>
 </div> <!-- /container -->
+
+
+<script>
+    function setContentTextFromEditor() {
+        //editor의 markdown으로 변환하여 form에 넣는다.
+        var text = editor.getMarkdown();
+        document.getElementById('contentText').value = text; //${form.contentText}
+    }
+</script>
+
 </body>
 </html>

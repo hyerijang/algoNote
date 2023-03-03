@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div class="cover body-header" th:fragment="editor">
-<!--    <div id="editor" class="toast-ui-editor" ,   th:field="*{contentText}" ></div>-->
+    <div id="editor" class="toast-ui-editor"  ></div>
     <script th:inline="javascript">
         const {Editor} = toastui;
         const {codeSyntaxHighlight} = Editor.plugin;
@@ -13,10 +13,10 @@
             previewStyle: 'vertical',
             plugins: [codeSyntaxHighlight]
         });
-
+        //기존 문서 읽기
         var contentText = [[*{contentText}]];
         editor.setMarkdown(contentText);
-        editor.getMarkdown();
+
     </script>
 </div>
 
