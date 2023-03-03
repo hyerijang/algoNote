@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header"/>
 <div th:replace="fragments/scripts" :: scripts></div>
+<!--Toast ui Viewer-->
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.js"></script>
 <body>
 <div th:replace="fragments/bodyHeader :: bodyHeader"/>
 <div class="detail-cover">
@@ -18,7 +20,7 @@
         </div>
 
         <hr class="my-3">
-        <div th:replace="fragments/autoResizeTextArea :: autoResizeContentTextReadonly"></div>
+        <div th:replace="fragments/toastUi :: viewer"/>
         <hr class="my-3">
 
         <div type="text" th:field="*{tagText}" class="form-control" readonly></div>
