@@ -46,7 +46,7 @@ public class HomeController {
                 ProblemCard problemCard = new ProblemCard();
                 String tagText = problemService.getTagText(problem.getProblemTags());
                 problemCard.setId(problem.getId());
-                problemCard.setSite(Site.valueOf(problem.getSite()).getName());
+                problemCard.setSiteName(problem.getSite());
                 problemCard.setTitle(problem.getTitle());
                 problemCard.setTagText(tagText);
                 ProblemCards.add(problemCard);

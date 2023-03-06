@@ -28,7 +28,7 @@
                     <div class="cover">
                         <h5 class="card-title" th:text="${problem.title}">
                             Problem title</h5>
-                        <h6 class="badge bg-secondary" th:text="${problem.site}"></h6>
+                        <h6 class="badge bg-secondary" th:text="${problem.getSiteName}"></h6>
                     </div>
                     <p class="card-text" th:text="${problem.tagText}"> 태그,태그2</p>
                     <p class="card-text review">리뷰 쓰기</p>
