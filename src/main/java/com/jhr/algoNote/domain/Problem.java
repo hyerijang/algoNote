@@ -77,8 +77,8 @@ public class Problem extends BaseTimeEntity {
      */
     @Builder
     public static Problem createProblem(@NonNull Member member, @NonNull String title,
-        @NonNull ProblemContent content,
-        String site, String url, List<ProblemTag> problemTagList) {
+                                        @NonNull ProblemContent content,
+                                        String site, String url, List<ProblemTag> problemTagList) {
 
         Problem problem = new Problem();
         problem.setMember(member);
@@ -91,20 +91,27 @@ public class Problem extends BaseTimeEntity {
     }
 
 
-
     //== 비즈니스 로직 ==//
+
     /**
      * 문제 수정
      */
-    public void update(String title, String site, String url, List<ProblemTag> problemTagList) {
+    public void update(String title, String site, String url) {
         this.title = title;
         this.site = site;
         this.url = url;
+    }
+
+    /**
+     * 문제 태그 수정
+     */
+    public void updateTag(List<ProblemTag> problemTagList) {
         this.addNewProblemTags(problemTagList);
     }
 
     /**
      * problemTag에 새로운 ProblemTag들 추가
+     *
      * @param problemTagList 추가할 ProblemTag의 List
      */
     private void addNewProblemTags(List<ProblemTag> problemTagList) {

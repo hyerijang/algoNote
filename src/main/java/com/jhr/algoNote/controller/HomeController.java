@@ -46,7 +46,6 @@ public class HomeController {
                 ProblemCard problemCard = new ProblemCard();
                 String tagText = problemService.getTagText(problem.getProblemTags());
                 problemCard.setId(problem.getId());
-                log.warn("사이트정보:" + problem.getSite());
                 problemCard.setSite(Site.valueOf(problem.getSite()).getName());
                 problemCard.setTitle(problem.getTitle());
                 problemCard.setTagText(tagText);
