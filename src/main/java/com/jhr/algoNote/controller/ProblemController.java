@@ -143,12 +143,12 @@ public class ProblemController {
     public String ProblemDetailsForm(@PathVariable Long id, Model model) {
         Problem problem = problemService.findOne(id);
         ProblemDetailsForm form = new ProblemDetailsForm();
-        //문제태그정보 text로 변환
-        String tagText = problemService.getTagText(problem.getProblemTags());
         form.setId(problem.getId());
         form.setTitle(problem.getTitle());
         form.setUrl(problem.getUrl());
         form.setContentText(problem.getContent().getText());
+        //문제태그정보 text로 변환
+        String tagText = problemService.getTagText(problem.getProblemTags());
         form.setTagText(tagText);
         form.setSiteName(problem.getSite());
 

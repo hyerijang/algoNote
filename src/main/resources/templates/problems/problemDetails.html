@@ -14,7 +14,8 @@
             <h6 class="badge bg-secondary" th:text="*{getSiteName}"></h6>
         </div>
 
-        <div class="cover-url">
+
+        <div class="cover-url" th:if="!*{url == ''}" >
             <img class="icon-url" src="/img/url.png">
             <a class="detail-url" th:text="*{url}" th:href="*{url}" target='_blank' readonly></a>
         </div>
@@ -23,7 +24,7 @@
         <div th:replace="fragments/toastUi :: viewer"/>
         <hr class="my-3">
 
-        <div type="text" th:field="*{tagText}" class="form-control" readonly></div>
+        <div type="text" th:field="*{tagText}" th:text="*{tagText}"  class="form-control" readonly></div>
         <br>
 
         <a th:href="@{/problems/{id}/edit(id=${id})}" class="btn btn-primary" role="button">수정</a>
