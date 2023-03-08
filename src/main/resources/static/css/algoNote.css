@@ -14,9 +14,11 @@
     padding: 1em 1em;
 }
 
-.review {
+.button-review {
     color: orange;
     font-weight: bold;
+    position: absolute;
+    bottom: 0.5rem;
 }
 
 .cover {
@@ -82,4 +84,16 @@
 
 .toast-ui-viewer{
     width: 100%;
+}
+
+.card-tag{
+    color: grey;
+    font-size: 0.8rem;
+    margin-top: 0.7rem;
+    margin-bottom:  1.5rem;
+}
+
+.card-date{
+    color: grey;
+    font-size: 0.8rem;
 }
