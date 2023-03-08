@@ -43,13 +43,15 @@ public class HomeController {
             //ProblemCard dto로 변경
             List<ProblemCard> ProblemCards = new ArrayList<>();
             for (Problem problem : problems) {
-                ProblemCard problemCard = new ProblemCard();
                 String tagText = problemService.getTagText(problem.getProblemTags());
-                problemCard.setId(problem.getId());
-                problemCard.setSiteName(problem.getSite());
-                problemCard.setTitle(problem.getTitle());
-                problemCard.setTagText(tagText);
-                ProblemCards.add(problemCard);
+                ProblemCard dto = ProblemCard.builder()
+                        .id(problem.getId())
+                        .title(problem.getTitle())
+                        .siteName(problem.getSite())
+                        .tagText(tagText)
+                        .createdDate(problem.getCreatedDate())
+                        .build();
+                ProblemCards.add(dto);
             }
             model.addAttribute("problems", ProblemCards);
             //사이트 정보

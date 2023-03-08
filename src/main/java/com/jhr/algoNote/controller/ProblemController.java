@@ -7,12 +7,15 @@ import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.Review;
 import com.jhr.algoNote.domain.Site;
+import com.jhr.algoNote.dto.ProblemCard;
 import com.jhr.algoNote.dto.ProblemCreateRequest;
 import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.repository.query.ProblemSearch;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ProblemService;
 import com.jhr.algoNote.service.TagService;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +87,24 @@ public class ProblemController {
 
         List<Problem> problems = problemService.search(problemSearch);
 
-        model.addAttribute("problems", problems);
+        //ProblemCard dto로 변경
+        List<ProblemCard> ProblemCards = new ArrayList<>();
+        for (Problem problem : problems) {
+            String tagText = problemService.getTagText(problem.getProblemTags());
+            ProblemCard dto = ProblemCard.builder()
+                    .id(problem.getId())
+                    .title(problem.getTitle())
+                    .siteName(problem.getSite())
+                    .tagText(tagText)
+                    .createdDate(problem.getCreatedDate())
+                    .modifiedDate(problem.getModifiedDate())
+                    .build();
+            ProblemCards.add(dto);
+        }
+        model.addAttribute("problems", ProblemCards);
+        //사이트 정보
+        model.addAttribute("sites", Site.values());
+
         return "problems/problemList";
     }
 
