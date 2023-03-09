@@ -31,9 +31,6 @@ public class HomeController {
     @GetMapping("/")
     public String index(Model model, @LoginUser SessionUser user) {
         if (user != null) {
-            model.addAttribute("userName", user.getName());
-            model.addAttribute("userImg", user.getPicture());
-
             //문제 조회
             ProblemSearch problemSearch = ProblemSearch.builder()
                     .memberEmail(user.getEmail())

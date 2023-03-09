@@ -18,11 +18,7 @@ public class AdminController {
     private final HttpSession httpSession;
 
     @RequestMapping("/admin")
-    public String adminPage(Model model, @LoginUser SessionUser user) {
-        if (user != null) {
-            model.addAttribute("userName", user.getName());
-            model.addAttribute("userImg", user.getPicture());
-        }
+    public String adminPage(Model model) {
         return "adminPage";
     }
 }
