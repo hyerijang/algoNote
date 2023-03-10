@@ -2,12 +2,9 @@ package com.jhr.algoNote.controller;
 
 import com.jhr.algoNote.config.auth.LoginUser;
 import com.jhr.algoNote.config.auth.dto.SessionUser;
-
-import javax.servlet.http.HttpSession;
-
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.Site;
-import com.jhr.algoNote.dto.ProblemCard;
+import com.jhr.algoNote.dto.ProblemDetails;
 import com.jhr.algoNote.repository.query.ProblemSearch;
 import com.jhr.algoNote.service.ProblemService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,10 +36,10 @@ public class HomeController {
             List<Problem> problems = problemService.search(problemSearch);
 
             //ProblemCard dto로 변경
-            List<ProblemCard> ProblemCards = new ArrayList<>();
+            List<ProblemDetails> ProblemCards = new ArrayList<>();
             for (Problem problem : problems) {
                 String tagText = problemService.getTagText(problem.getProblemTags());
-                ProblemCard dto = ProblemCard.builder()
+                ProblemDetails dto = ProblemDetails.builder()
                         .id(problem.getId())
                         .title(problem.getTitle())
                         .siteName(problem.getSite())

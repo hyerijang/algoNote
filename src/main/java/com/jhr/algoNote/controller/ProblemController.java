@@ -7,10 +7,7 @@ import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Problem;
 import com.jhr.algoNote.domain.Review;
 import com.jhr.algoNote.domain.Site;
-import com.jhr.algoNote.dto.ProblemCard;
-import com.jhr.algoNote.dto.ProblemCreateRequest;
-import com.jhr.algoNote.dto.ProblemUpdateRequest;
-import com.jhr.algoNote.dto.ReviewDto;
+import com.jhr.algoNote.dto.*;
 import com.jhr.algoNote.repository.query.ProblemSearch;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ProblemService;
@@ -18,9 +15,7 @@ import com.jhr.algoNote.service.ReviewService;
 import com.jhr.algoNote.service.TagService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -92,10 +87,10 @@ public class ProblemController {
         List<Problem> problems = problemService.search(problemSearch);
 
         //ProblemCard dto로 변경
-        List<ProblemCard> ProblemCards = new ArrayList<>();
+        List<ProblemDetails> list = new ArrayList<>();
         for (Problem problem : problems) {
             String tagText = problemService.getTagText(problem.getProblemTags());
-            ProblemCard dto = ProblemCard.builder()
+            ProblemDetails dto = ProblemDetails.builder()
                     .id(problem.getId())
                     .title(problem.getTitle())
                     .siteName(problem.getSite())
@@ -103,9 +98,9 @@ public class ProblemController {
                     .createdDate(problem.getCreatedDate())
                     .modifiedDate(problem.getModifiedDate())
                     .build();
-            ProblemCards.add(dto);
+            list.add(dto);
         }
-        model.addAttribute("problems", ProblemCards);
+        model.addAttribute("problems", list);
         //사이트 정보
         model.addAttribute("sites", Site.values());
 
@@ -164,31 +159,32 @@ public class ProblemController {
 
 
     @GetMapping(DETAILS)
-    public String ProblemDetailsForm(@PathVariable Long id, Model model) {
+    public String ProblemDetails(@PathVariable Long id, Model model) {
         // 문제 조회
         Problem problem = problemService.findOne(id);
-        ProblemDetailsForm form = new ProblemDetailsForm();
-        form.setId(problem.getId());
-        form.setTitle(problem.getTitle());
-        form.setUrl(problem.getUrl());
-        form.setContentText(problem.getContent().getText());
-        form.setTagText(problemService.getTagText(problem.getProblemTags()));
-        form.setSiteName(problem.getSite());
+        ProblemDetails p = ProblemDetails.builder()
+                .id(problem.getId())
+                .title(problem.getTitle())
+                .url(problem.getUrl())
+                .contentText(problem.getContent().getText())
+                .tagText(problemService.getTagText(problem.getProblemTags()))
+                .siteName(problem.getSite())
+                .build();
 
         //리뷰 정보
-        List<ReviewDto> reviews = new ArrayList<>();
+        List<ReviewDetails> reviews = new ArrayList<>();
         for (Review r : problem.getReviews()) {
-            ReviewDto reviewDto = ReviewDto.builder()
+            ReviewDetails reviewDetails = ReviewDetails.builder()
                     .id(r.getId())
-                    .title("AAAAA")
+                    .title(r.getTitle())
                     .createdDate(r.getCreatedDate())
                     .tagText(reviewService.getTagText(r.getReviewTags()))
                     .build();
 
-            reviews.add(reviewDto);
+            reviews.add(reviewDetails);
         }
 
-        model.addAttribute("form", form);
+        model.addAttribute("form", p);
         model.addAttribute("reviews", reviews);
         model.addAttribute("sites", Site.values());
         return "problems/problemDetails";

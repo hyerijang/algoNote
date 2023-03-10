@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class ReviewDto {
+public class ReviewDetails {
     private Long id;
     private Long problemId;
     private String writer;
@@ -19,7 +19,7 @@ public class ReviewDto {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public ReviewDto(Long id, Long problemId, String writer, String title, String tagText, LocalDateTime createdDate, LocalDateTime modifiedDate) {
+    public ReviewDetails(Long id, Long problemId, String writer, String title, String tagText, LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.id = id;
         this.problemId = problemId;
         this.writer = writer;
