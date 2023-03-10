@@ -20,6 +20,7 @@ public class LoginUserInterceptor implements HandlerInterceptor {
         //로그인된 유저정보를 가져온다.
         SessionUser user = (SessionUser) request.getSession().getAttribute("user");
         //로그인이 된 경우 유저 이름과 사진을 model에 추가한다.
+
         if (user != null) {
             modelAndView.getModelMap().addAttribute("userName", user.getName());
             modelAndView.getModelMap().addAttribute("userImg", user.getPicture());

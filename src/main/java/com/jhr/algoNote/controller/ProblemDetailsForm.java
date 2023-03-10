@@ -18,11 +18,6 @@ public class ProblemDetailsForm {
     private String tagText;
     private String siteName;
     private Long id;
-    /**
-     * reviewId, title
-     */
-    private Map<Long,String> reviewInfo;
-
 
     public void setSiteName(String siteName) {
         if (siteName == null)

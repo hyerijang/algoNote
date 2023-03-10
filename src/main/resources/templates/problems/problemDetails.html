@@ -33,30 +33,19 @@
 
     </form>
     <br>
-    <div class="container" th:if="${form.reviewInfo.size()}">
-        <H3>
-            리뷰 목록
-        </H3>
 
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>제목</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="review : ${form.reviewInfo}">
-                <td th:text="${review.key}"></td>
-                <td>
-                    <!--제목          -->
-                    <a th:href="@{/problems/{problemId}/reviews/{reviewId} (problemId=${form.getId()}, reviewId =${review.key})}"
-                       th:text="${review.value}"></a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="col" th:each="review : ${reviews}"W>
 
+        <div class="card h-100">
+            <div class="card-body" th:onclick="'location.href=\''+ @{/reviews/{id}(id=${review.id})} + '\''">
+                <div class="cover">
+                    <h5 class="card-title" th:text="${review.title}">Problem title</h5>
+                </div>
+                <p class="card-tag" th:text="${review.tagText}"> 태그,태그2</p>
+                <div class="card-date" th:text="${#temporals.format(review.getCreatedDate(), 'yyyy-MM-dd')}"></div>
+
+            </div>
+        </div>
     </div>
     <br>
     <div th:replace="fragments/footer :: footer"/>
