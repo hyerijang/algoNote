@@ -1,9 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header"/>
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.js"></script><!--Toast ui Viewer-->
 <div th:replace="fragments/scripts" :: scripts></div>
-<!--Toast ui Viewer-->
-<script src="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.js"></script>
 <body>
 <div th:replace="fragments/bodyHeader :: bodyHeader"/>
 <div class="detail-cover">
@@ -37,7 +36,7 @@
     <div class="col" th:each="review : ${reviews}"W>
 
         <div class="card h-100">
-            <div class="card-body" th:onclick="'location.href=\''+ @{/reviews/{id}(id=${review.id})} + '\''">
+            <div class="card-body" th:onclick="'location.href=\''+ @{/problems/{pid}/reviews/{rid}(pid = ${form.id}, rid=${review.id})} + '\''">
                 <div class="cover">
                     <h5 class="card-title" th:text="${review.title}">Problem title</h5>
                 </div>

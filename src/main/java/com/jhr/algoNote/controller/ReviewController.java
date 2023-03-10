@@ -6,6 +6,7 @@ import com.jhr.algoNote.config.auth.dto.SessionUser;
 import com.jhr.algoNote.domain.Member;
 import com.jhr.algoNote.domain.Review;
 import com.jhr.algoNote.dto.ReviewCreateRequest;
+import com.jhr.algoNote.dto.ReviewDetails;
 import com.jhr.algoNote.service.MemberService;
 import com.jhr.algoNote.service.ReviewService;
 import javax.validation.Valid;
@@ -65,16 +66,21 @@ public class ReviewController {
     @GetMapping(DETAILS)
     public String detailsForm(Model model, @PathVariable Long problemId,
         @PathVariable Long reviewId) {
+        log.warn("리뷰 조회");
+
         Review review = reviewService.findOne(reviewId);
 
-        ReviewForm reviewForm = new ReviewForm();
-        reviewForm.setProblemId(review.getProblem().getId());
-        reviewForm.setContentText(review.getTitle());
-        String tagText = reviewService.getTagText(review.getReviewTags());
-        reviewForm.setTagText(tagText);
-        reviewForm.setTitle(review.getTitle());
 
-        model.addAttribute("form", reviewForm);
+        ReviewDetails r = ReviewDetails.builder()
+                .id(reviewId)
+                .problemId(review.getProblem().getId())
+                .title(review.getTitle())
+                .createdDate(review.getCreatedDate())
+                .modifiedDate(review.getModifiedDate())
+                .contentText(review.getContent().getText())
+                .tagText(reviewService.getTagText(review.getReviewTags()))
+                .build();
+        model.addAttribute("form", r);
         return "/reviews/reviewDetailsForm";
     }
 

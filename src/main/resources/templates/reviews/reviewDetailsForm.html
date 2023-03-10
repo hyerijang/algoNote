@@ -1,33 +1,36 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header"/>
-<div th:replace="fragments/scripts" :: scripts></div>
+<head th:replace="fragments/header :: header">
+    <title>ALGONOTE</title>
+</head>
+<!--script시작-->
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.js"></script><!--Toast ui Viewer-->
+<div th:replace="fragments/scripts" :: scripts></div> <!--공통 script-->
+<!--script끝-->
 <body>
-<div class="container">
-  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-  <div class="container">
-    <H3>
-      리뷰 조회
-    </H3>
+<div th:replace="fragments/bodyHeader :: bodyHeader"/>
+<div class="detail-cover">
+    <!--시작-->
     <form th:object="${form}" method="get">
-      <div class="form-group">
-        <label th:for="title">제목</label>
-        <input type="text" th:field="*{title}" class="form-control" disabled>
-      </div>
-      <div class="form-group">
-        <label th:for="contentText">내용</label>
-        <input type="text" th:field="*{contentText}" class="form-control" disabled>
-      </div>
-      <div class="form-group">
-        <label th:for="tagText">태그</label>
-        <input type="text" th:field="*{tagText}" class="form-control" disabled>
-      </div>
-      <button type="submit" class="btn btn-primary" disabled>수정</button>
-    </form>
-  </div>
+        <input type="hidden" th:field="*{id}" readonly/>
+        <div class="cover detail-title">
+            <h3 th:text="*{title}" readonly></h3>
+        </div>
 
-  <br/>
-  <div th:replace="fragments/footer :: footer"/>
-</div> <!-- /container -->
+        <hr class="my-3">
+        <div th:replace="fragments/toastUi :: viewer"/>
+        <hr class="my-3">
+
+        <div type="text" th:field="*{tagText}" th:text="*{tagText}"  class="form-control" readonly></div>
+        <br>
+
+        <a th:href="@{/problems/{id}/edit(id=${id})}" class="btn btn-primary" role="button">수정</a>
+    </form>
+
+    <!--끝-->
+    <div th:replace="fragments/footer :: footer"/>
+</div>
+
+
 </body>
 </html>
