@@ -173,7 +173,7 @@ class ProblemServiceTest {
         //when
         ProblemSearch problemSearch = ProblemSearch.builder()
             .memberEmail(member.getEmail())
-            .title("채팅")
+            .keyword("채팅")
             .build();
 
         List<Problem> result = problemService.search(problemSearch);

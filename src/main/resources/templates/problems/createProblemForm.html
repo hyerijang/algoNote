@@ -13,6 +13,7 @@
         문제 생성
     </H3>
 
+    <!-- NOTE : form 전송시 editor의 내용을 markdown으로 변환하여 form에 저장해야함-->
     <form th:action="@{/problems/new}" th:object="${form}" method="post" onsubmit="return setContentTextFromEditor()">
         <div class="form-group">
             <input type="hidden" th:field="*{id}"/>
