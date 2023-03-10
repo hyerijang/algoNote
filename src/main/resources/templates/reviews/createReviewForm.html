@@ -2,34 +2,48 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header"/>
 <div th:replace="fragments/scripts" :: scripts></div>
+<!-- toast ui Editor and highlighter-->
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
 <body>
-<div class="container">
-    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-    <div class="container">
-        <H3>
-            리뷰 등록
-        </H3>
-        <form th:object="${form}" method="post">
-            <input type="text" th:field="*{problemId}" th:value="${form.problemId}" hidden>
+<div th:replace="fragments/bodyHeader :: bodyHeader"/>
+<div class="detail-cover">
+    <H3>
+        리뷰 생성
+    </H3>
+    <!-- NOTE : form 전송시 editor의 내용을 markdown으로 변환하여 form에 저장해야함-->
+    <form th:object="${form}" method="post" onsubmit="return setContentTextFromEditor()">
+        <input type="text" th:field="*{problemId}" th:value="${form.problemId}" hidden>
 
-            <div class="form-group">
-                <label th:for="title">제목</label>
-                <input type="text" th:field="*{title}" class="form-control" placeholder="제목을 입력하세요">
-            </div>
-            <div class="form-group">
-                <label th:for="contentText">내용</label>
-                <input type="text" th:field="*{contentText}" class="form-control" placeholder="내용을 입력하세요">
-            </div>
-            <div class="form-group">
-                <label th:for="tagText">태그</label>
-                <input type="text" th:field="*{tagText}" class="form-control" placeholder="태그를 입력하세요">
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div>
+        <div class="form-group">
+            <label th:for="title">제목</label>
+            <input type="text" th:field="*{title}" class="form-control" placeholder="제목을 입력하세요">
+        </div>
+        <!--내용-->
+        <div class="form-group">
+            <textarea class="form-control animated" th:field="*{contentText}" hidden></textarea>
+            <div th:replace="fragments/toastUi :: editor"/>
+        </div>
 
-    <br/>
-    <div th:replace="fragments/footer :: footer"/>
+        <div class="form-group">
+            <label th:for="tagText">태그</label>
+            <input type="text" th:field="*{tagText}" class="form-control" placeholder="태그를 입력하세요">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+<br/>
+<div th:replace="fragments/footer :: footer"/>
 </div> <!-- /container -->
+<script>
+    function setContentTextFromEditor() {
+        //editor의 markdown으로 변환하여 form에 넣는다.
+        var text = editor.getMarkdown();
+        document.getElementById('contentText').value = text; //${form.contentText}
+    }
+</script>
+
 </body>
+
 </html>
