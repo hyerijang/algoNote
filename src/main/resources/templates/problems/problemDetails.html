@@ -6,7 +6,7 @@
 <body>
 <div th:replace="fragments/bodyHeader :: bodyHeader"/>
 <div class="detail-cover">
-    <form th:object="${form}" method="get">
+    <div th:object="${form}">
         <input type="hidden" th:field="*{id}" readonly/>
         <div class="cover detail-title">
             <h3 th:text="*{title}" readonly></h3>
@@ -25,18 +25,15 @@
 
         <div type="text" th:field="*{tagText}" th:text="*{tagText}"  class="form-control" readonly></div>
         <br>
-
-        <a th:href="@{/problems/{id}/edit(id=${id})}" class="btn btn-primary" role="button">수정</a>
-        <a th:href="@{/problems/{id}/reviews/new(id=${id})}" class="btn btn-primary" role="button">리뷰
-            등록</a>
-
-    </form>
+    </div>
+    <a th:href="@{/problems/{id}/edit(id=${id})}" class="btn btn-primary" role="button">수정</a>
+    <a th:href="@{/reviews/new(pid=${id})}" class="btn btn-primary" role="button">리뷰 등록</a>
     <br>
 
     <div class="col" th:each="review : ${reviews}"W>
 
         <div class="card h-100">
-            <div class="card-body" th:onclick="'location.href=\''+ @{/problems/{pid}/reviews/{rid}(pid = ${form.id}, rid=${review.id})} + '\''">
+            <div class="card-body" th:onclick="'location.href=\''+ @{/reviews/{rid}(rid=${review.id})} + '\''">
                 <div class="cover">
                     <h5 class="card-title" th:text="${review.title}">Problem title</h5>
                 </div>

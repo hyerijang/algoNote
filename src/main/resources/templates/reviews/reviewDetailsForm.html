@@ -11,7 +11,7 @@
 <div th:replace="fragments/bodyHeader :: bodyHeader"/>
 <div class="detail-cover">
     <!--시작-->
-    <form th:object="${form}" method="get">
+    <div th:object="${review}">
         <input type="hidden" th:field="*{id}" readonly/>
         <div class="cover detail-title">
             <h3 th:text="*{title}" readonly></h3>
@@ -24,8 +24,8 @@
         <div type="text" th:field="*{tagText}" th:text="*{tagText}"  class="form-control" readonly></div>
         <br>
 
-        <a th:href="@{/problems/{id}/edit(id=${id})}" class="btn btn-primary" role="button">수정</a>
-    </form>
+<!--        <a th:href="@{/problems/{id}/edit(id=${id})}" class="btn btn-primary" role="button">수정</a>-->
+    </div>
 
     <!--끝-->
     <div th:replace="fragments/footer :: footer"/>
