@@ -15,7 +15,6 @@ public class ProblemSearch {
 
 
     @Builder
-
     public ProblemSearch(String site, String memberEmail, String keyword) {
         this.site = site;
         this.memberEmail = memberEmail;

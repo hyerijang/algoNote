@@ -2,6 +2,7 @@ package com.jhr.algoNote.config;
 
 import com.jhr.algoNote.interceptor.LoginUserInterceptor;
 import com.jhr.algoNote.config.auth.LoginUserArgumentResolver;
+import com.jhr.algoNote.interceptor.SearchInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -22,6 +23,12 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new SearchInterceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns("/css/**", "/images/**", "/js/**", "/h2-console/**", "/img/**")
+                .excludePathPatterns("/api/**")
+                .excludePathPatterns("/error");
+
         registry.addInterceptor(new LoginUserInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns("/css/**", "/images/**", "/js/**", "/h2-console/**", "/img/**")

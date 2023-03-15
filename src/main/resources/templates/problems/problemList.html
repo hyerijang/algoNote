@@ -5,11 +5,14 @@
 <body>
 <div th:replace="fragments/bodyHeader :: bodyHeader"/>
 <div class="detail-cover">
-    <H3>
-        문제 목록
-    </H3>
+    <div class="category_info">
+        <H3>
+            문제 목록
+        </H3>
 
+    </div>
     <div class="card-group row row-cols-1 row-cols-md-1 g-4">
+
 
         <div class="col" th:each="problem : ${problems}">
             <!--카드-->

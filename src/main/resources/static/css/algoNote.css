@@ -97,3 +97,40 @@
     color: grey;
     font-size: 0.8rem;
 }
+.category_info{
+    margin: 1rem 1rem;
+}
+
+.search-result-keyword {
+    display: inline-block;
+}
+
+.search-result-size {
+    /*좌우정렬*/
+    display: inline-block;
+    color: #0a53be;
+    font-weight: bold;
+}
+
+/*검색 바 관련*/
+.search-bar{
+    height: 6vh;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-right: 6vh;
+}
+.search-bar-item{
+    height: 100%;
+}
+.btn-search-img{
+    object-fit : fill
+}
+
+.socialLogin{
+    height: 6vh;
+}
+
+.social-login-img{
+    height: 6vh;
+}
