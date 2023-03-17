@@ -60,27 +60,27 @@ test {
         destinationFile = file("$buildDir/jacoco/jacoco.exec")
     }
 
-    finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
 jacoco {
     toolVersion = "0.8.7"
-    reportsDirectory = layout.buildDirectory.dir('jacocoReports')
 }
 
 jacocoTestReport {
     reports {
         html.enabled true
+        xml.enabled false
+        csv.enabled false
     }
+
     dependsOn test // tests are required to run before generating the report
-    finalizedBy 'jacocoTestCoverageVerification'
 
     def Qdomains = []
     for (qPattern in '**/QA'..'**/QZ') {
         Qdomains.add(qPattern + '*')
     }
 
-    //패키지 제외
+    //결과 보고서에서 제외할 패키지
     afterEvaluate {
         classDirectories.setFrom(
                 files(classDirectories.files.collect {
@@ -93,6 +93,7 @@ jacocoTestReport {
                 })
         )
     }
+
 }
 
 jacocoTestCoverageVerification {
@@ -136,7 +137,7 @@ jacocoTestCoverageVerification {
 
 task testCoverage(type: Test) {
     group 'verification'
-    description 'Runs the unit tests with coverage'
+    description 'Runs the unit tests and create test report'
 
     dependsOn(':test',
             ':jacocoTestReport',
