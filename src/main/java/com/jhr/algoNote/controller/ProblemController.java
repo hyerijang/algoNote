@@ -147,10 +147,24 @@ public class ProblemController {
         model.addAttribute("userEmail", user.getEmail());
         //자신의 문제만 검색 가능
         problemSearch.setMemberEmail(user.getEmail());
+        //검색 DTO 생성
+        List<ProblemDetails> list = new ArrayList<>();
+        for (Problem problem : problemService.search(problemSearch)) {
+            //태그 추출
+            String tagText = problemService.getTagText(problem.getProblemTags());
+            //DTO 변환
+            ProblemDetails dto = ProblemDetails.builder()
+                    .id(problem.getId())
+                    .title(problem.getTitle())
+                    .siteName(problem.getSite())
+                    .tagText(tagText)
+                    .createdDate(problem.getCreatedDate())
+                    .modifiedDate(problem.getModifiedDate())
+                    .build();
+            list.add(dto);
+        }
 
-        //검색
-        List<Problem> problems = problemService.search(problemSearch);
-        model.addAttribute("problems", problems);
+        model.addAttribute("problems", list);
 
         return "problems/problemSearch";
     }

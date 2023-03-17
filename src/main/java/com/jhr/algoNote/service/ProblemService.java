@@ -8,18 +8,18 @@ import com.jhr.algoNote.domain.tag.Tag;
 import com.jhr.algoNote.dto.ProblemCreateRequest;
 import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
-import com.jhr.algoNote.repository.query.ProblemSearch;
 import com.jhr.algoNote.repository.ProblemTagRepository;
 import com.jhr.algoNote.repository.query.ProblemQueryRepository;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.jhr.algoNote.repository.query.ProblemSearch;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static java.lang.Boolean.TRUE;
 
@@ -120,7 +120,7 @@ public class ProblemService {
      */
     @Transactional
     public List<Problem> search(ProblemSearch problemSearch) {
-        return problemQueryRepository.search(problemSearch);
+        return safe(problemQueryRepository.search(problemSearch));
     }
 
     /**
@@ -254,4 +254,12 @@ public class ProblemService {
         return TRUE;
     }
 
+    /**
+     * problem list가 비어있는 경우 null을 반환
+     * @param other
+     * @return
+     */
+    public static List<Problem> safe(List<Problem> other ) {
+        return other == null ? Collections.EMPTY_LIST : other;
+    }
 }
