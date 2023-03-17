@@ -21,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProblemQueryRepository {
 
-    private final EntityManager em;
     private final JPAQueryFactory jpaQueryFactory;
 
     // == QueryDSL== //
@@ -31,6 +30,11 @@ public class ProblemQueryRepository {
 
 
     public List<Problem> search(ProblemSearch problemSearch) {
+
+        if (problemSearch.getMemberEmail() == null) {
+            throw new NullPointerException("검색 : 유저 이메일은 null일 수 없습니다.");
+        }
+
         BooleanBuilder builder = new BooleanBuilder();
 
         //검색 키워드 검색 ->  제목 or 내용 or 태그에 포함되면 검색 결과로 출력
@@ -59,20 +63,6 @@ public class ProblemQueryRepository {
             return null;
         }
         return problem.title.contains(title);
-    }
-
-    private BooleanExpression siteEq(String site) {
-        if (site == null || site.isBlank()) {
-            return null;
-        }
-        return problem.site.eq(site);
-    }
-
-    private BooleanExpression emailEq(String email) {
-        if (email == null || email.isBlank()) {
-            return null;
-        }
-        return problem.member.email.eq(email);
     }
 
     private BooleanExpression contentTextLike(String contentText) {
