@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -33,11 +34,9 @@ import java.util.List;
 @RequestMapping("/problems")
 public class ProblemController {
 
-    private final HttpSession httpSession;
     private final ProblemService problemService;
     private final MemberService memberService;
     private final ReviewService reviewService;
-    private final TagService tagService;
 
     //URI
     private final String CREAT = "/new";
@@ -47,14 +46,20 @@ public class ProblemController {
 
     @GetMapping(CREAT)
     public String createForm(Model model) {
-        model.addAttribute("form", new ProblemForm());
+        model.addAttribute("problemForm", new ProblemForm());
         //사이트 정보
         model.addAttribute("sites", Site.values());
         return "problems/createProblemForm";
     }
 
     @PostMapping(CREAT)
-    public String creat(@Valid ProblemForm problemForm, @LoginUser SessionUser user) {
+    public String creat(@Valid ProblemForm problemForm, BindingResult bindingResult, Model model, @LoginUser SessionUser user) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("sites", Site.values());
+            return "problems/createProblemForm";
+        }
+
         Member member = memberService.findByEmail(user.getEmail());
         ProblemCreateRequest problemCreateRequest = ProblemCreateRequest.builder()
                 .title(problemForm.getTitle())
@@ -64,9 +69,8 @@ public class ProblemController {
                 .site(problemForm.getSite())
                 .build();
         Long problemId = problemService.register(member.getId(), problemCreateRequest);
-        log.debug("registered problem id ={}", problemId);
-
-        return "redirect:/";
+        log.error("문제아이디 {}",problemId);
+        return "redirect:/problems/"+problemId;
     }
 
     /**
@@ -117,14 +121,20 @@ public class ProblemController {
         form.setContentText(problem.getContent().getText());
         form.setTagText(tagText);
         form.setSite(problem.getSite());
-        model.addAttribute("form", form);
+
+        model.addAttribute("problemForm", form);
         //사이트 정보
         model.addAttribute("sites", Site.values());
         return "problems/updateProblemForm";
     }
 
     @PostMapping(EDIT)
-    public String edit(@ModelAttribute ProblemForm problemForm, @LoginUser SessionUser user) {
+    public String edit(@Valid ProblemForm problemForm, BindingResult bindingResult, Model model, @LoginUser SessionUser user) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("sites", Site.values());
+            return "problems/updateProblemForm";
+        }
 
         Member member = memberService.findByEmail(user.getEmail());
 
@@ -138,7 +148,7 @@ public class ProblemController {
                 .build();
 
         problemService.edit(member.getId(), dto);
-        return "redirect:/";
+        return "redirect:/problems/{id}";
     }
 
     @GetMapping(SEARCH)
@@ -201,5 +211,6 @@ public class ProblemController {
         model.addAttribute("sites", Site.values());
         return "problems/problemDetails";
     }
+
 
 }
