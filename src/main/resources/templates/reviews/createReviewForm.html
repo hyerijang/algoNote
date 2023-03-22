@@ -11,7 +11,7 @@
     <H3>
         리뷰 생성
     </H3>
-    <!-- NOTE : form 전송시 editor의 내용을 markdown으로 변환하여 form에 저장해야함-->
+    <!-- NOTE : problemForm 전송시 editor의 내용을 markdown으로 변환하여 form에 저장해야함-->
     <form th:object="${form}" method="post" onsubmit="return setContentTextFromEditor()">
         <input type="text" th:field="*{problemId}" th:value="${form.problemId}" hidden>
 
@@ -40,7 +40,7 @@
     function setContentTextFromEditor() {
         //editor의 markdown으로 변환하여 form에 넣는다.
         var text = editor.getMarkdown();
-        document.getElementById('contentText').value = text; //${form.contentText}
+        document.getElementById('contentText').value = text; //${problemForm.contentText}
     }
 </script>
 

@@ -148,7 +148,7 @@ public class ProblemController {
                 .build();
 
         problemService.edit(member.getId(), dto);
-        return "redirect:/problems/{id}";
+        return "redirect:";
     }
 
     @GetMapping(SEARCH)
@@ -184,6 +184,10 @@ public class ProblemController {
     public String ProblemDetails(@PathVariable Long id, Model model) {
         // 문제 조회
         Problem problem = problemService.findOne(id);
+        if (problem == null) {
+            log.warn("problemId:{id}를 조회할 수 없습니다.", id);
+            return  "redirect:";
+        }
         ProblemDetails p = ProblemDetails.builder()
                 .id(problem.getId())
                 .title(problem.getTitle())

@@ -17,25 +17,6 @@
             <div class="search-result-size " th:text='${#lists.size(problemSearch)}'></div>
         </div>
 
-<!--        <form class="row gy-2 gx-3 ">-->
-<!--            <div class="col-auto" th:object="${problemSearch}">-->
-<!--&lt;!&ndash;                사이트필터링기능&ndash;&gt;-->
-<!--                <input th:type="text" th:field="${problemSearch.keyword}" class="form-control "-->
-<!--                       placeholder="검색 내용을 입력하세요"-->
-<!--                       hidden>-->
-<!--                <select th:field="*{site}" class=" form-control ">-->
-<!--                    <option value="">사이트</option>-->
-<!--                    <option th:each="status : ${T(com.jhr.algoNote.domain.Site).values()}"-->
-<!--                            th:value="${status.code}"-->
-<!--                            th:text="${status.name}"></option>-->
-<!--                </select>-->
-<!--            </div>-->
-
-
-<!--            <div class="col-3 d-flex align-self-end">-->
-<!--                <button type="submit" class="btn btn-primary">검색</button>-->
-<!--            </div>-->
-<!--        </form>-->
 
     </div>
 
