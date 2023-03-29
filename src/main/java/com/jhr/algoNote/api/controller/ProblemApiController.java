@@ -24,8 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/problems")
 public class ProblemApiController {
 
-    private final ProblemService problemService;
-    private final ProblemRepository problemRepository;
     private final ProblemQueryRepository problemQueryRepository;
 
     @GetMapping
