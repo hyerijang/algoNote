@@ -1,46 +1,72 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header"/>
+<div th:replace="fragments/scripts" :: scripts></div>
+<!-- toast ui Editor and highlighter-->
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
 <body>
-<div class="container">
-  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-  <div class="container">
-    <H3>
-      문제 등록
-    </H3>
-    <form th:action="@{/problems/new}" th:object="${form}" method="post">
-      <div class="form-group">
-        <label th:for="title">제목</label>
-        <input type="text" th:field="*{title}" class="form-control" placeholder="제목을 입력하세요">
-      </div>
-      <div class="form-group">
-        <label th:for="url">url</label>
-        <input type="url" th:field="*{url}" class="form-control" placeholder="url를 입력하세요">
-      </div>
-      <div class="form-group">
-        <label th:for="site">사이트명</label>
-        <select th:field="*{site}" class="form-select">
-          <option value="">==사이트명 선택==</option>
-          <option th:each="site : ${sites}"
-          th:value="${site.code}"
-          th:text="${site.name}">
-          </option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label th:for="contentText">내용</label>
-        <input type="text" th:field="*{contentText}" class="form-control" placeholder="내용을 입력하세요">
-      </div>
-      <div class="form-group">
-        <label th:for="tagText">태그</label>
-        <input type="text" th:field="*{tagText}" class="form-control" placeholder="태그를 입력하세요">
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-  </div>
+<div th:replace="fragments/bodyHeader :: bodyHeader"/>
+<div class="detail-cover">
 
-  <br/>
-  <div th:replace="fragments/footer :: footer"/>
+    <H3>
+        문제 생성
+    </H3>
+
+    <!-- NOTE : problemForm 전송시 editor의 내용을 markdown으로 변환하여 form에 저장해야함-->
+    <form th:action="@{/problems/new}" th:object="${problemForm}" method="post" onsubmit="return setContentTextFromEditor()">
+        <div class="form-group">
+            <input type="hidden" th:field="*{id}"/>
+        </div>
+        <div>
+            <label for="title">제목</label>
+            <input type="text" id="title" th:field="*{title}" class="form-control">
+            <span span class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"> Empty Error </span>
+
+        </div>
+
+        <div class="form-group">
+            <label th:for="url">url</label>
+            <input type="url" th:field="*{url}" class="form-control">
+        </div>
+        <div class="form-group">
+            <label th:for="site">사이트명</label>
+            <select th:field="*{site}" class="form-select">
+                <option value=""></option>
+                <option th:each="site : ${sites}"
+                        th:value="${site.code}"
+                        th:text="${site.name}">
+                </option>
+            </select>
+        </div>
+
+
+        <div class="form-group">
+            <textarea class="form-control animated" th:field="*{contentText}" hidden></textarea>
+            <div th:replace="fragments/toastUi :: editor"/>
+        </div>
+        <div class="form-group">
+            <label th:for="tagText">태그</label>
+            <input type="text" th:field="*{tagText}" class="form-control" placeholder="태그를 입력하세요">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+    </form>
+
+
+    <br/>
+    <div th:replace="fragments/footer :: footer"/>
 </div> <!-- /container -->
+
+
+<script>
+    function setContentTextFromEditor() {
+        //editor의 markdown으로 변환하여 form에 넣는다.
+        var text = editor.getMarkdown();
+        document.getElementById('contentText').value = text; //${problemForm.contentText}
+    }
+</script>
+
 </body>
+
 </html>

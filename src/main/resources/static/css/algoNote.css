@@ -1,0 +1,136 @@
+
+.wrap {
+    margin: auto;
+}
+
+.card-group {
+    padding: 0em 1em;
+    margin: auto;
+}
+
+.jumbotron {
+    background-color: #eee;
+    margin: auto;
+    padding: 1em 1em;
+}
+
+.button-review {
+    color: orange;
+    font-weight: bold;
+    position: absolute;
+    bottom: 0.5rem;
+}
+
+.cover {
+    /*좌우정렬*/
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.cover-url {
+    /*좌우정렬*/
+    display: flex;
+    /*justify-content: space-between;*/
+    align-items: start;
+}
+
+.card:hover{
+    box-shadow: 0.2em 0.2em #e9ecef;
+    transform: scale(1.02);
+}
+
+.form-content{
+    background-color: #00ff00;
+}
+
+
+.detail-url{
+    font-size: 0.7rem;
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.icon-url{
+    height: 0.7rem;
+    margin: 0rem 0.2rem;
+    width: auto;
+}
+
+.body-header{
+    padding: 0.3rem 0.5rem;
+
+}
+
+.detail-title{
+    background-color: #eee;
+}
+
+.detail-cover{
+    padding: 0.3rem 0.5rem;
+}
+
+.detail-tags{
+    font-size: 1.0rem;
+    color: black;
+
+}
+
+.toast-ui-editor{
+    width: 100%;
+}
+
+.toast-ui-viewer{
+    width: 100%;
+}
+
+.card-tag{
+    color: grey;
+    font-size: 0.8rem;
+    margin-top: 0.7rem;
+    margin-bottom:  1.5rem;
+}
+
+.card-date{
+    color: grey;
+    font-size: 0.8rem;
+}
+.category_info{
+    margin: 1rem 1rem;
+}
+
+.search-result-keyword {
+    display: inline-block;
+}
+
+.search-result-size {
+    /*좌우정렬*/
+    display: inline-block;
+    color: #0a53be;
+    font-weight: bold;
+}
+
+/*검색 바 관련*/
+.search-bar{
+    height: 6vh;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-right: 6vh;
+}
+.search-bar-item{
+    height: 100%;
+}
+.btn-search-img{
+    object-fit : fill
+}
+
+.socialLogin{
+    height: 6vh;
+}
+
+.social-login-img{
+    height: 6vh;
+}

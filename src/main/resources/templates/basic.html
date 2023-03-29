@@ -2,18 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header">
   <title>ALGONOTE</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
+<!--script시작-->
+<div th:replace="fragments/scripts" :: scripts></div> <!--공통 script-->
+<!--script끝-->
+
 <body>
-<div class="jumbotron">
-  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-  <div class="container">
-    <!--  구글 로그인 시작-->
-    <head th:replace="fragments/socialLogin :: socialLogin"/>
-    <!--    구글 로그인 끝-->
-    <p>hello</p>
-  </div>
-  <div th:replace="fragments/footer :: footer"/>
+
+<div th:replace="fragments/bodyHeader :: bodyHeader"/>
+<div class="detail-cover">
+<!--시작-->
+
+
+<!--끝-->
+<div th:replace="fragments/footer :: footer"/>
 </div>
+
+
 </body>
 </html>

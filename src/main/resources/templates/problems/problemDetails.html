@@ -1,73 +1,50 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header"/>
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.js"></script><!--Toast ui Viewer-->
+<div th:replace="fragments/scripts" :: scripts></div>
 <body>
-<div class="container">
-  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+<div th:replace="fragments/bodyHeader :: bodyHeader"/>
+<div class="detail-cover">
+    <div th:object="${form}">
+        <input type="hidden" th:field="*{id}" readonly/>
+        <div class="cover detail-title">
+            <h3 th:text="*{title}" readonly></h3>
+            <h6 class="badge bg-secondary" th:text="*{getSiteName}"></h6>
+        </div>
 
-  <div class="container">
-    <H3>
-      문제 조회
-    </H3>
-    <form th:object="${form}" method="get">
-      <div class="form-group">
-        <input type="hidden" th:field="*{id}" disabled/>
-      </div>
-      <label th:for="title">제목</label>
-      <input type="text" th:field="*{title}" class="form-control" disabled>
-      <div class="form-group">
-        <label th:for="url">url</label>
-        <input type="url" th:field="*{url}" class="form-control" disabled>
-      </div>
-      <div class="form-group">
-        <label th:for="site">사이트명</label>
-        <select th:field="*{site}" class="form-select" disabled>
-          <option value=""></option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label th:for="contentText">내용</label>
-        <input type="text" th:field="*{contentText}" class="form-control" disabled>
-      </div>
-      <div class="form-group">
-        <label th:for="tagText">태그</label>
-        <input type="text" th:field="*{tagText}" class="form-control" disabled>
-      </div>
-      <br>
-      <a th:href="@{/problems/{id}/edit(id=${id})}" class="btn btn-primary" role="button">수정</a>
-      <a th:href="@{/problems/{id}/reviews/new(id=${id})}" class="btn btn-primary" role="button">리뷰
-        등록</a>
 
-    </form>
-  </div>
-  <br>
-  <div class="container" th:if="${form.reviewInfo.size()}">
-    <H3>
-      리뷰 목록
-    </H3>
+        <div class="cover-url" th:if="!*{url == ''}" >
+            <img class="icon-url" src="/img/url.png">
+            <a class="detail-url" th:text="*{url}" th:href="*{url}" target='_blank' readonly></a>
+        </div>
 
-    <table class="table table-striped">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th>제목</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="review : ${form.reviewInfo}">
-        <td th:text="${review.key}"></td>
-        <td>
-          <!--제목          -->
-          <a th:href="@{/problems/{problemId}/reviews/{reviewId} (problemId=${form.getId()}, reviewId =${review.key})}"
-             th:text="${review.value}"></a>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+        <hr class="my-3">
+        <div th:replace="fragments/toastUi :: viewer"/>
+        <hr class="my-3">
 
-  </div>
-  <br>
-  <div th:replace="fragments/footer :: footer"/>
+        <div type="text" th:field="*{tagText}" th:text="*{tagText}"  class="form-control" readonly></div>
+        <br>
+    </div>
+    <a th:href="@{/problems/{id}/edit(id=${id})}" class="btn btn-primary" role="button">수정</a>
+    <a th:href="@{/reviews/new(pid=${id})}" class="btn btn-primary" role="button">리뷰 등록</a>
+    <br>
+
+    <div class="col" th:each="review : ${reviews}"W>
+
+        <div class="card h-100">
+            <div class="card-body" th:onclick="'location.href=\''+ @{/reviews/{rid}(rid=${review.id})} + '\''">
+                <div class="cover">
+                    <h5 class="card-title" th:text="${review.title}">Problem title</h5>
+                </div>
+                <p class="card-tag" th:text="${review.tagText}"> 태그,태그2</p>
+                <div class="card-date" th:text="${#temporals.format(review.getCreatedDate(), 'yyyy-MM-dd')}"></div>
+
+            </div>
+        </div>
+    </div>
+    <br>
+    <div th:replace="fragments/footer :: footer"/>
 </div> <!-- /container -->
 </body>
 </html>

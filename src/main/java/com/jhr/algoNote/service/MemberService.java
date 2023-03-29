@@ -82,8 +82,12 @@ public class MemberService {
     @Transactional
     public void update(Long id, String name, String picture) {
         Member member = memberRepository.findById(id);
-        member.updateName(name);
-        member.updatePicture(picture);
+        if (!name.isEmpty()) {
+            member.updateName(name);
+        }
+        if (!picture.isEmpty()) {
+            member.updatePicture(picture);
+        }
 
     }
 }

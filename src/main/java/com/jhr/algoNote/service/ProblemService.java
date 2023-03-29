@@ -8,16 +8,20 @@ import com.jhr.algoNote.domain.tag.Tag;
 import com.jhr.algoNote.dto.ProblemCreateRequest;
 import com.jhr.algoNote.dto.ProblemUpdateRequest;
 import com.jhr.algoNote.repository.ProblemRepository;
-import com.jhr.algoNote.repository.query.ProblemSearch;
 import com.jhr.algoNote.repository.ProblemTagRepository;
 import com.jhr.algoNote.repository.query.ProblemQueryRepository;
-import java.util.ArrayList;
-import java.util.List;
+import com.jhr.algoNote.repository.query.ProblemSearch;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static java.lang.Boolean.TRUE;
 
 @Slf4j
 @Service
@@ -47,7 +51,7 @@ public class ProblemService {
     @Deprecated
     @Transactional
     public Long register(@NonNull Long memberId, @NonNull String title, @NonNull String content,
-        String tagText) {
+                         String tagText) {
         return register(memberId, title, content, tagText, null, null);
     }
 
@@ -57,7 +61,7 @@ public class ProblemService {
     @Deprecated
     @Transactional
     public Long register(@NonNull Long memberId, @NonNull String title, @NonNull String content,
-        String tagText, String site, String url) {
+                         String tagText, String site, String url) {
         //엔티티 조회
         Member member = memberService.findOne(memberId);
 
@@ -69,14 +73,14 @@ public class ProblemService {
 
         //문제 생성 후 제목, 내용, 태그 등록
         return problemRepository.save(
-            Problem.builder()
-                .member(member)
-                .title(title)
-                .content(problemContent)
-                .problemTagList(problemTagList)
-                .url(url)
-                .site(site)
-                .build()
+                Problem.builder()
+                        .member(member)
+                        .title(title)
+                        .content(problemContent)
+                        .problemTagList(problemTagList)
+                        .url(url)
+                        .site(site)
+                        .build()
         );
     }
 
@@ -116,7 +120,7 @@ public class ProblemService {
      */
     @Transactional
     public List<Problem> search(ProblemSearch problemSearch) {
-        return problemQueryRepository.search(problemSearch);
+        return safe(problemQueryRepository.search(problemSearch));
     }
 
     /**
@@ -133,22 +137,22 @@ public class ProblemService {
 
         //문제 내용 생성
         ProblemContent problemContent = ProblemContent.createProblemContent(
-            problemCreateRequest.getContentText());
+                problemCreateRequest.getContentText());
 
         //태그 생성
         List<ProblemTag> problemTagList = createProblemTagListWithText(
-            problemCreateRequest.getTagText());
+                problemCreateRequest.getTagText());
 
         //문제 생성 후 제목, 내용, 태그 등록
         return problemRepository.save(
-            Problem.builder()
-                .member(member)
-                .title(problemCreateRequest.getTitle())
-                .content(problemContent)
-                .problemTagList(problemTagList)
-                .url(problemCreateRequest.getUrl())
-                .site(problemCreateRequest.getSite())
-                .build()
+                Problem.builder()
+                        .member(member)
+                        .title(problemCreateRequest.getTitle())
+                        .content(problemContent)
+                        .problemTagList(problemTagList)
+                        .url(problemCreateRequest.getUrl())
+                        .site(problemCreateRequest.getSite())
+                        .build()
         );
     }
 
@@ -176,11 +180,14 @@ public class ProblemService {
         problem.getContent().editText(problemUpdateRequest.getContentText());
 
         //태그 정보 변경된 경우 태그 정보 갱신
-        List<ProblemTag> problemTags = updateTagList(
-            problemUpdateRequest.getTagText(), problem);
+        Boolean state = isTagChanged(problemUpdateRequest.getTagText(), problem);
+        if (state == TRUE) {
+            List<ProblemTag> newProblemTags = updateTagList(problemUpdateRequest.getTagText(), problem);
+            problem.updateTag(newProblemTags );
+        }
         //문제 update
         problem.update(problemUpdateRequest.getTitle(), problemUpdateRequest.getSite(),
-            problemUpdateRequest.getUrl(), problemTags);
+                problemUpdateRequest.getUrl());
 
         return problem.getId();
     }
@@ -196,14 +203,8 @@ public class ProblemService {
 
 
     private List<ProblemTag> updateTagList(String tagText,
-        Problem problem) {
+                                           Problem problem) {
         String originalTegText = getTagText(problem.getProblemTags());
-
-        //태그정보 변경되지 않은 경우
-        if ((originalTegText.length() == tagText.length()) &&
-            originalTegText.equals(tagText)) {
-            return problem.getProblemTags();
-        }
 
         //태그 정보 변경 된 경우
         //1. 기존 태그정보 삭제
@@ -215,6 +216,7 @@ public class ProblemService {
         //2. 입력받은 텍스트로 문제태그 생성
         return createProblemTagListWithText(tagText);
     }
+
 
     /**
      * ProblemTagList를 String으로 변환
@@ -239,4 +241,25 @@ public class ProblemService {
     }
 
 
+    private Boolean isTagChanged(String tagText,
+                                 Problem problem) {
+        String originalTegText = getTagText(problem.getProblemTags());
+
+        //태그정보 변경되지 않은 경우
+        if ((originalTegText.length() == tagText.length()) &&
+                originalTegText.equals(tagText)) {
+            return Boolean.FALSE;
+        }
+
+        return TRUE;
+    }
+
+    /**
+     * problem list가 비어있는 경우 null을 반환
+     * @param other
+     * @return
+     */
+    public static List<Problem> safe(List<Problem> other ) {
+        return other == null ? Collections.EMPTY_LIST : other;
+    }
 }

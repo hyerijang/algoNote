@@ -1,51 +1,47 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header">
-  <title>ALGONOTE</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>ALGONOTE</title>
 </head>
-
+<div th:replace="fragments/scripts" :: scripts></div>
 <body>
-<div class="jumbotron">
-  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-  <div class="container">
-    <!--  구글 로그인 시작-->
-    <head th:replace="fragments/socialLogin :: socialLogin"/>
-    <!--    구글 로그인 끝-->
 
+<div th:replace="fragments/bodyHeader :: bodyHeader"/>
 
-    <!--            <div th:if="${not #strings.isEmpty(userName)}" class="col-md-2">-->
-    <!--                <a href="/posts/save" role="button" class="btn btn-primary float-right">글 등록</a>-->
-    <!--            </div>-->
+<div class="wrap">
+    <div class="jumbotron">
+        <h1 class="display-4">Hello, This is AlgoNote!</h1>
+        <p class="lead"> 알고리즘 문제 및 풀이를 기록하는<br>알고리즘 문제 풀이 저장소입니다.</p>
+        <hr class="my-4">
+        <p>The dots will somehow connect in my future!</p>
+        <!--        <p class="lead">-->
+        <!--            <a class="btn btn-primary btn-lg" href="/problems" role="button">문제 관리</a>-->
+        <!--        </p>-->
+    </div>
+    <!--카드 그룹-->
+    <div class="card-group row row-cols-1 row-cols-md-3 g-4">
 
+        <div class="col" th:each="problem : ${problems}">
+            <!--카드-->
+            <div class="card h-100">
+                <div class="card-body" th:onclick="'location.href=\''+ @{/problems/{id}(id=${problem.id})} + '\''">
+                    <div class="cover">
+                        <h5 class="card-title" th:text="${problem.title}">
+                            Problem title</h5>
+                        <h6 class="badge bg-secondary" th:text="${problem.getSiteName}"></h6>
+                    </div>
+                    <p class="card-tag" th:text="${problem.tagText}"> 태그,태그2</p>
+                    <p class="card-text button-review">리뷰 쓰기</p>
+                </div>
+            </div>
+        </div>
 
-    <!--관리자 페이지-->
-    <!--      관리자인 경우에만 접근 가능하도록 수정할 것-->
-    <p class="lead">관리 기능</p>
-    <p>
-      <a class="btn btn-lg btn-dark" role="button" href="/admin">관리자 페이지</a>
-    </p>
-
-
-    <p class="lead">문제 기능</p>
-    <p>
-      <a class="btn btn-lg btn-dark" href="/problems/new">문제 등록</a>
-
-    </p>
-    <p>
-      <a class="btn btn-lg btn-dark" href="/problems">문제 조회</a>
-
-    </p>
-    <p>
-      <a class="btn btn-lg btn-dark" href="/problems/search">문제 검색</a>
-
-    </p>
-
-  </div>
-  <div th:replace="fragments/footer :: footer"/>
-</div>
+    </div>
 
 </div>
+<div th:replace="fragments/footer :: footer"/>
+</div>
+
 
 </body>
 </html>

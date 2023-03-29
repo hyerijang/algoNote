@@ -1,16 +1,37 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div class="socialLogin" th:fragment="socialLogin">
-  <div th:if="${not #strings.isEmpty(userName)}">
-    <img style="width:45px; height:45px" src="/image/unnamed.png" th:src="${userImg}"
-         class="rounded-circle img-thumbnail img-responsive">
-    <span id="login-user" th:text="${userName}">사용자</span> 님, 안녕하세요.
-    <a href="/logout" class="btn btn-sm btn-info active" role="button">Logout</a>
-  </div>
-  <div th:if="${#strings.isEmpty(userName)}">
-    <p class="lead">구글 로그인</p>
-    <!-- 스프링 시큐리티에서 기본 제공하는 URL - 별도 컨트롤러 작성 필요 없음 -->
-    <a href="/oauth2/authorization/google" class="btn btn-sm btn-success active" role="button">Google
-      Login</a>
-  </div>
+    <div th:if="${not #strings.isEmpty(userName)}">
+
+        <div class="dropdown">
+            <button class="dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                <img src="/image/unnamed.png" th:src="${userImg}"
+                     class="rounded-circle img-thumbnail img-responsive social-login-img">
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <li>
+                    <a class="dropdown-item" type="button" href="/problems">문제 목록</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" type="button" href="/problems/new">새 문제 등록</a>
+                </li>
+
+                <li>
+                    <a class="dropdown-item" type="button" href="/problems/search">검색</a>
+                </li>
+
+                <li>
+                    <a class="dropdown-item" type="button" href="/logout">로그아웃</a>
+                </li>
+            </ul>
+
+
+        </div>
+
+    </div>
+    <div th:if="${#strings.isEmpty(userName)}">
+        <!-- 스프링 시큐리티에서 기본 제공하는 URL - 별도 컨트롤러 작성 필요 없음 -->
+        <a href="/oauth2/authorization/google" class="btn btn-sm btn-success active" role="button">Login</a>
+    </div>
 </div>

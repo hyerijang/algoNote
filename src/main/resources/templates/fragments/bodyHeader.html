@@ -1,5 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div class="header" th:fragment="bodyHeader">
-  <a href="/"><h3 class="text-muted">ALGONOTE</h3></a>
+<div class="cover body-header" th:fragment="bodyHeader">
+    <a href="/"><h3 class="text-muted ">ALGONOTE</h3></a>
+
+    <div class="cover">
+        <!--검색 바-->
+        <form class="search-bar" th:action="@{/problems/search}" method="get" th:object="${problemSearch}" }>
+<!--            <div class="collapse" id="search_form">-->
+                <input type="text" class="form-control search-bar-item" placeholder="검색 내용을 입력하세요" aria-describedby="button-addon2"
+                       th:field="${problemSearch.keyword}">
+<!--            </div>-->
+            <!--제출용 버튼-->
+            <button class="search-bar-item" type="submit" data-bs-toggle="collapse"
+                    data-bs-target="#search_form"
+                    aria-expanded="false" aria-controls="search_form">
+                <img class="btn-search-img" src="/img/search.svg">
+            </button>
+        </form>
+        <!--로그인-->
+        <head th:replace="fragments/socialLogin :: socialLogin"/>
+    </div>
+
 </div>
+

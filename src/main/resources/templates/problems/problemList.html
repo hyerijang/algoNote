@@ -1,38 +1,38 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header"/>
+<div th:replace="fragments/scripts" :: scripts></div>
 <body>
+<div th:replace="fragments/bodyHeader :: bodyHeader"/>
+<div class="detail-cover">
+    <div class="category_info">
+        <H3>
+            문제 목록
+        </H3>
 
-<div class="container">
-  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-  <div class="container">
-    <H3>
-      문제 목록
-    </H3>
-    <table class="table table-striped">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th>제목</th>
-        <th>url</th>
-        <th>수정</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="problem : ${problems}">
-        <td th:text="${problem.id}"></td>
-        <td >
-          <a th:href="@{/problems/{id}(id=${problem.id})}" th:text="${problem.title}" ></a>
-        </td>
-        <td th:text="${problem.url}"></td>
-        <td>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+    </div>
+    <div class="card-group row row-cols-1 row-cols-md-1 g-4">
 
-  <div th:replace="fragments/footer :: footer"/>
+
+        <div class="col" th:each="problem : ${problems}">
+            <!--카드-->
+            <div class="card h-100">
+                <div class="card-body" th:onclick="'location.href=\''+ @{/problems/{id}(id=${problem.id})} + '\''">
+                    <div class="cover">
+                        <h5 class="card-title" th:text="${problem.title}">Problem title</h5>
+                        <h6 class="badge bg-secondary" th:text="${problem.getSiteName}"></h6>
+                    </div>
+                    <p class="card-tag" th:text="${problem.tagText}"> 태그,태그2</p>
+                    <div class="card-date" th:text="${#temporals.format(problem.getCreatedDate(), 'yyyy-MM-dd')}"></div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div th:replace="fragments/footer :: footer"/>
 
 </div> <!-- /container -->
 

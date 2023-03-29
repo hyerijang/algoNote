@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="cover body-header" th:fragment="editor">
+    <div id="editor" class="toast-ui-editor"></div>
+    <script th:inline="javascript">
+        const {Editor} = toastui;
+        const {codeSyntaxHighlight} = Editor.plugin;
+        var contentText = [[*{contentText}]]; // 기존 문서 읽기
+
+        //신규 content 생성
+        if (contentText == null)
+            contentText = "";
+
+        const editor = new Editor({
+            el: document.querySelector('#editor'),
+            height: '500px',
+            initialEditType: 'markdown',
+            initialValue: contentText,
+            previewStyle: 'vertical',
+            plugins: [codeSyntaxHighlight]
+        });
+
+    </script>
+</div>
+
+<div class="cover body-header" th:fragment="viewer">
+        <div id="viewer" class="toast-ui-viewer"></div>
+        <script th:inline="javascript">
+            const Viewer = toastui.Editor;
+            var contentText = [[*{contentText}]]; // 기존 문서 읽기
+            const viewer = new Viewer({
+                el: document.querySelector('#viewer'),
+                height: '600px',
+                initialValue: contentText,
+            });
+        </script>
+
+
+
+</div>

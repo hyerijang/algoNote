@@ -37,10 +37,11 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    testImplementation 'org.springframework.security:spring-security-test'
+    implementation group: 'org.springframework', name: 'spring-context'
 
 
     // QueryDSL
@@ -60,27 +61,27 @@ test {
         destinationFile = file("$buildDir/jacoco/jacoco.exec")
     }
 
-    finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
 jacoco {
     toolVersion = "0.8.7"
-    reportsDirectory = layout.buildDirectory.dir('jacocoReports')
 }
 
 jacocoTestReport {
     reports {
         html.enabled true
+        xml.enabled false
+        csv.enabled false
     }
+
     dependsOn test // tests are required to run before generating the report
-    finalizedBy 'jacocoTestCoverageVerification'
 
     def Qdomains = []
     for (qPattern in '**/QA'..'**/QZ') {
         Qdomains.add(qPattern + '*')
     }
 
-    //패키지 제외
+    //결과 보고서에서 제외할 패키지, 파일
     afterEvaluate {
         classDirectories.setFrom(
                 files(classDirectories.files.collect {
@@ -88,11 +89,14 @@ jacocoTestReport {
                             "**/*config*",
                             "**/*dto*",
                             "**/*exception*",
-                            "**/*Application.*"
+                            "**/*Application.*",
+                            "**/*Dto.*",
+                            "**/*domain*/*Site.*"
                     ] + Qdomains)
                 })
         )
     }
+
 }
 
 jacocoTestCoverageVerification {
@@ -136,7 +140,7 @@ jacocoTestCoverageVerification {
 
 task testCoverage(type: Test) {
     group 'verification'
-    description 'Runs the unit tests with coverage'
+    description 'Runs the unit tests and create test report'
 
     dependsOn(':test',
             ':jacocoTestReport',

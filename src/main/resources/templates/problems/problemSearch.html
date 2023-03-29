@@ -1,65 +1,46 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header"/>
+<div th:replace="fragments/scripts" :: scripts></div>
 <body>
+<div th:replace="fragments/bodyHeader :: bodyHeader"/>
+<div class="detail-cover">
 
-<div class="container">
-  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-  <H3>
-    문제 검색
-  </H3>
-  <form class="row gy-2 gx-3 ">
 
-    <div class="col-auto" th:object="${problemSearch}">
-      <label th:for="title" class="control-label">제목</label>
-      <input th:type="text" th:field="*{title}" class="form-control " placeholder="문제 제목">
-    </div>
-    <div class="col-auto" th:object="${problemSearch}">
-      <label th:for="site" class="control-label">사이트</label>
-      <select th:field="*{site}" class=" form-control ">
-        <option value="">사이트</option>
-        <option th:each="status : ${T(com.jhr.algoNote.domain.Site).values()}"
-                th:value="${status.code}"
-                th:text="${status.name}"></option>
-      </select>
-    </div>
-    <div class="col-auto" th:object="${problemSearch}">
-      <label th:for="contentText" class="control-label">내용</label>
-      <input th:type="text" th:field="*{contentText}" class="form-control" placeholder="문제 내용">
+    <div class="category_info">
+        <H3>
+            검색 결과
+        </H3>
+
+        <div th:if='${problemSearch.keyword} != null'>
+            <div class="search-result-keyword " th:text='|&#39${problemSearch.keyword}&#39의 검색결과|'></div>
+            <div class="search-result-size " th:text='${#lists.size(problemSearch)}'></div>
+        </div>
+
 
     </div>
-    <div class="col-3 d-flex align-self-end">
-      <button type="submit" class="btn btn-primary">Submit</button>
+
+    <!--검색 결과 리스트-->
+    <div class="card-group row row-cols-1 row-cols-md-1 g-4">
+
+        <div class="col" th:each="problem : ${problems}">
+            <!--카드-->
+            <div class="card h-100">
+                <div class="card-body" th:onclick="'location.href=\''+ @{/problems/{id}(id=${problem.id})} + '\''">
+                    <div class="cover">
+                        <h5 class="card-title" th:text="${problem.title}">Problem title</h5>
+                        <h6 class="badge bg-secondary" th:text="${problem.getSiteName}"></h6>
+                    </div>
+                    <p class="card-tag" th:text="${problem.tagText}"> 태그,태그2</p>
+                    <div class="card-date" th:text="${#temporals.format(problem.getCreatedDate(), 'yyyy-MM-dd')}"></div>
+
+                </div>
+            </div>
+        </div>
+
     </div>
-  </form>
 
-
-  <div class="container">
-    <table class="table table-striped">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th>제목</th>
-        <th>url</th>
-        <th>수정</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="problem : ${problems}">
-        <td th:text="${problem.id}"></td>
-        <td th:text="${problem.title}"></td>
-        <td th:text="${problem.url}"></td>
-        <td>
-          <a th:href="@{/problems/{id}/edit(id=${problem.id})}" class="btn btn-primary"
-             role="button">수정</a>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div th:replace="fragments/footer :: footer"/>
-
+    <div th:replace="fragments/footer :: footer"/>
 </div> <!-- /container -->
 
 </body>
